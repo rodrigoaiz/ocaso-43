@@ -1,0 +1,97 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const documentos = await getCollection("documentos");
+const sortedDocumentos = documentos.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+// Agrupar por categoría
+const categories = [...new Set(documentos.map((d) => d.data.category))];
+---
+
+<Layout title="Documentos Importantes">
+  <header class="mb-16">
+    <div class="flex items-center gap-4 mb-4">
+      <a
+        href="/"
+        class="text-xs font-black uppercase tracking-widest text-orange-500 hover:text-orange-600 transition-colors"
+        >&larr; Inicio</a
+      >
+    </div>
+    <h1 class="text-5xl font-black text-slate-900 mb-4 tracking-tight">
+      Biblioteca <span class="text-violet-500">Digital</span>
+    </h1>
+    <p class="text-lg text-slate-500 font-medium max-w-2xl leading-relaxed">
+      Repositorio oficial de reglamentos, facturas y documentos de interés para
+      la comunidad Ocaso 43.
+    </p>
+  </header>
+
+  <div class="grid md:grid-cols-2 gap-8">
+    {
+      sortedDocumentos.length > 0 ? (
+        sortedDocumentos.map((doc) => (
+          <a href={`/documentos/${doc.slug}`} class="group">
+            <div class="p-10 rounded-[2.5rem] bg-white border border-slate-100 group-hover:border-violet-200 transition-all shadow-sm hover:shadow-2xl hover:shadow-violet-500/5 relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-24 h-24 bg-violet-50/50 rounded-bl-[3rem] group-hover:scale-125 transition-transform duration-500" />
+
+              <div class="relative z-10">
+                <div class="flex items-center gap-4 mb-8">
+                  <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-violet-200 group-hover:scale-110 transition-transform">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-6 h-6 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                      />
+                    </svg>
+                  </div>
+                  <div class="flex flex-col">
+                    <span class="text-[10px] font-black text-violet-500 uppercase tracking-widest">
+                      Categoría
+                    </span>
+                    <span class="text-xs font-bold text-slate-400 capitalize">
+                      {doc.data.category}
+                    </span>
+                  </div>
+                </div>
+
+                <h2 class="text-2xl font-black text-slate-900 mb-3 group-hover:text-violet-600 transition-colors leading-tight">
+                  {doc.data.title}
+                </h2>
+                <p class="text-slate-500 text-sm leading-relaxed mb-8">
+                  {doc.data.description ||
+                    "Consulta la información oficial del edificio."}
+                </p>
+
+                <div class="flex items-center justify-between pt-6 border-t border-slate-50">
+                  <span class="text-[10px] font-black text-slate-300 uppercase tracking-widest">
+                    {doc.data.date.toLocaleDateString("es-MX")}
+                  </span>
+                  <span class="text-violet-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">
+                    Abril Documento &rarr;
+                  </span>
+                </div>
+              </div>
+            </div>
+          </a>
+        ))
+      ) : (
+        <div class="col-span-full py-24 text-center bg-white/50 backdrop-blur-sm rounded-[2.5rem] border border-dashed border-violet-200">
+          <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">
+            Archivo vacío por el momento
+          </p>
+        </div>
+      )
+    }
+  </div>
+</Layout>

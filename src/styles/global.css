@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+:root {
+  --background: oklch(0.99 0.01 40);
+  --foreground: oklch(0.15 0.02 20);
+  
+  /* Palette "Ocaso" */
+  --ocaso-light: oklch(0.97 0.02 40);
+  --ocaso-accent: oklch(0.65 0.18 45); /* Orange / Sunset */
+  --ocaso-deep: oklch(0.35 0.08 280); /* Deep Purple / Night Sky */
+  --ocaso-warm: oklch(0.85 0.12 60);  /* Soft Peach */
+}
+
+body {
+  @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
+  font-family: var(--font-sans);
+  background-image: radial-gradient(circle at top right, var(--ocaso-warm), transparent 40%),
+                    radial-gradient(circle at bottom left, oklch(0.95 0.05 300), transparent 40%);
+  background-attachment: fixed;
+}
+
+.prose {
+  @apply mx-auto;
+}

@@ -1,0 +1,159 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../layouts/Layout.astro";
+
+const minutas = await getCollection("minutas");
+const documentos = await getCollection("documentos");
+
+// Ordenar minutas por fecha descendente
+const sortedMinutas = minutas.sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+const latestMinutas = sortedMinutas.slice(0, 3);
+
+// Agrupar por año para la navegación
+const years = [...new Set(minutas.map((m) => m.data.year))].sort(
+  (a, b) => b - a,
+);
+---
+
+<Layout title="Administración">
+  <section class="mb-24 relative">
+    <div
+      class="absolute -top-10 -left-10 w-64 h-64 bg-orange-100/50 rounded-full blur-3xl -z-10"
+    >
+    </div>
+    <div class="max-w-3xl">
+      <h1
+        class="text-7xl font-black text-slate-900 tracking-tighter mb-8 leading-[0.9]"
+      >
+        Portal de <span class="text-orange-500">Ocaso 43</span>
+      </h1>
+      <p class="text-xl text-slate-500 font-medium leading-relaxed">
+        Gestión transparente y accesible para nuestra comunidad. Consulta actas
+        de reuniones, reglamentos y documentos oficiales del edificio.
+      </p>
+    </div>
+  </section>
+
+  <div class="grid lg:grid-cols-12 gap-16">
+    <div class="lg:col-span-8">
+      <div class="flex justify-between items-end mb-10">
+        <div>
+          <span
+            class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500 mb-2 block"
+            >Actualidad</span
+          >
+          <h2 class="text-3xl font-black text-slate-900">Últimas Sesiones</h2>
+        </div>
+        <a
+          href="/minutas"
+          class="text-xs font-black uppercase tracking-widest text-slate-400 hover:text-orange-500 transition-colors border-b-2 border-slate-100 hover:border-orange-200 pb-1"
+          >Ver Historial &rarr;</a
+        >
+      </div>
+
+      <div class="grid gap-6">
+        {
+          latestMinutas.length > 0 ? (
+            latestMinutas.map((minuta) => (
+              <a
+                href={`/minutas/${minuta.slug}`}
+                class="group p-8 rounded-[2rem] bg-white border border-slate-100 hover:border-orange-200 transition-all shadow-sm hover:shadow-xl hover:shadow-orange-500/5 flex flex-col sm:flex-row sm:items-center gap-6"
+              >
+                <div class="w-16 h-16 shrink-0 rounded-2xl bg-orange-50 flex flex-col items-center justify-center group-hover:bg-orange-500 transition-colors">
+                  <span class="text-[10px] font-black text-orange-400 group-hover:text-white uppercase leading-none">
+                    {new Date(2000, minuta.data.month - 1).toLocaleDateString(
+                      "es-MX",
+                      { month: "short" },
+                    )}
+                  </span>
+                  <span class="text-xl font-black text-orange-600 group-hover:text-white leading-none mt-1">
+                    {minuta.data.year}
+                  </span>
+                </div>
+                <div class="flex-grow">
+                  <h3 class="text-xl font-black text-slate-900 group-hover:text-orange-500 transition-colors mb-2">
+                    {minuta.data.title}
+                  </h3>
+                  <p class="text-slate-500 text-sm line-clamp-1 font-medium italic">
+                    {minuta.data.description}
+                  </p>
+                </div>
+                <div class="text-slate-300 group-hover:text-orange-500 transition-colors font-black text-2xl group-hover:translate-x-2 transition-transform">
+                  &rarr;
+                </div>
+              </a>
+            ))
+          ) : (
+            <div class="p-16 text-center bg-white/50 backdrop-blur-sm rounded-[2rem] border border-dashed border-orange-200">
+              <p class="text-slate-300 font-bold uppercase tracking-widest text-xs">
+                Aún no hay minutas registradas
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+
+    <aside class="lg:col-span-4">
+      <div
+        class="p-10 rounded-[2.5rem] bg-slate-900 text-white shadow-2xl shadow-slate-200 sticky top-32"
+      >
+        <h2 class="text-2xl font-black mb-8 tracking-tight">
+          Archivo <span class="text-orange-400">Histórico</span>
+        </h2>
+        <div class="space-y-10">
+          {
+            years.map((year) => (
+              <div>
+                <h3 class="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] mb-6 border-b border-slate-800 pb-2">
+                  {year}
+                </h3>
+                <ul class="grid grid-cols-2 gap-y-4 gap-x-2 text-[11px] font-black uppercase tracking-widest text-slate-400">
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => {
+                    const hasMinutas = minutas.some(
+                      (m) => m.data.year === year && m.data.month === month,
+                    );
+                    const monthName = new Date(
+                      2000,
+                      month - 1,
+                    ).toLocaleDateString("es-MX", { month: "short" });
+
+                    return (
+                      <li>
+                        {hasMinutas ? (
+                          <a
+                            href={`/minutas?year=${year}&month=${month}`}
+                            class="text-orange-400 hover:text-white transition-colors flex items-center gap-2 group/item"
+                          >
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-500 group-hover/item:scale-150 transition-transform" />
+                            {monthName}
+                          </a>
+                        ) : (
+                          <span class="text-slate-700 flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-slate-800" />
+                            {monthName}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))
+          }
+        </div>
+
+        <div class="mt-12 pt-8 border-t border-slate-800">
+          <a
+            href="/documentos"
+            class="block p-4 rounded-2xl bg-slate-800 hover:bg-orange-500 transition-colors text-center font-black text-[10px] uppercase tracking-widest"
+          >
+            Biblioteca de Documentos
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</Layout>

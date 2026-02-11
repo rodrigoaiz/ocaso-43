@@ -1,0 +1,108 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+// Forzamos SSR para que el middleware de sesión funcione siempre
+export const prerender = false;
+
+const { slug } = Astro.params;
+const documentos = await getCollection("documentos");
+const documento = documentos.find((d) => d.slug === slug);
+
+if (!documento) {
+  return Astro.redirect("/404");
+}
+
+const { Content } = await render(documento);
+---
+
+<Layout title={documento.data.title}>
+  <article class="max-w-4xl mx-auto">
+    <header class="mb-16 relative">
+      <div class="absolute -left-20 top-0 hidden lg:block">
+        <a
+          href="/documentos"
+          class="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 hover:text-violet-500 hover:border-violet-200 transition-all group"
+        >
+          <span class="text-xl group-hover:-translate-x-1 transition-transform"
+            >&larr;</span
+          >
+        </a>
+      </div>
+
+      <div class="mb-8 flex flex-col items-center">
+        <span
+          class="px-4 py-1 bg-violet-100 text-violet-600 text-[10px] font-black rounded-full uppercase tracking-[0.3em] mb-6"
+          >{documento.data.category}</span
+        >
+        <h1
+          class="text-6xl font-black text-slate-900 leading-[1.1] mb-6 tracking-tight text-center"
+        >
+          {documento.data.title}
+        </h1>
+        <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">
+          Documento Oficial • {
+            documento.data.date.toLocaleDateString("es-MX", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })
+          }
+        </p>
+      </div>
+    </header>
+
+    <div
+      class="bg-white p-12 lg:p-16 rounded-[3rem] shadow-2xl shadow-violet-500/5 border border-slate-100 relative overflow-hidden"
+    >
+      <div
+        class="absolute top-0 right-0 w-64 h-64 bg-violet-50/30 rounded-full blur-3xl -mr-32 -mt-32"
+      >
+      </div>
+
+      <div
+        class="relative z-10 prose prose-indigo prose-lg max-w-none
+				prose-headings:text-slate-900 prose-headings:font-black prose-headings:tracking-tight
+				prose-p:text-slate-600 prose-p:leading-relaxed
+				prose-a:text-violet-600 prose-a:font-bold prose-a:no-underline hover:prose-a:underline
+				prose-strong:text-slate-900 prose-strong:font-black
+				prose-li:text-slate-600"
+      >
+        <Content />
+      </div>
+    </div>
+
+    <div
+      class="mt-20 p-12 rounded-[2.5rem] bg-gradient-to-br from-violet-600 to-indigo-700 text-white flex flex-col items-center shadow-xl shadow-violet-200"
+    >
+      <div
+        class="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-6"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-8 w-8 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2-2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+          ></path>
+        </svg>
+      </div>
+      <h3 class="text-xl font-black mb-2">¿Desea una copia física?</h3>
+      <p class="text-violet-100 text-sm mb-8 font-medium">
+        Este documento está optimizado para su impresión inmediata.
+      </p>
+      <button
+        onclick="window.print()"
+        class="bg-white text-violet-600 px-10 py-4 rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-violet-900/20"
+      >
+        Imprimir Ahora
+      </button>
+    </div>
+  </article>
+</Layout>
