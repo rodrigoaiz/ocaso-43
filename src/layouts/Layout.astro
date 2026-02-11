@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
 
 interface Props {
   title: string;
@@ -23,71 +25,14 @@ const { title } = Astro.props;
       rel="stylesheet"
     />
   </head>
-  <body class="min-h-screen flex flex-col">
-    <header
-      class="py-10 bg-white/30 backdrop-blur-md sticky top-0 z-50 border-b border-orange-100/50"
-    >
-      <div class="container mx-auto px-4 flex justify-between items-center">
-        <a href="/" class="group flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-violet-500 shadow-lg shadow-orange-200 flex items-center justify-center text-white font-black italic text-xl group-hover:scale-110 transition-transform"
-          >
-            O
-          </div>
-          <div class="flex flex-col">
-            <span
-              class="text-xl font-black tracking-tight text-slate-900 leading-none"
-              >Ocaso 43</span
-            >
-            <span
-              class="text-[10px] uppercase tracking-[0.3em] font-bold text-orange-500"
-              >Administración</span
-            >
-          </div>
-        </a>
-        <nav>
-          <ul
-            class="flex gap-8 text-sm font-bold uppercase tracking-widest text-slate-500"
-          >
-            <li>
-              <a href="/" class="hover:text-orange-500 transition-colors"
-                >Inicio</a>
-            </li>
-            <li>
-              <a href="/minutas" class="hover:text-orange-500 transition-colors"
-                >Minutas</a>
-            </li>
-            <li>
-              <a
-                href="/documentos"
-                class="hover:text-orange-500 transition-colors">Documentos</a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </header>
+  <body class="min-h-screen flex flex-col overflow-x-hidden">
+    <Navbar />
 
-    <main class="flex-grow container mx-auto px-4 py-16 max-w-5xl">
+    <main class="flex-grow container mx-auto px-4 py-12 lg:py-16 max-w-5xl">
       <slot />
     </main>
 
-    <footer class="py-12 text-center">
-      <div class="container mx-auto px-4">
-        <div
-          class="w-20 h-1 bg-gradient-to-r from-transparent via-orange-200 to-transparent mx-auto mb-8 rounded-full"
-        >
-        </div>
-        <p class="text-sm font-medium text-slate-400">
-          &copy; {new Date().getFullYear()} Administración <span
-            class="text-slate-900 font-bold">Ocaso 43</span>
-        </p>
-        <p
-          class="text-[10px] uppercase tracking-widest text-slate-300 mt-2 font-bold"
-        >
-          Transparencia y Comunidad
-        </p>
-      </div>
-    </footer>
+    <Footer />
   </body>
 </html>
 

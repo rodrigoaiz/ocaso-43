@@ -1,0 +1,142 @@
+<header
+  class="py-6 lg:py-10 bg-white/30 backdrop-blur-md sticky top-0 z-50 border-b border-orange-100/50"
+>
+  <div class="container mx-auto px-4 flex justify-between items-center">
+    <a href="/" class="group flex items-center gap-3 relative z-50">
+      <div
+        class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-violet-500 shadow-lg shadow-orange-200 flex items-center justify-center text-white font-black italic text-xl group-hover:scale-110 transition-transform"
+      >
+        O
+      </div>
+      <div class="flex flex-col">
+        <span
+          class="text-xl font-black tracking-tight text-slate-900 leading-none"
+          >Ocaso 43</span
+        >
+        <span
+          class="text-[10px] uppercase tracking-[0.3em] font-bold text-orange-500"
+          >Administración</span
+        >
+      </div>
+    </a>
+
+    <!-- Botón Menú Móvil -->
+    <button
+      id="menu-toggle"
+      class="lg:hidden relative z-50 w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none"
+      aria-label="Abrir menú"
+    >
+      <span class="w-6 h-0.5 bg-slate-900 transition-all origin-center"></span>
+      <span class="w-6 h-0.5 bg-slate-900 transition-all"></span>
+      <span class="w-6 h-0.5 bg-slate-900 transition-all origin-center"></span>
+    </button>
+
+    <!-- Navegación Escritorio -->
+    <nav class="hidden lg:block">
+      <ul
+        class="flex gap-8 text-sm font-bold uppercase tracking-widest text-slate-500"
+      >
+        <li>
+          <a href="/" class="hover:text-orange-500 transition-colors">Inicio</a>
+        </li>
+        <li>
+          <a href="/minutas" class="hover:text-orange-500 transition-colors"
+            >Minutas</a
+          >
+        </li>
+        <li>
+          <a href="/documentos" class="hover:text-orange-500 transition-colors"
+            >Documentos</a
+          >
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Menú Móvil Overlay -->
+    <div
+      id="mobile-menu"
+      class="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center lg:hidden transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-[-10px]"
+    >
+      <nav>
+        <ul class="flex flex-col gap-10 text-center">
+          <li>
+            <a
+              href="/"
+              class="mobile-nav-link text-3xl font-black text-slate-900 tracking-tighter hover:text-orange-500 transition-colors"
+              >Inicio</a
+            >
+          </li>
+          <li>
+            <a
+              href="/minutas"
+              class="mobile-nav-link text-3xl font-black text-slate-900 tracking-tighter hover:text-orange-500 transition-colors"
+              >Minutas</a
+            >
+          </li>
+          <li>
+            <a
+              href="/documentos"
+              class="mobile-nav-link text-3xl font-black text-slate-900 tracking-tighter hover:text-orange-500 transition-colors"
+              >Documentos</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const spans = menuToggle?.querySelectorAll("span");
+  const body = document.body;
+
+  menuToggle?.addEventListener("click", () => {
+    const isOpen = mobileMenu?.classList.contains("opacity-100");
+
+    if (isOpen) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  });
+
+  // Cerrar al hacer click en un enlace
+  const links = document.querySelectorAll(".mobile-nav-link");
+  links.forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  function openMenu() {
+    mobileMenu?.classList.remove(
+      "opacity-0",
+      "pointer-events-none",
+      "translate-y-[-10px]",
+    );
+    mobileMenu?.classList.add("opacity-100", "translate-y-0");
+    body.style.overflow = "hidden";
+
+    if (spans) {
+      spans[0].style.transform = "rotate(45deg) translate(6px, 6px)";
+      spans[1].style.opacity = "0";
+      spans[2].style.transform = "rotate(-45deg) translate(5px, -5px)";
+    }
+  }
+
+  function closeMenu() {
+    mobileMenu?.classList.add(
+      "opacity-0",
+      "pointer-events-none",
+      "translate-y-[-10px]",
+    );
+    mobileMenu?.classList.remove("opacity-100", "translate-y-0");
+    body.style.overflow = "";
+
+    if (spans) {
+      spans[0].style.transform = "";
+      spans[1].style.opacity = "1";
+      spans[2].style.transform = "";
+    }
+  }
+</script>

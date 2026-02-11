@@ -18,27 +18,29 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
 ---
 
 <Layout title="Administración">
-  <section class="mb-24 relative">
+  <section class="mb-16 lg:mb-24 relative">
     <div
       class="absolute -top-10 -left-10 w-64 h-64 bg-orange-100/50 rounded-full blur-3xl -z-10"
     >
     </div>
     <div class="max-w-3xl">
       <h1
-        class="text-7xl font-black text-slate-900 tracking-tighter mb-8 leading-[0.9]"
+        class="text-4xl sm:text-7xl font-black text-slate-900 tracking-tighter mb-6 lg:mb-8 leading-[1]"
       >
         Portal de <span class="text-orange-500">Ocaso 43</span>
       </h1>
-      <p class="text-xl text-slate-500 font-medium leading-relaxed">
+      <p class="text-lg lg:text-xl text-slate-500 font-medium leading-relaxed">
         Gestión transparente y accesible para nuestra comunidad. Consulta actas
         de reuniones, reglamentos y documentos oficiales del edificio.
       </p>
     </div>
   </section>
 
-  <div class="grid lg:grid-cols-12 gap-16">
+  <div class="grid lg:grid-cols-12 gap-10 lg:gap-16">
     <div class="lg:col-span-8">
-      <div class="flex justify-between items-end mb-10">
+      <div
+        class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4"
+      >
         <div>
           <span
             class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500 mb-2 block"
@@ -59,7 +61,7 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
             latestMinutas.map((minuta) => (
               <a
                 href={`/minutas/${minuta.slug}`}
-                class="group p-8 rounded-[2rem] bg-white border border-slate-100 hover:border-orange-200 transition-all shadow-sm hover:shadow-xl hover:shadow-orange-500/5 flex flex-col sm:flex-row sm:items-center gap-6"
+                class="group p-6 sm:p-8 rounded-[2rem] bg-white border border-slate-100 hover:border-orange-200 transition-all shadow-sm hover:shadow-xl hover:shadow-orange-500/5 flex flex-col sm:flex-row sm:items-center gap-6"
               >
                 <div class="w-16 h-16 shrink-0 rounded-2xl bg-orange-50 flex flex-col items-center justify-center group-hover:bg-orange-500 transition-colors">
                   <span class="text-[10px] font-black text-orange-400 group-hover:text-white uppercase leading-none">

@@ -40,7 +40,9 @@ const monthName = filterMonth
         >&larr; Inicio</a
       >
     </div>
-    <h1 class="text-5xl font-black text-slate-900 mb-4 tracking-tight">
+    <h1
+      class="text-3xl sm:text-5xl font-black text-slate-900 mb-4 tracking-tight"
+    >
       Minutas de <span class="text-orange-500">Reuniones</span>
     </h1>
     <p class="text-lg text-slate-500 font-medium max-w-2xl leading-relaxed">
@@ -67,7 +69,7 @@ const monthName = filterMonth
         filteredMinutas.map((minuta) => (
           <a
             href={`/minutas/${minuta.slug}`}
-            class="block p-10 rounded-3xl bg-white border border-slate-100 hover:border-orange-200/50 transition-all shadow-sm hover:shadow-xl hover:shadow-orange-500/5 group relative overflow-hidden"
+            class="block p-6 sm:p-10 rounded-3xl bg-white border border-slate-100 hover:border-orange-200/50 transition-all shadow-sm hover:shadow-xl hover:shadow-orange-500/5 group relative overflow-hidden"
           >
             <div class="absolute top-0 right-0 w-32 h-32 bg-orange-50/50 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700" />
 

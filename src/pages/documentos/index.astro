@@ -20,7 +20,9 @@ const categories = [...new Set(documentos.map((d) => d.data.category))];
         >&larr; Inicio</a
       >
     </div>
-    <h1 class="text-5xl font-black text-slate-900 mb-4 tracking-tight">
+    <h1
+      class="text-3xl sm:text-5xl font-black text-slate-900 mb-4 tracking-tight"
+    >
       Biblioteca <span class="text-violet-500">Digital</span>
     </h1>
     <p class="text-lg text-slate-500 font-medium max-w-2xl leading-relaxed">
@@ -34,7 +36,7 @@ const categories = [...new Set(documentos.map((d) => d.data.category))];
       sortedDocumentos.length > 0 ? (
         sortedDocumentos.map((doc) => (
           <a href={`/documentos/${doc.slug}`} class="group">
-            <div class="p-10 rounded-[2.5rem] bg-white border border-slate-100 group-hover:border-violet-200 transition-all shadow-sm hover:shadow-2xl hover:shadow-violet-500/5 relative overflow-hidden">
+            <div class="p-6 sm:p-10 rounded-[2.5rem] bg-white border border-slate-100 group-hover:border-violet-200 transition-all shadow-sm hover:shadow-2xl hover:shadow-violet-500/5 relative overflow-hidden">
               <div class="absolute top-0 right-0 w-24 h-24 bg-violet-50/50 rounded-bl-[3rem] group-hover:scale-125 transition-transform duration-500" />
 
               <div class="relative z-10">
@@ -78,7 +80,7 @@ const categories = [...new Set(documentos.map((d) => d.data.category))];
                     {doc.data.date.toLocaleDateString("es-MX")}
                   </span>
                   <span class="text-violet-600 font-black text-xs uppercase tracking-widest flex items-center gap-2 group-hover:translate-x-2 transition-transform">
-                    Abril Documento &rarr;
+                    Abrir Documento &rarr;
                   </span>
                 </div>
               </div>
