@@ -1,44 +1,65 @@
-# Astro Starter Kit: Minimal
+# Portal de Administración - Ocaso 43
 
-```sh
-npm create astro@latest -- --template minimal
-```
+Este es el portal administrativo del **Condominio Ocaso No. 43**, diseñado para gestionar de manera transparente y eficiente las minutas de asambleas, reglamentos y protocolos internos de la comunidad.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 🚀 Tecnologías Utilizadas
 
-## 🚀 Project Structure
+- **[Astro 5](https://astro.build/)**: Framework web para una carga ultra rápida.
+- **[Tailwind CSS 4](https://tailwindcss.com/)**: Estilizado moderno con la paleta de colores personalizada "Ocaso".
+- **[MDX](https://mdxjs.com/)**: Para la creación de contenido enriquecido (minutas y documentos).
+- **[Vercel](https://vercel.com/)**: Plataforma de despliegue y hosting SSR.
 
-Inside of your Astro project, you'll see the following folders and files:
+## 🛠️ Estructura del Proyecto
 
 ```text
 /
-├── public/
 ├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
+│   ├── content/        # Contenido MDX (Minutas y Documentos)
+│   ├── layouts/        # Plantillas de diseño base
+│   ├── components/     # Componentes interactivos
+│   ├── pages/          # Rutas y páginas de la aplicación
+│   ├── middleware.ts   # Sistema de autenticación SSR
+│   └── styles/         # Estilos globales y tokens de diseño
+├── public/             # Archivos estáticos
+└── astro.config.mjs    # Configuración de Astro y Adaptador Vercel
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## 💻 Desarrollo Local
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Para ejecutar el proyecto en tu máquina:
 
-Any static assets, like images, can be placed in the `public/` directory.
+1. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
+2. **Iniciar servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
+3. **Limpiar caché (en caso de errores extraños):**
+   ```bash
+   rm -rf .astro
+   npm run dev
+   ```
 
-## 🧞 Commands
+## 📑 Gestión de Contenido
 
-All commands are run from the root of the project, from a terminal:
+Para añadir nuevas minutas o documentos:
+- **Minutas:** Crear un archivo `.mdx` en `src/content/minutas/[AÑO]/[MES]/`.
+- **Documentos:** Crear un archivo `.mdx` en `src/content/documentos/`.
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Ambos requieren un *frontmatter* (encabezado) con el título, fecha y descripción.
 
-## 👀 Want to learn more?
+## 🚢 Despliegue
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
-# ocaso-43
+El proyecto está configurado para desplegarse automáticamente en **Vercel** al hacer push a la rama `main`:
+
+```bash
+git add .
+git commit -m "Descripción de tus cambios"
+git push origin main
+```
+
+---
+**Administración Ocaso 43**  
+*Transparencia y Comunidad*
