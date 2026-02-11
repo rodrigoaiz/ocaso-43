@@ -16,6 +16,10 @@
   --ocaso-warm: oklch(0.85 0.12 60);  /* Soft Peach */
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
   @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
   font-family: var(--font-sans);

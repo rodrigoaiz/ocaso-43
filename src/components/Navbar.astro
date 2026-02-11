@@ -55,32 +55,71 @@
     <!-- Menú Móvil Overlay -->
     <div
       id="mobile-menu"
-      class="fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center lg:hidden transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-[-10px]"
+      class="fixed inset-0 bg-white/95 backdrop-blur-3xl z-40 flex flex-col items-center justify-center lg:hidden transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-[-20px] h-screen w-screen"
     >
-      <nav>
-        <ul class="flex flex-col gap-10 text-center">
+      <!-- Decoración de fondo -->
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-orange-50/50 via-white to-violet-50/50 -z-10"
+      >
+      </div>
+
+      <nav class="relative z-10 w-full px-8 flex flex-col items-center">
+        <ul class="flex flex-col gap-8 text-center">
           <li>
             <a
               href="/"
-              class="mobile-nav-link text-3xl font-black text-slate-900 tracking-tighter hover:text-orange-500 transition-colors"
-              >Inicio</a
+              class="mobile-nav-link group flex flex-col items-center"
             >
+              <span
+                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
+                >01</span
+              >
+              <span
+                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
+                >Inicio</span
+              >
+            </a>
           </li>
           <li>
             <a
               href="/minutas"
-              class="mobile-nav-link text-3xl font-black text-slate-900 tracking-tighter hover:text-orange-500 transition-colors"
-              >Minutas</a
+              class="mobile-nav-link group flex flex-col items-center"
             >
+              <span
+                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
+                >02</span
+              >
+              <span
+                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
+                >Minutas</span
+              >
+            </a>
           </li>
           <li>
             <a
               href="/documentos"
-              class="mobile-nav-link text-3xl font-black text-slate-900 tracking-tighter hover:text-orange-500 transition-colors"
-              >Documentos</a
+              class="mobile-nav-link group flex flex-col items-center"
             >
+              <span
+                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
+                >03</span
+              >
+              <span
+                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
+                >Documentos</span
+              >
+            </a>
           </li>
         </ul>
+
+        <div class="mt-20 flex flex-col items-center gap-4">
+          <div class="w-10 h-px bg-slate-200"></div>
+          <p
+            class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400"
+          >
+            Ocaso 43
+          </p>
+        </div>
       </nav>
     </div>
   </div>
@@ -112,7 +151,7 @@
     mobileMenu?.classList.remove(
       "opacity-0",
       "pointer-events-none",
-      "translate-y-[-10px]",
+      "translate-y-[-20px]",
     );
     mobileMenu?.classList.add("opacity-100", "translate-y-0");
     body.style.overflow = "hidden";
