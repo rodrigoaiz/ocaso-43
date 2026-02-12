@@ -9,7 +9,7 @@ if (Astro.request.method === "POST") {
     const password = data.get("password");
 
     // Password simple para vecinos
-    if (password === "admin") {
+    if (password === "ocaso43adm") {
       Astro.cookies.set("ocaso_session", "active", {
         path: "/",
         maxAge: 60 * 60 * 24 * 7, // 1 semana
@@ -26,7 +26,10 @@ if (Astro.request.method === "POST") {
 }
 ---
 
-<Layout title="Acceso Seguro">
+<Layout
+  title="Acceso Residentes"
+  description="Portal de acceso exclusivo para los residentes de Ocaso No. 43. Ingrese su código para consultar minutas y documentos oficiales."
+>
   <div class="max-w-xl mx-auto mt-12 mb-24">
     <div
       class="relative group p-1 lg:p-2 rounded-[3.5rem] bg-gradient-to-br from-orange-400 via-pink-500 to-violet-600 shadow-2xl shadow-orange-200 overflow-hidden"
