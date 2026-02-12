@@ -28,12 +28,14 @@ const {
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
     <meta
       property="og:title"
       content={`${title} | Ocaso 43 - Administración`}
     />
     <meta property="og:description" content={description} />
     <meta property="og:image" content="/og-image.png" />
+    <meta property="og:logo" content="/favicon.svg" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
