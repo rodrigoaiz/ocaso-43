@@ -247,15 +247,38 @@ Para mantener Supabase activo (free tier pausa proyectos después de 7 días de 
 
 Cada vez que crees un nuevo proyecto MDX en `src/content/proyectos-votacion/`, necesitas sincronizarlo a Supabase.
 
-**Automático (en build)**:
+### Método 1: API Endpoint (Recomendado)
+
+Con el servidor de desarrollo corriendo (`npm run dev`):
+
+1. Inicia sesión como usuario de la comisión o admin
+2. Visita en tu navegador: `http://localhost:4321/api/admin/sync-proyectos`
+3. Verás una respuesta JSON indicando cuántos proyectos se sincronizaron
+
+**Usando curl**:
 \`\`\`bash
-npm run build
+# Con sesión de comisión
+curl -b "comision_session=YOUR_SESSION" http://localhost:4321/api/admin/sync-proyectos
+
+# O con sesión admin general
+curl -b "ocaso_session=YOUR_SESSION" http://localhost:4321/api/admin/sync-proyectos
 \`\`\`
 
-**Manual**:
+**En producción**:
 \`\`\`bash
-npm run sync:proyectos
+curl -b "comision_session=YOUR_SESSION" https://tu-proyecto.vercel.app/api/admin/sync-proyectos
 \`\`\`
+
+### Método 2: Inserción Manual SQL
+
+Si prefieres insertar proyectos directamente en Supabase:
+
+\`\`\`sql
+INSERT INTO proyectos_votacion (slug, titulo, mes, anio, categoria, presupuesto_estimado, proveedor, activo) VALUES
+('2026-03-proyecto-ejemplo', 'Título del Proyecto', 3, 2026, 'Categoría', 50000, 'Proveedor SA', true);
+\`\`\`
+
+**Nota**: El endpoint API es más conveniente ya que sincroniza automáticamente todos los proyectos MDX con Supabase.
 
 ---
 
