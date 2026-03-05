@@ -130,9 +130,9 @@ CREATE POLICY "Allow all for anon" ON votos FOR ALL TO anon USING (true);
 
 -- Función para mantener la base de datos activa
 CREATE OR REPLACE FUNCTION ping_keepalive()
-RETURNS TABLE(alive BOOLEAN, timestamp TIMESTAMP WITH TIME ZONE) AS $$
+RETURNS TABLE(alive BOOLEAN, ping_time TIMESTAMP WITH TIME ZONE) AS $$
 BEGIN
-  RETURN QUERY SELECT true AS alive, NOW() AS timestamp;
+  RETURN QUERY SELECT true AS alive, NOW() AS ping_time;
 END;
 $$ LANGUAGE plpgsql;
 \`\`\`
