@@ -1,0 +1,25 @@
+---
+interface Props {
+  votosCount: number;
+  votacionCompleta: boolean;
+  hasUserVoted: boolean;
+}
+
+const { votosCount, votacionCompleta, hasUserVoted } = Astro.props;
+---
+
+<div class="inline-flex items-center gap-2">
+  {votacionCompleta ? (
+    <span class="badge-completa">
+      ✅ Votación completa ({votosCount}/3)
+    </span>
+  ) : hasUserVoted ? (
+    <span class="badge-esperando">
+      ⏳ Esperando votos ({votosCount}/3)
+    </span>
+  ) : (
+    <span class="badge-pendiente">
+      📬 Pendiente de tu voto
+    </span>
+  )}
+</div>

@@ -1,0 +1,99 @@
+---
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+---
+
+<div id="vote-buttons" class="voting-section" data-slug={slug}>
+  <h3 class="font-black text-2xl mb-6 text-slate-800">Emite tu voto</h3>
+  
+  <div class="flex flex-col sm:flex-row gap-4">
+    <button
+      id="btn-a-favor"
+      class="btn-a-favor flex-1"
+      data-voto="a_favor"
+    >
+      <span class="text-2xl mr-2">👍</span>
+      A favor
+    </button>
+    
+    <button
+      id="btn-en-contra"
+      class="btn-en-contra flex-1"
+      data-voto="en_contra"
+    >
+      <span class="text-2xl mr-2">👎</span>
+      En contra
+    </button>
+  </div>
+  
+  <p class="text-sm text-slate-500 mt-4 text-center">
+    ⚠️ Los votos son definitivos y no pueden cambiarse
+  </p>
+  
+  <div id="vote-message" class="hidden mt-4"></div>
+</div>
+
+<script>
+  const voteButtons = document.getElementById('vote-buttons');
+  const btnAFavor = document.getElementById('btn-a-favor') as HTMLButtonElement;
+  const btnEnContra = document.getElementById('btn-en-contra') as HTMLButtonElement;
+  const messageDiv = document.getElementById('vote-message');
+  
+  if (voteButtons && btnAFavor && btnEnContra && messageDiv) {
+    const slug = voteButtons.dataset.slug;
+    
+    const handleVote = async (voto: string) => {
+      // Deshabilitar botones
+      btnAFavor.disabled = true;
+      btnEnContra.disabled = true;
+      btnAFavor.classList.add('btn-loading');
+      btnEnContra.classList.add('btn-loading');
+      
+      try {
+        const response = await fetch('/api/votar', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            proyecto_slug: slug,
+            voto: voto,
+          }),
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Mostrar mensaje de éxito
+          messageDiv.className = 'mt-4 p-4 bg-emerald-100 border-2 border-emerald-300 rounded-xl text-emerald-800 text-center';
+          messageDiv.textContent = '✅ Tu voto ha sido registrado exitosamente';
+          messageDiv.classList.remove('hidden');
+          
+          // Recargar página después de 2 segundos para mostrar resultados
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+        } else {
+          throw new Error(result.error || 'Error al registrar voto');
+        }
+      } catch (error) {
+        // Mostrar error
+        messageDiv.className = 'mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl text-red-800 text-center';
+        messageDiv.textContent = `❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+        messageDiv.classList.remove('hidden');
+        
+        // Rehabilitar botones en caso de error
+        btnAFavor.disabled = false;
+        btnEnContra.disabled = false;
+        btnAFavor.classList.remove('btn-loading');
+        btnEnContra.classList.remove('btn-loading');
+      }
+    };
+    
+    btnAFavor.addEventListener('click', () => handleVote('a_favor'));
+    btnEnContra.addEventListener('click', () => handleVote('en_contra'));
+  }
+</script>

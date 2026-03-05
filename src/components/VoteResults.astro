@@ -1,0 +1,63 @@
+---
+interface Voto {
+  voto: 'a_favor' | 'en_contra';
+  usuario: {
+    username: string;
+  };
+}
+
+interface Props {
+  votos: Voto[];
+  votosCount: number;
+}
+
+const { votos, votosCount } = Astro.props;
+
+const aFavorCount = votos.filter(v => v.voto === 'a_favor').length;
+const enContraCount = votos.filter(v => v.voto === 'en_contra').length;
+---
+
+<div class="rounded-[2rem] bg-gradient-to-br from-emerald-50 to-slate-50 p-8 border-2 border-emerald-200 shadow-xl">
+  <h3 class="font-black text-2xl text-emerald-900 mb-6">
+    ✅ Resultados de la Votación
+  </h3>
+  
+  <!-- Votos individuales -->
+  <div class="space-y-3 mb-6">
+    {votos.map((voto) => (
+      <div class="vote-result-row">
+        <span class="font-bold text-slate-700 capitalize">
+          {voto.usuario.username}
+        </span>
+        <span class={voto.voto === 'a_favor' ? 'vote-badge-a-favor' : 'vote-badge-en-contra'}>
+          {voto.voto === 'a_favor' ? '👍 A favor' : '👎 En contra'}
+        </span>
+      </div>
+    ))}
+  </div>
+  
+  <!-- Resumen -->
+  <div class="grid grid-cols-2 gap-6 pt-6 border-t-2 border-emerald-200">
+    <div class="text-center">
+      <p class="text-5xl font-black text-emerald-600 mb-2">{aFavorCount}</p>
+      <p class="text-sm font-bold text-emerald-700 uppercase tracking-wide">A favor</p>
+    </div>
+    <div class="text-center">
+      <p class="text-5xl font-black text-red-600 mb-2">{enContraCount}</p>
+      <p class="text-sm font-bold text-red-700 uppercase tracking-wide">En contra</p>
+    </div>
+  </div>
+  
+  <!-- Nota de quórum -->
+  {votosCount === 2 && (
+    <p class="text-slate-600 text-sm mt-6 text-center bg-amber-50 rounded-xl p-3 border border-amber-200">
+      ℹ️ Quórum alcanzado. Falta 1 voto para completar.
+    </p>
+  )}
+  
+  {votosCount === 3 && (
+    <p class="text-emerald-700 text-sm mt-6 text-center bg-emerald-100 rounded-xl p-3 border border-emerald-300 font-bold">
+      ✅ Votación completa - Todos los miembros han votado
+    </p>
+  )}
+</div>
