@@ -110,23 +110,23 @@ const { Content } = await proyecto.render();
       )}
     </header>
 
-    <!-- Contenido del Proyecto (MDX) -->
-    <article class="prose prose-orange prose-lg max-w-none mb-12 rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 shadow-xl border border-slate-100">
-      <Content />
-    </article>
-
-    <!-- Sección de Votación -->
-    <div class="space-y-8">
+    <!-- Sección de Votación (PRIMERO) -->
+    <div class="space-y-8 mb-12">
       {hasUserVoted ? (
         <!-- Usuario ya votó -->
-        <div class="bg-slate-100 rounded-[2rem] p-8 text-center border-2 border-slate-200">
-          <p class="text-slate-600 text-lg mb-3">Ya emitiste tu voto:</p>
-          <p class="font-black text-3xl text-slate-800 capitalize mb-3">
-            {votoUsuario.voto === 'a_favor' ? '👍 A favor' : '👎 En contra'}
-          </p>
-          <p class="text-sm text-slate-500">
-            ℹ️ Los votos son definitivos y no pueden cambiarse
-          </p>
+        <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] p-8 text-center border-2 border-slate-200 shadow-xl">
+          <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-8 py-6 mb-4">
+            <p class="text-slate-600 text-lg mb-3">Ya emitiste tu voto en este proyecto:</p>
+            <p class="font-black text-4xl mb-2">
+              {votoUsuario.voto === 'a_favor' ? '👍 A FAVOR' : '👎 EN CONTRA'}
+            </p>
+          </div>
+          <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 inline-block">
+            <p class="text-sm text-amber-800 font-bold flex items-center gap-2">
+              <span>🔒</span>
+              <span>Los votos son definitivos y no pueden cambiarse</span>
+            </p>
+          </div>
         </div>
       ) : (
         <!-- Usuario no ha votado -->
@@ -138,18 +138,38 @@ const { Content } = await proyecto.render();
         <VoteResults votos={votos} votosCount={votosCount || 0} />
       ) : (
         <!-- Votación en proceso -->
-        <div class="bg-amber-50 rounded-[2rem] p-8 border-2 border-amber-200 text-center">
-          <p class="text-amber-800 font-bold text-lg mb-2">
-            ⏳ Votación en proceso
-          </p>
-          <p class="text-amber-700">
-            {votosCount || 0}/3 votos emitidos
-          </p>
-          <p class="text-amber-600 text-sm mt-3">
-            Los resultados serán visibles cuando al menos 2 miembros voten (quórum alcanzado)
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] p-8 border-2 border-amber-200 text-center shadow-lg">
+          <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-8 py-6">
+            <p class="text-amber-900 font-black text-2xl mb-3">
+              ⏳ Votación en proceso
+            </p>
+            <div class="flex items-center justify-center gap-4 mb-4">
+              <div class="text-5xl font-black text-amber-600">
+                {votosCount || 0}
+              </div>
+              <div class="text-3xl text-amber-400">/</div>
+              <div class="text-4xl font-bold text-amber-500">3</div>
+            </div>
+            <p class="text-amber-700 font-semibold">
+              votos emitidos
+            </p>
+          </div>
+          <p class="text-amber-600 text-sm mt-6 font-medium">
+            📊 Los resultados serán visibles cuando al menos 2 miembros voten (quórum alcanzado)
           </p>
         </div>
       )}
+    </div>
+
+    <!-- Contenido del Proyecto (MDX) - DESPUÉS -->
+    <div class="mb-8">
+      <h2 class="font-black text-2xl text-slate-900 mb-6 flex items-center gap-3">
+        <span class="text-3xl">📄</span>
+        <span>Detalles del Proyecto</span>
+      </h2>
+      <article class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 shadow-xl border border-slate-100">
+        <Content />
+      </article>
     </div>
   </div>
 </Layout>
