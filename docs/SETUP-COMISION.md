@@ -351,9 +351,72 @@ Visita: `http://localhost:4321/comision-vigilancia/login`
 
 ---
 
+## 11. Gestión de Contraseñas
+
+### Cambio de Contraseña por Usuario
+
+Los usuarios pueden cambiar su propia contraseña en cualquier momento:
+
+1. Iniciar sesión en `/comision-vigilancia/login`
+2. Click en el botón **"Mi Perfil"** en el dashboard
+3. Ingresar:
+   - Contraseña actual
+   - Nueva contraseña (mínimo 8 caracteres)
+   - Confirmar nueva contraseña
+4. Click en **"Cambiar Contraseña"**
+
+**Requisitos:**
+- La nueva contraseña debe tener al menos 8 caracteres
+- Se requiere la contraseña actual para confirmar el cambio
+- El cambio es inmediato
+
+### Reset Manual de Contraseña (Por Administrador)
+
+Si un usuario olvida su contraseña, el administrador puede resetearla manualmente:
+
+#### Paso 1: Generar Nuevo Hash
+
+En tu terminal (en el proyecto):
+
+```bash
+node -e "const bcrypt = require('bcryptjs'); console.log(bcrypt.hashSync('NuevaContraseñaSegura123!', 10));"
+```
+
+Esto generará un hash bcrypt como:
+```
+$2a$10$abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+```
+
+#### Paso 2: Actualizar en Supabase
+
+1. Ir a Supabase → **SQL Editor** → "New Query"
+2. Ejecutar el siguiente SQL (reemplaza con el hash generado):
+
+```sql
+UPDATE comision_usuarios 
+SET password_hash = '$2a$10$HASH_GENERADO_AQUI' 
+WHERE username = 'rodrigo';  -- Reemplaza con el username del usuario
+```
+
+3. Click en **Run**
+
+#### Paso 3: Comunicar Nueva Contraseña
+
+Contacta al usuario de forma segura (teléfono, WhatsApp, en persona) para comunicarle su nueva contraseña temporal. Recomiéndale cambiarla inmediatamente desde "Mi Perfil".
+
+### Buenas Prácticas
+
+- ✅ Los usuarios deben cambiar contraseñas temporales inmediatamente
+- ✅ Usar contraseñas seguras (mínimo 8 caracteres, mezcla de letras, números y símbolos)
+- ✅ Nunca compartir contraseñas por email o mensajes no cifrados
+- ✅ El administrador debe verificar la identidad del usuario antes de resetear contraseñas
+
+---
+
 ## Notas de Seguridad
 
 - **NUNCA** subas `.env.local` o `docs/USUARIOS-COMISION.md` a GitHub
-- Cambia las contraseñas por defecto en producción
+- Las contraseñas en la base de datos están hasheadas con bcrypt (10 rounds)
+- Los usuarios pueden cambiar su propia contraseña desde "Mi Perfil"
 - Las RLS policies están configuradas de forma permisiva para el free tier
 - Para mayor seguridad, considera actualizar a Supabase Pro y configurar RLS más estrictas
