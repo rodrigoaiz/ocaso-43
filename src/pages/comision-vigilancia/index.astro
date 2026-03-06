@@ -3,12 +3,16 @@ import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import VotingCard from '../../components/VotingCard.astro';
 import { createSupabaseClient } from '../../lib/supabase';
+import { autoSyncProyectosSilent } from '../../lib/auto-sync-proyectos';
 
 const comisionUser = Astro.locals.comisionUser;
 
 if (!comisionUser) {
   return Astro.redirect('/comision-vigilancia/login');
 }
+
+// Auto-sincronizar proyectos MDX a Supabase (silenciosamente)
+await autoSyncProyectosSilent();
 
 // Cargar proyectos desde Content Collection
 const proyectos = await getCollection('proyectos-votacion');

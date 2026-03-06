@@ -249,12 +249,32 @@ Para mantener Supabase activo (free tier pausa proyectos después de 7 días de 
 
 ---
 
-## 9. Sincronizar Proyectos MDX a Supabase
+## 9. Sincronización de Proyectos MDX a Supabase
 
-Cada vez que crees un nuevo proyecto MDX en `src/content/proyectos-votacion/`, necesitas sincronizarlo a Supabase.
+### ✨ Sincronización Automática (Implementada)
 
-### Método 1: API Endpoint (Recomendado)
+El sistema **sincroniza automáticamente** los proyectos MDX a Supabase cada vez que:
+- Alguien visita el dashboard `/comision-vigilancia`
+- Alguien abre un proyecto individual
 
+**Cómo funciona:**
+1. Creas un nuevo archivo MDX en `src/content/proyectos-votacion/`
+2. Haces commit y push a GitHub
+3. Vercel hace deploy automáticamente
+4. **La primera persona que visite el dashboard después del deploy** sincroniza automáticamente el nuevo proyecto
+5. ¡Listo! El proyecto ya está disponible para votar
+
+**Importante:**
+- Solo **agrega** proyectos nuevos a la base de datos
+- **NUNCA borra** proyectos de la BD (para preservar historial de votos)
+- Si quieres archivar un proyecto, marca `activo: false` manualmente en Supabase
+- La sincronización es silenciosa y no interrumpe la experiencia del usuario
+
+### Método Manual (Opcional)
+
+Si necesitas sincronizar manualmente (por ejemplo, para debugging):
+
+**Localmente:**
 Con el servidor de desarrollo corriendo (`npm run dev`):
 
 1. Inicia sesión como usuario de la comisión o admin
@@ -274,17 +294,6 @@ curl -b "ocaso_session=YOUR_SESSION" http://localhost:4321/api/admin/sync-proyec
 \`\`\`bash
 curl -b "comision_session=YOUR_SESSION" https://tu-proyecto.vercel.app/api/admin/sync-proyectos
 \`\`\`
-
-### Método 2: Inserción Manual SQL
-
-Si prefieres insertar proyectos directamente en Supabase:
-
-\`\`\`sql
-INSERT INTO proyectos_votacion (slug, titulo, mes, anio, categoria, presupuesto_estimado, proveedor, activo) VALUES
-('2026-03-proyecto-ejemplo', 'Título del Proyecto', 3, 2026, 'Categoría', 50000, 'Proveedor SA', true);
-\`\`\`
-
-**Nota**: El endpoint API es más conveniente ya que sincroniza automáticamente todos los proyectos MDX con Supabase.
 
 ---
 

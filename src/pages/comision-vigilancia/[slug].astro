@@ -4,6 +4,7 @@ import { getCollection, getEntry } from 'astro:content';
 import VoteButtons from '../../components/VoteButtons.astro';
 import VoteResults from '../../components/VoteResults.astro';
 import { createSupabaseClient } from '../../lib/supabase';
+import { autoSyncProyectosSilent } from '../../lib/auto-sync-proyectos';
 
 export const prerender = false;
 
@@ -25,6 +26,9 @@ const proyecto = await getEntry('proyectos-votacion', slug);
 if (!proyecto) {
   return Astro.redirect('/comision-vigilancia?error=proyecto_no_encontrado');
 }
+
+// Auto-sincronizar proyectos antes de consultar BD
+await autoSyncProyectosSilent();
 
 const supabase = createSupabaseClient();
 
