@@ -43,12 +43,25 @@ if (!proyectoBD) {
   return Astro.redirect('/comision-vigilancia?error=proyecto_no_sincronizado');
 }
 
-// Obtener votos
+// Obtener opciones de producto si es votación de selección
+let opciones: any[] | undefined = undefined;
+if (proyectoBD.tipo_votacion === 'seleccion') {
+  const { data: opcionesData } = await supabase
+    .from('opciones_producto')
+    .select('*')
+    .eq('proyecto_id', proyectoBD.id)
+    .order('orden', { ascending: true });
+  
+  opciones = opcionesData || [];
+}
+
+// Obtener votos (con opciones de producto si es selección)
 const { data: votos, count: votosCount } = await supabase
   .from('votos')
   .select(`
     *,
-    usuario:comision_usuarios(username)
+    usuario:comision_usuarios(username),
+    opcion:opciones_producto(*)
   `, { count: 'exact' })
   .eq('proyecto_id', proyectoBD.id);
 
@@ -116,22 +129,33 @@ const { Content } = await proyecto.render();
         </p>
       )}
       
-      <!-- Botón para saltar a detalles -->
+      <!-- Botón para saltar a votación -->
       <div class="mt-6">
         <a
-          href="#detalles-proyecto"
+          href="#seccion-votacion"
           class="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-orange-500 transition-colors group"
         >
           <svg class="w-5 h-5 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
           </svg>
-          Saltar a detalles del proyecto
+          Saltar a votación
         </a>
       </div>
     </header>
 
-    <!-- Sección de Votación (PRIMERO) -->
-    <div class="space-y-6 mb-10">
+    <!-- Contenido del Proyecto (MDX) - PRIMERO -->
+    <div id="detalles-proyecto" class="mb-10 scroll-mt-20">
+      <h2 class="font-black text-2xl text-slate-900 mb-6 flex items-center gap-3">
+        <span class="text-3xl">📄</span>
+        <span>Detalles del Proyecto</span>
+      </h2>
+      <article class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 shadow-xl border border-slate-100">
+        <Content />
+      </article>
+    </div>
+
+    <!-- Sección de Votación - DESPUÉS -->
+    <div id="seccion-votacion" class="space-y-6 mb-10 scroll-mt-20">
       {!votacionAbierta ? (
         <!-- Votación cerrada -->
         <div class="bg-gradient-to-br from-slate-100 to-slate-200 rounded-[2rem] p-6 text-center border-2 border-slate-300 shadow-lg">
@@ -152,9 +176,20 @@ const { Content } = await proyecto.render();
         <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] p-6 text-center border-2 border-slate-200 shadow-lg">
           <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-6 py-4 mb-3">
             <p class="text-slate-600 text-base mb-2">Ya emitiste tu voto:</p>
-            <p class="font-black text-3xl mb-1">
-              {votoUsuario.voto === 'a_favor' ? '👍 A FAVOR' : '👎 EN CONTRA'}
-            </p>
+            {proyectoBD.tipo_votacion === 'binaria' ? (
+              <p class="font-black text-3xl mb-1">
+                {votoUsuario.voto === 'a_favor' ? '👍 A FAVOR' : '👎 EN CONTRA'}
+              </p>
+            ) : (
+              <div>
+                <p class="font-black text-3xl mb-1">🛍️ Selección emitida</p>
+                {votoUsuario.opcion_producto_id && opciones && (
+                  <p class="text-slate-700 text-lg font-bold">
+                    {opciones.find(o => o.id === votoUsuario.opcion_producto_id)?.nombre || 'Opción seleccionada'}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
           <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 inline-block">
             <p class="text-xs text-amber-800 font-bold flex items-center gap-2">
@@ -165,12 +200,12 @@ const { Content } = await proyecto.render();
         </div>
       ) : (
         <!-- Usuario no ha votado -->
-        <VoteButtons slug={slug} userRol={comisionUser.rol} />
+        <VoteButtons slug={slug} userRol={comisionUser.rol} tipoVotacion={proyectoBD.tipo_votacion} opciones={opciones} />
       )}
 
       <!-- Resultados (solo si votación completa) -->
       {votacionCompleta && votos ? (
-        <VoteResults votos={votos} votosCount={votosCount || 0} />
+        <VoteResults votos={votos} votosCount={votosCount || 0} tipoVotacion={proyectoBD.tipo_votacion} opciones={opciones || []} />
       ) : (
         <!-- Votación en proceso -->
         <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] p-5 border-2 border-amber-200 text-center shadow-lg">
@@ -192,17 +227,6 @@ const { Content } = await proyecto.render();
           </p>
         </div>
       )}
-    </div>
-
-    <!-- Contenido del Proyecto (MDX) - DESPUÉS -->
-    <div id="detalles-proyecto" class="mb-8 scroll-mt-20">
-      <h2 class="font-black text-2xl text-slate-900 mb-6 flex items-center gap-3">
-        <span class="text-3xl">📄</span>
-        <span>Detalles del Proyecto</span>
-      </h2>
-      <article class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 shadow-xl border border-slate-100">
-        <Content />
-      </article>
     </div>
   </div>
 </Layout>

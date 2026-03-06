@@ -58,6 +58,18 @@ export interface ProyectoVotacion {
   proveedor: string | null;
   votacion_completa: boolean;
   activo: boolean;
+  tipo_votacion: 'binaria' | 'seleccion';
+  created_at: string;
+}
+
+export interface OpcionProducto {
+  id: string;
+  proyecto_id: string;
+  opcion_id: string;
+  nombre: string;
+  precio: number | null;
+  descripcion_corta: string | null;
+  orden: number;
   created_at: string;
 }
 
@@ -65,11 +77,19 @@ export interface Voto {
   id: string;
   proyecto_id: string;
   usuario_id: string;
-  voto: 'a_favor' | 'en_contra';
+  voto: 'a_favor' | 'en_contra' | null;
+  opcion_producto_id: string | null;
   created_at: string;
 }
 
 export interface VotoConUsuario extends Voto {
+  usuario: {
+    username: string;
+  };
+}
+
+export interface VotoConOpcion extends Voto {
+  opcion?: OpcionProducto;
   usuario: {
     username: string;
   };

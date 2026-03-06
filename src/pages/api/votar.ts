@@ -15,27 +15,20 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     // Parse request body
     const body = await request.json();
-    const { proyectoSlug, voto } = body;
+    const { proyectoSlug, voto, opcionProductoId } = body;
 
-    // Validate input
-    if (!proyectoSlug || !voto) {
+    // Validate input básico
+    if (!proyectoSlug) {
       return new Response(JSON.stringify({ error: 'Datos incompletos' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
-    if (voto !== 'a_favor' && voto !== 'en_contra') {
-      return new Response(JSON.stringify({ error: 'Voto inválido' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
-    // Get project ID from slug
+    // Get project with tipo_votacion
     const { data: proyecto, error: proyectoError } = await supabase
       .from('proyectos_votacion')
-      .select('id')
+      .select('id, tipo_votacion')
       .eq('slug', proyectoSlug)
       .eq('activo', true)
       .single();
@@ -45,6 +38,40 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         status: 404,
         headers: { 'Content-Type': 'application/json' }
       });
+    }
+
+    // Validar según tipo de votación
+    if (proyecto.tipo_votacion === 'binaria') {
+      // Votación binaria: requiere voto (a_favor o en_contra)
+      if (!voto || !['a_favor', 'en_contra'].includes(voto)) {
+        return new Response(JSON.stringify({ error: 'Voto binario inválido' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+    } else if (proyecto.tipo_votacion === 'seleccion') {
+      // Votación de selección: requiere opcionProductoId
+      if (!opcionProductoId) {
+        return new Response(JSON.stringify({ error: 'Opción de producto requerida' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      
+      // Validar que la opción existe y pertenece al proyecto
+      const { data: opcion, error: opcionError } = await supabase
+        .from('opciones_producto')
+        .select('id')
+        .eq('id', opcionProductoId)
+        .eq('proyecto_id', proyecto.id)
+        .single();
+      
+      if (opcionError || !opcion) {
+        return new Response(JSON.stringify({ error: 'Opción no válida para este proyecto' }), {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
     }
 
     // Check if user already voted
@@ -62,14 +89,24 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       });
     }
 
+    // Preparar datos del voto según tipo
+    const votoData: any = {
+      proyecto_id: proyecto.id,
+      usuario_id: user.id,
+    };
+
+    if (proyecto.tipo_votacion === 'binaria') {
+      votoData.voto = voto;
+      votoData.opcion_producto_id = null;
+    } else if (proyecto.tipo_votacion === 'seleccion') {
+      votoData.voto = null;
+      votoData.opcion_producto_id = opcionProductoId;
+    }
+
     // Insert vote
     const { error: votoError } = await supabase
       .from('votos')
-      .insert({
-        proyecto_id: proyecto.id,
-        usuario_id: user.id,
-        voto: voto
-      });
+      .insert(votoData);
 
     if (votoError) {
       console.error('Error al registrar voto:', votoError);

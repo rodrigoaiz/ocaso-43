@@ -1,20 +1,49 @@
 ---
-interface Voto {
-  voto: 'a_favor' | 'en_contra';
-  usuario: {
-    username: string;
-  };
-}
+import type { VotoConOpcion, OpcionProducto } from '../lib/supabase';
 
 interface Props {
-  votos: Voto[];
+  votos: VotoConOpcion[];
   votosCount: number;
+  tipoVotacion: 'binaria' | 'seleccion';
+  opciones?: OpcionProducto[];
 }
 
-const { votos, votosCount } = Astro.props;
+const { votos, votosCount, tipoVotacion, opciones = [] } = Astro.props;
 
-const aFavorCount = votos.filter(v => v.voto === 'a_favor').length;
-const enContraCount = votos.filter(v => v.voto === 'en_contra').length;
+let resultados: any = {};
+
+if (tipoVotacion === 'binaria') {
+  // Calcular resultados para votación binaria
+  const aFavorCount = votos.filter(v => v.voto === 'a_favor').length;
+  const enContraCount = votos.filter(v => v.voto === 'en_contra').length;
+  
+  resultados = {
+    tipo: 'binaria',
+    a_favor: aFavorCount,
+    en_contra: enContraCount,
+  };
+} else {
+  // Calcular resultados para votación de selección
+  const conteo: Record<string, number> = {};
+  opciones.forEach(op => conteo[op.id] = 0);
+  
+  votos.forEach(v => {
+    if (v.opcion_producto_id) {
+      conteo[v.opcion_producto_id] = (conteo[v.opcion_producto_id] || 0) + 1;
+    }
+  });
+  
+  const maxVotos = Math.max(...Object.values(conteo), 0);
+  const ganadores = Object.keys(conteo).filter(k => conteo[k] === maxVotos && maxVotos > 0);
+  
+  resultados = {
+    tipo: 'seleccion',
+    conteo,
+    ganador: ganadores.length === 1 ? ganadores[0] : null,
+    empate: ganadores.length > 1 && votos.length === 3,
+    ganadores: ganadores,
+  };
+}
 ---
 
 <div class="rounded-[2rem] bg-gradient-to-br from-emerald-50 to-slate-50 p-6 border-2 border-emerald-200 shadow-lg">
@@ -22,31 +51,127 @@ const enContraCount = votos.filter(v => v.voto === 'en_contra').length;
     ✅ Resultados de la Votación
   </h3>
   
-  <!-- Votos individuales -->
-  <div class="space-y-2 mb-4">
-    {votos.map((voto) => (
-      <div class="vote-result-row">
-        <span class="font-bold text-slate-700 capitalize">
-          {voto.usuario.username}
-        </span>
-        <span class={voto.voto === 'a_favor' ? 'vote-badge-a-favor' : 'vote-badge-en-contra'}>
-          {voto.voto === 'a_favor' ? '👍 A favor' : '👎 En contra'}
-        </span>
+  {tipoVotacion === 'binaria' ? (
+    <>
+      <!-- Votos individuales -->
+      <div class="space-y-2 mb-4">
+        {votos.map((voto) => (
+          <div class="vote-result-row">
+            <span class="font-bold text-slate-700 capitalize">
+              {voto.usuario.username}
+            </span>
+            <span class={voto.voto === 'a_favor' ? 'vote-badge-a-favor' : 'vote-badge-en-contra'}>
+              {voto.voto === 'a_favor' ? '👍 A favor' : '👎 En contra'}
+            </span>
+          </div>
+        ))}
       </div>
-    ))}
-  </div>
-  
-  <!-- Resumen -->
-  <div class="grid grid-cols-2 gap-4 pt-4 border-t-2 border-emerald-200">
-    <div class="text-center">
-      <p class="text-4xl font-black text-emerald-600 mb-1">{aFavorCount}</p>
-      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wide">A favor</p>
-    </div>
-    <div class="text-center">
-      <p class="text-4xl font-black text-red-600 mb-1">{enContraCount}</p>
-      <p class="text-xs font-bold text-red-700 uppercase tracking-wide">En contra</p>
-    </div>
-  </div>
+      
+      <!-- Resumen binario -->
+      <div class="grid grid-cols-2 gap-4 pt-4 border-t-2 border-emerald-200">
+        <div class="text-center">
+          <p class="text-4xl font-black text-emerald-600 mb-1">{resultados.a_favor}</p>
+          <p class="text-xs font-bold text-emerald-700 uppercase tracking-wide">A favor</p>
+        </div>
+        <div class="text-center">
+          <p class="text-4xl font-black text-red-600 mb-1">{resultados.en_contra}</p>
+          <p class="text-xs font-bold text-red-700 uppercase tracking-wide">En contra</p>
+        </div>
+      </div>
+    </>
+  ) : (
+    <>
+      {/* Caso: Empate triple */}
+      {resultados.empate && (
+        <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-4">
+          <div class="text-center">
+            <div class="text-4xl mb-2">⚠️</div>
+            <div class="font-black text-lg text-amber-800 mb-1">
+              Empate Triple Detectado
+            </div>
+            <p class="text-amber-700 text-sm">
+              Cada votante eligió una opción diferente. Se requiere segunda ronda de votación.
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* Caso: Hay ganador */}
+      {resultados.ganador && !resultados.empate && (
+        <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-4 mb-4">
+          <div class="text-center">
+            <div class="text-4xl mb-2">🏆</div>
+            <div class="font-black text-lg text-green-800 mb-1">
+              Opción Ganadora
+            </div>
+            {opciones.find(o => o.id === resultados.ganador) && (
+              <>
+                <div class="text-base text-green-700 font-bold mb-1">
+                  {opciones.find(o => o.id === resultados.ganador)!.nombre}
+                </div>
+                {opciones.find(o => o.id === resultados.ganador)!.precio && (
+                  <div class="text-lg font-black text-green-600">
+                    ${opciones.find(o => o.id === resultados.ganador)!.precio} MXN
+                  </div>
+                )}
+              </>
+            )}
+          </div>
+        </div>
+      )}
+      
+      {/* Votos individuales con su selección */}
+      <div class="space-y-2 mb-4">
+        {votos.map((voto) => {
+          const opcionVotada = opciones.find(o => o.id === voto.opcion_producto_id);
+          return (
+            <div class="vote-result-row">
+              <span class="font-bold text-slate-700 capitalize">
+                {voto.usuario.username}
+              </span>
+              <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+                {opcionVotada ? opcionVotada.nombre : 'Opción desconocida'}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Resumen por opciones */}
+      <div class="space-y-3 pt-4 border-t-2 border-emerald-200">
+        <h4 class="font-black text-sm text-slate-800 mb-2">📊 Distribución de votos:</h4>
+        {opciones
+          .sort((a, b) => (resultados.conteo[b.id] || 0) - (resultados.conteo[a.id] || 0))
+          .map(opcion => {
+            const votosOpcion = resultados.conteo[opcion.id] || 0;
+            const porcentaje = votos.length > 0 ? Math.round((votosOpcion / votos.length) * 100) : 0;
+            const esGanador = resultados.ganador === opcion.id;
+            
+            return (
+              <div class={`bg-slate-50 rounded-xl p-3 border-2 border-slate-200 transition-all ${esGanador ? 'bg-green-50 border-green-300' : ''}`}>
+                <div class="flex items-center justify-between mb-2">
+                  <div class="flex items-center gap-2 flex-1">
+                    {esGanador && <span class="text-xl">🏆</span>}
+                    <span class="font-bold text-slate-900 text-sm">{opcion.nombre}</span>
+                  </div>
+                  <div class="flex items-center gap-3">
+                    {opcion.precio && (
+                      <span class="text-green-600 font-bold text-sm">${opcion.precio}</span>
+                    )}
+                    <span class="font-black text-slate-700 text-sm">
+                      {votosOpcion} {votosOpcion === 1 ? 'voto' : 'votos'} ({porcentaje}%)
+                    </span>
+                  </div>
+                </div>
+                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r from-orange-400 to-pink-500 transition-all duration-500" style={`width: ${porcentaje}%`}></div>
+                </div>
+              </div>
+            );
+          })}
+      </div>
+    </>
+  )}
   
   <!-- Nota de quórum -->
   {votosCount === 2 && (
@@ -61,3 +186,5 @@ const enContraCount = votos.filter(v => v.voto === 'en_contra').length;
     </p>
   )}
 </div>
+
+

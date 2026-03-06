@@ -34,7 +34,33 @@ const proyectosVotacion = defineCollection({
     proveedor: z.string().optional(),
     descripcion_corta: z.string().optional(),
     votacion_abierta: z.boolean().default(true), // Si false, la votación está cerrada
-  }),
+    
+    // NUEVO: Tipo de votación
+    tipo_votacion: z.enum(['binaria', 'seleccion']).default('binaria'),
+    
+    // NUEVO: Opciones para votación de selección
+    opciones_votacion: z.array(
+      z.object({
+        id: z.string(),
+        nombre: z.string(),
+        precio: z.number().optional(),
+        descripcion_corta: z.string().optional(),
+      })
+    ).optional(),
+  }).refine(
+    (data) => {
+      // Si es selección, opciones_votacion es requerido (min 2, max 6)
+      if (data.tipo_votacion === 'seleccion') {
+        return data.opciones_votacion && 
+               data.opciones_votacion.length >= 2 && 
+               data.opciones_votacion.length <= 6;
+      }
+      return true;
+    },
+    {
+      message: "Votación de selección requiere entre 2 y 6 opciones",
+    }
+  ),
 });
 
 export const collections = {

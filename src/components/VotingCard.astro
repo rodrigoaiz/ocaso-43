@@ -10,6 +10,7 @@ interface Proyecto {
     anio?: number;
     presupuesto_estimado?: number;
     votacion_abierta?: boolean;
+    tipo_votacion?: 'binaria' | 'seleccion';
   };
 }
 
@@ -23,6 +24,7 @@ interface Props {
 const { proyecto, votosCount, votacionCompleta, hasUserVoted } = Astro.props;
 
 const votacionAbierta = proyecto.data.votacion_abierta ?? true;
+const tipoVotacion = proyecto.data.tipo_votacion || 'binaria';
 
 const formatPresupuesto = (monto?: number) => {
   if (!monto) return null;
@@ -42,6 +44,12 @@ const formatPresupuesto = (monto?: number) => {
       </h2>
       
       <div class="flex flex-wrap gap-2 mb-3">
+        {tipoVotacion === 'seleccion' && (
+          <span class="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+            🛍️ Selección de producto
+          </span>
+        )}
+        
         {proyecto.data.categoria && (
           <span class="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
             {proyecto.data.categoria}
