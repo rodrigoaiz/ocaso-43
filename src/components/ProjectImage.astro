@@ -1,0 +1,43 @@
+---
+/**
+ * ProjectImage - Componente optimizado para mostrar imágenes en proyectos MDX
+ * 
+ * Características:
+ * - Lazy loading automático
+ * - Estilos consistentes con el diseño Ocaso
+ * - Caption opcional
+ * - Responsive por defecto
+ * - Border y shadow para mejor presentación
+ * 
+ * Uso en MDX:
+ * <ProjectImage 
+ *   src="/img/proyectos/nombre-imagen.jpg"
+ *   alt="Descripción de la imagen"
+ *   caption="Texto descriptivo opcional"
+ * />
+ */
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  className?: string;
+}
+
+const { src, alt, caption, className = '' } = Astro.props;
+---
+
+<figure class={`my-8 ${className}`}>
+  <img 
+    src={src}
+    alt={alt}
+    loading="lazy"
+    decoding="async"
+    class="rounded-2xl shadow-xl shadow-slate-200 border-2 border-slate-100 w-full h-auto object-cover transition-transform duration-300 hover:scale-[1.02]"
+  />
+  {caption && (
+    <figcaption class="text-sm text-slate-500 italic mt-3 text-center px-4">
+      {caption}
+    </figcaption>
+  )}
+</figure>
