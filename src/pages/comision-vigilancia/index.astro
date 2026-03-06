@@ -57,14 +57,27 @@ const proyectosConEstado = await Promise.all(
   })
 );
 
-// Ordenar: pendientes primero, luego en proceso, luego completados
-const proyectosOrdenados = proyectosConEstado.sort((a, b) => {
-  if (!a.hasUserVoted && b.hasUserVoted) return -1;
-  if (a.hasUserVoted && !b.hasUserVoted) return 1;
-  if (!a.votacionCompleta && b.votacionCompleta) return -1;
-  if (a.votacionCompleta && !b.votacionCompleta) return 1;
-  return 0;
-});
+// Separar proyectos abiertos y cerrados
+const proyectosAbiertos = proyectosConEstado
+  .filter(p => p.proyecto.data.votacion_abierta !== false)
+  .sort((a, b) => {
+    // Primero los que el usuario no ha votado
+    if (!a.hasUserVoted && b.hasUserVoted) return -1;
+    if (a.hasUserVoted && !b.hasUserVoted) return 1;
+    // Luego por fecha (más recientes primero)
+    const dateA = new Date(a.proyecto.data.fecha);
+    const dateB = new Date(b.proyecto.data.fecha);
+    return dateB.getTime() - dateA.getTime();
+  });
+
+const proyectosCerrados = proyectosConEstado
+  .filter(p => p.proyecto.data.votacion_abierta === false)
+  .sort((a, b) => {
+    // Por fecha (más recientes primero)
+    const dateA = new Date(a.proyecto.data.fecha);
+    const dateB = new Date(b.proyecto.data.fecha);
+    return dateB.getTime() - dateA.getTime();
+  });
 ---
 
 <Layout title="Dashboard - Comisión de Vigilancia">
@@ -110,24 +123,54 @@ const proyectosOrdenados = proyectosConEstado.sort((a, b) => {
       </div>
     </div>
 
-    <!-- Lista de Proyectos -->
-    {proyectosOrdenados.length === 0 ? (
+    <!-- Votaciones Abiertas -->
+    {proyectosAbiertos.length === 0 && proyectosCerrados.length === 0 ? (
       <div class="text-center py-20">
         <p class="text-slate-500 text-lg">
           No hay proyectos en votación actualmente
         </p>
       </div>
     ) : (
-      <div class="grid gap-6">
-        {proyectosOrdenados.map(({ proyecto, votosCount, votacionCompleta, hasUserVoted }) => (
-          <VotingCard
-            proyecto={proyecto}
-            votosCount={votosCount}
-            votacionCompleta={votacionCompleta}
-            hasUserVoted={hasUserVoted}
-          />
-        ))}
-      </div>
+      <>
+        {proyectosAbiertos.length > 0 && (
+          <div class="mb-12">
+            <h2 class="font-black text-2xl text-slate-800 mb-6">
+              📊 Votaciones Activas
+            </h2>
+            <div class="grid gap-6">
+              {proyectosAbiertos.map(({ proyecto, votosCount, votacionCompleta, hasUserVoted }) => (
+                <VotingCard
+                  proyecto={proyecto}
+                  votosCount={votosCount}
+                  votacionCompleta={votacionCompleta}
+                  hasUserVoted={hasUserVoted}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {proyectosCerrados.length > 0 && (
+          <div>
+            <h2 class="font-black text-2xl text-slate-800 mb-2">
+              📚 Historial de Votaciones
+            </h2>
+            <p class="text-slate-600 mb-6 text-sm">
+              Votaciones cerradas y archivadas
+            </p>
+            <div class="grid gap-6 opacity-75">
+              {proyectosCerrados.map(({ proyecto, votosCount, votacionCompleta, hasUserVoted }) => (
+                <VotingCard
+                  proyecto={proyecto}
+                  votosCount={votosCount}
+                  votacionCompleta={votacionCompleta}
+                  hasUserVoted={hasUserVoted}
+                />
+              ))}
+            </div>
+          </div>
+        )}
+      </>
     )}
   </div>
 </Layout>
