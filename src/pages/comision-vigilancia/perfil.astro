@@ -11,118 +11,122 @@ export const prerender = false;
 ---
 
 <Layout title="Mi Perfil - Comisión de Vigilancia">
-  <main class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 py-12 px-4">
-    <div class="max-w-2xl mx-auto">
-      <!-- Header -->
-      <div class="mb-8">
-        <a 
-          href="/comision-vigilancia" 
-          class="inline-flex items-center text-orange-400 hover:text-orange-300 transition-colors mb-4"
-        >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-          </svg>
-          Volver al Dashboard
-        </a>
-        <h1 class="text-4xl font-bold text-white mb-2">Mi Perfil</h1>
-        <p class="text-slate-300">Usuario: <span class="font-semibold text-orange-400">{comisionUser.username}</span></p>
-        <p class="text-slate-400 text-sm">
-          Rol: <span class="capitalize">{comisionUser.rol}</span>
-        </p>
-      </div>
+  <main class="container mx-auto px-4 py-12 max-w-3xl">
+    <!-- Header -->
+    <div class="mb-8">
+      <a 
+        href="/comision-vigilancia" 
+        class="inline-flex items-center text-slate-600 hover:text-orange-500 transition-colors mb-6 font-semibold"
+      >
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Volver al Dashboard
+      </a>
+      <h1 class="font-black text-4xl text-slate-900 mb-3">Mi Perfil</h1>
+      <p class="text-slate-600 text-lg">
+        Usuario: <span class="font-bold text-orange-500">{comisionUser.username}</span>
+      </p>
+      <p class="text-slate-500 text-sm">
+        Rol: <span class="capitalize font-semibold">{comisionUser.rol}</span>
+      </p>
+    </div>
 
-      <!-- Card de Cambio de Contraseña -->
-      <div class="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8 shadow-xl">
-        <div class="flex items-center mb-6">
-          <svg class="w-6 h-6 text-orange-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <!-- Card de Cambio de Contraseña -->
+    <div class="bg-white/80 backdrop-blur-sm rounded-[2rem] border-2 border-slate-100 p-8 shadow-xl shadow-orange-500/5">
+      <div class="flex items-center mb-6">
+        <div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center mr-4">
+          <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
           </svg>
-          <h2 class="text-2xl font-bold text-white">Cambiar Contraseña</h2>
         </div>
-
-        <!-- Mensaje de éxito/error -->
-        <div id="message-container" class="hidden mb-6"></div>
-
-        <form id="change-password-form" class="space-y-6">
-          <!-- Contraseña Actual -->
-          <div>
-            <label for="contrasenaActual" class="block text-sm font-medium text-slate-300 mb-2">
-              Contraseña Actual *
-            </label>
-            <input
-              type="password"
-              id="contrasenaActual"
-              name="contrasenaActual"
-              required
-              class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="Ingresa tu contraseña actual"
-            />
-          </div>
-
-          <!-- Nueva Contraseña -->
-          <div>
-            <label for="contrasenaNueva" class="block text-sm font-medium text-slate-300 mb-2">
-              Nueva Contraseña *
-            </label>
-            <input
-              type="password"
-              id="contrasenaNueva"
-              name="contrasenaNueva"
-              required
-              minlength="8"
-              class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="Mínimo 8 caracteres"
-            />
-            <p class="text-xs text-slate-400 mt-1">
-              La contraseña debe tener al menos 8 caracteres
-            </p>
-          </div>
-
-          <!-- Confirmar Nueva Contraseña -->
-          <div>
-            <label for="confirmarContrasena" class="block text-sm font-medium text-slate-300 mb-2">
-              Confirmar Nueva Contraseña *
-            </label>
-            <input
-              type="password"
-              id="confirmarContrasena"
-              name="confirmarContrasena"
-              required
-              minlength="8"
-              class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
-              placeholder="Repite la nueva contraseña"
-            />
-          </div>
-
-          <!-- Botones -->
-          <div class="flex gap-4 pt-4">
-            <button
-              type="submit"
-              id="submit-btn"
-              class="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-orange-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 focus:ring-offset-slate-800 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-            >
-              Cambiar Contraseña
-            </button>
-            <a
-              href="/comision-vigilancia"
-              class="flex-1 bg-slate-700 text-white font-semibold py-3 px-6 rounded-lg hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 focus:ring-offset-slate-800 transition-all text-center"
-            >
-              Cancelar
-            </a>
-          </div>
-        </form>
+        <h2 class="text-2xl font-black text-slate-900">Cambiar Contraseña</h2>
       </div>
 
-      <!-- Info adicional -->
-      <div class="mt-6 bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
-        <div class="flex items-start">
-          <svg class="w-5 h-5 text-blue-400 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <!-- Mensaje de éxito/error -->
+      <div id="message-container" class="hidden mb-6"></div>
+
+      <form id="change-password-form" class="space-y-6">
+        <!-- Contraseña Actual -->
+        <div>
+          <label for="contrasenaActual" class="block text-sm font-bold text-slate-700 mb-2">
+            Contraseña Actual *
+          </label>
+          <input
+            type="password"
+            id="contrasenaActual"
+            name="contrasenaActual"
+            required
+            class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all"
+            placeholder="Ingresa tu contraseña actual"
+          />
+        </div>
+
+        <!-- Nueva Contraseña -->
+        <div>
+          <label for="contrasenaNueva" class="block text-sm font-bold text-slate-700 mb-2">
+            Nueva Contraseña *
+          </label>
+          <input
+            type="password"
+            id="contrasenaNueva"
+            name="contrasenaNueva"
+            required
+            minlength="8"
+            class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all"
+            placeholder="Mínimo 8 caracteres"
+          />
+          <p class="text-xs text-slate-500 mt-1">
+            La contraseña debe tener al menos 8 caracteres
+          </p>
+        </div>
+
+        <!-- Confirmar Nueva Contraseña -->
+        <div>
+          <label for="confirmarContrasena" class="block text-sm font-bold text-slate-700 mb-2">
+            Confirmar Nueva Contraseña *
+          </label>
+          <input
+            type="password"
+            id="confirmarContrasena"
+            name="confirmarContrasena"
+            required
+            minlength="8"
+            class="w-full px-4 py-3 bg-white border-2 border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all"
+            placeholder="Repite la nueva contraseña"
+          />
+        </div>
+
+        <!-- Botones -->
+        <div class="flex gap-4 pt-4">
+          <button
+            type="submit"
+            id="submit-btn"
+            class="flex-1 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-black py-4 px-6 rounded-[1rem] hover:from-orange-600 hover:to-pink-600 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:ring-offset-2 transition-all transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-lg hover:shadow-xl"
+          >
+            Cambiar Contraseña
+          </button>
+          <a
+            href="/comision-vigilancia"
+            class="flex-1 bg-slate-200 text-slate-700 font-black py-4 px-6 rounded-[1rem] hover:bg-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 transition-all text-center"
+          >
+            Cancelar
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Info adicional -->
+    <div class="mt-6 bg-blue-50 border-2 border-blue-200 rounded-[2rem] p-6">
+      <div class="flex items-start">
+        <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center mr-4 flex-shrink-0">
+          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
           </svg>
-          <div class="text-sm text-blue-200">
-            <p class="font-semibold mb-1">¿Olvidaste tu contraseña?</p>
-            <p>Si no recuerdas tu contraseña actual, contacta al administrador del sistema para solicitar un reset manual.</p>
-          </div>
+        </div>
+        <div class="text-sm text-slate-700">
+          <p class="font-bold mb-1">¿Olvidaste tu contraseña?</p>
+          <p>Si no recuerdas tu contraseña actual, contacta al administrador del sistema para solicitar un reset manual.</p>
         </div>
       </div>
     </div>
@@ -135,10 +139,10 @@ export const prerender = false;
   const messageContainer = document.getElementById('message-container') as HTMLDivElement;
 
   function showMessage(message: string, type: 'success' | 'error') {
-    messageContainer.className = `mb-6 p-4 rounded-lg ${
+    messageContainer.className = `mb-6 p-4 rounded-xl border-2 font-semibold ${
       type === 'success' 
-        ? 'bg-green-900/50 border border-green-700 text-green-200' 
-        : 'bg-red-900/50 border border-red-700 text-red-200'
+        ? 'bg-green-50 border-green-300 text-green-800' 
+        : 'bg-red-50 border-red-300 text-red-800'
     }`;
     messageContainer.textContent = message;
     messageContainer.classList.remove('hidden');
