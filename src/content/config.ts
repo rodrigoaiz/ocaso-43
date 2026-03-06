@@ -22,7 +22,22 @@ const documentos = defineCollection({
   }),
 });
 
+const proyectosVotacion = defineCollection({
+  type: "content",
+  schema: z.object({
+    titulo: z.string(),
+    fecha: z.date(),
+    mes: z.number().min(1).max(12).optional(),
+    anio: z.number().optional(),
+    categoria: z.string().optional(),
+    presupuesto_estimado: z.number().optional(),
+    proveedor: z.string().optional(),
+    descripcion_corta: z.string().optional(),
+  }),
+});
+
 export const collections = {
   minutas: minutas,
   documentos: documentos,
+  "proyectos-votacion": proyectosVotacion,
 };

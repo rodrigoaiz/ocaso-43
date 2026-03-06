@@ -31,3 +31,140 @@ body {
 .prose {
   @apply mx-auto;
 }
+
+/* ============================================
+   Voting System Styles
+   ============================================ */
+
+/* Vote Button States */
+.vote-button {
+  @apply transition-all duration-300 ease-out;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.vote-button:not(:disabled):hover {
+  @apply scale-105 shadow-xl;
+}
+
+.vote-button:not(:disabled):active {
+  @apply scale-95;
+}
+
+/* Vote Button - A Favor */
+.vote-button-favor {
+  @apply bg-gradient-to-br from-green-500 to-emerald-600;
+  @apply text-white font-semibold;
+  @apply hover:from-green-600 hover:to-emerald-700;
+}
+
+/* Vote Button - En Contra */
+.vote-button-contra {
+  @apply bg-gradient-to-br from-red-500 to-rose-600;
+  @apply text-white font-semibold;
+  @apply hover:from-red-600 hover:to-rose-700;
+}
+
+/* Project Status Badges */
+.status-badge {
+  @apply inline-flex items-center gap-2 px-4 py-2 rounded-full;
+  @apply text-sm font-semibold tracking-wide uppercase;
+  @apply backdrop-blur-sm;
+}
+
+.status-badge-pendiente {
+  @apply bg-amber-100/80 text-amber-800 border border-amber-300;
+}
+
+.status-badge-quorum {
+  @apply bg-blue-100/80 text-blue-800 border border-blue-300;
+}
+
+.status-badge-completa {
+  @apply bg-emerald-100/80 text-emerald-800 border border-emerald-300;
+}
+
+.status-badge-votado {
+  @apply bg-purple-100/80 text-purple-800 border border-purple-300;
+}
+
+/* Vote Results */
+.vote-result-item {
+  @apply flex items-center justify-between gap-4;
+  @apply p-4 rounded-2xl backdrop-blur-sm;
+  @apply transition-all duration-300;
+}
+
+.vote-result-favor {
+  @apply bg-green-50/80 border-2 border-green-200;
+}
+
+.vote-result-contra {
+  @apply bg-red-50/80 border-2 border-red-200;
+}
+
+.vote-result-icon {
+  @apply w-10 h-10 rounded-full flex items-center justify-center;
+  @apply text-white font-bold text-lg;
+}
+
+.vote-result-icon-favor {
+  @apply bg-gradient-to-br from-green-500 to-emerald-600;
+}
+
+.vote-result-icon-contra {
+  @apply bg-gradient-to-br from-red-500 to-rose-600;
+}
+
+/* Voting Cards */
+.voting-card {
+  @apply relative overflow-hidden;
+  @apply bg-white/60 backdrop-blur-md;
+  @apply rounded-[2rem] shadow-lg;
+  @apply border border-white/40;
+  @apply transition-all duration-300;
+  @apply hover:shadow-2xl hover:scale-[1.02];
+}
+
+.voting-card::before {
+  content: '';
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+  @apply bg-gradient-to-br from-[var(--ocaso-accent)]/10 to-[var(--ocaso-deep)]/10;
+  pointer-events: none;
+}
+
+.voting-card:hover::before {
+  @apply opacity-100;
+}
+
+/* Quorum Indicator */
+.quorum-indicator {
+  @apply flex items-center gap-3 p-4 rounded-2xl;
+  @apply bg-gradient-to-r from-blue-50 to-indigo-50;
+  @apply border-2 border-blue-200;
+}
+
+.quorum-bar {
+  @apply h-3 rounded-full overflow-hidden bg-gray-200;
+  @apply relative;
+}
+
+.quorum-progress {
+  @apply h-full rounded-full;
+  @apply bg-gradient-to-r from-blue-500 to-indigo-600;
+  @apply transition-all duration-500 ease-out;
+}
+
+/* Loading States */
+.vote-loading {
+  @apply opacity-60 pointer-events-none;
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: .5;
+  }
+}

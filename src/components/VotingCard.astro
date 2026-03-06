@@ -1,0 +1,80 @@
+---
+import ProjectStatus from './ProjectStatus.astro';
+
+interface Proyecto {
+  slug: string;
+  data: {
+    titulo: string;
+    categoria?: string;
+    mes?: number;
+    anio?: number;
+    presupuesto_estimado?: number;
+  };
+}
+
+interface Props {
+  proyecto: Proyecto;
+  votosCount: number;
+  votacionCompleta: boolean;
+  hasUserVoted: boolean;
+}
+
+const { proyecto, votosCount, votacionCompleta, hasUserVoted } = Astro.props;
+
+const formatPresupuesto = (monto?: number) => {
+  if (!monto) return null;
+  return new Intl.NumberFormat('es-MX', { 
+    style: 'currency', 
+    currency: 'MXN',
+    minimumFractionDigits: 0,
+  }).format(monto);
+};
+---
+
+<article class="project-card">
+  <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
+    <div class="flex-1">
+      <h2 class="font-black text-2xl text-slate-800 mb-3">
+        {proyecto.data.titulo}
+      </h2>
+      
+      <div class="flex flex-wrap gap-2 mb-3">
+        {proyecto.data.categoria && (
+          <span class="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+            {proyecto.data.categoria}
+          </span>
+        )}
+        
+        {proyecto.data.mes && proyecto.data.anio && (
+          <span class="inline-block bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-bold">
+            {proyecto.data.mes.toString().padStart(2, '0')}/{proyecto.data.anio}
+          </span>
+        )}
+        
+        {proyecto.data.presupuesto_estimado && (
+          <span class="inline-block bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold">
+            💰 {formatPresupuesto(proyecto.data.presupuesto_estimado)}
+          </span>
+        )}
+      </div>
+    </div>
+    
+    <div>
+      <ProjectStatus 
+        votosCount={votosCount} 
+        votacionCompleta={votacionCompleta} 
+        hasUserVoted={hasUserVoted} 
+      />
+    </div>
+  </div>
+  
+  <a 
+    href={`/comision-vigilancia/${proyecto.slug}`}
+    class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-black py-3 px-6 rounded-[1rem] transition-all shadow-lg hover:shadow-xl hover:scale-105"
+  >
+    {votacionCompleta ? '📊 Ver resultados' : '🗳️ Ver y votar'}
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+    </svg>
+  </a>
+</article>
