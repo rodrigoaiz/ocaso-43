@@ -42,6 +42,7 @@ export function createSupabaseServerClient(cookies: AstroCookies) {
 export interface ComisionUsuario {
   id: string;
   username: string;
+  rol: 'votante' | 'observador';
   activo: boolean;
   created_at: string;
 }

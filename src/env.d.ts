@@ -5,6 +5,7 @@ declare namespace App {
     comisionUser?: {
       id: string;
       username: string;
+      rol: 'votante' | 'observador';
       activo: boolean;
       created_at: string;
     };

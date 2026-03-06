@@ -43,6 +43,7 @@ CREATE TABLE comision_usuarios (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   username VARCHAR(50) NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
+  rol VARCHAR(20) DEFAULT 'votante' CHECK (rol IN ('votante', 'observador')),
   activo BOOLEAN DEFAULT true,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -160,10 +161,15 @@ Este comando generará los hashes bcrypt para los 3 usuarios. **Copia y guarda e
 2. Reemplaza los `<HASH_AQUI>` con los hashes que generaste:
 
 \`\`\`sql
-INSERT INTO comision_usuarios (username, password_hash, activo) VALUES
-('rodrigo', '<HASH_DE_RODRIGO>', true),
-('arturo', '<HASH_DE_ARTURO>', true),
-('carlos', '<HASH_DE_CARLOS>', true);
+-- Usuarios votantes (pueden votar)
+INSERT INTO comision_usuarios (username, password_hash, rol, activo) VALUES
+('rodrigo', '<HASH_DE_RODRIGO>', 'votante', true),
+('arturo', '<HASH_DE_ARTURO>', 'votante', true),
+('carlos', '<HASH_DE_CARLOS>', 'votante', true);
+
+-- Usuario observador (solo puede ver, no votar)
+INSERT INTO comision_usuarios (username, password_hash, rol, activo) VALUES
+('miguel', '<HASH_DE_MIGUEL>', 'observador', true);
 \`\`\`
 
 3. Click en **Run**
@@ -171,10 +177,10 @@ INSERT INTO comision_usuarios (username, password_hash, activo) VALUES
 Para verificar que se insertaron correctamente:
 
 \`\`\`sql
-SELECT username, activo, created_at FROM comision_usuarios;
+SELECT username, rol, activo, created_at FROM comision_usuarios;
 \`\`\`
 
-Deberías ver los 3 usuarios listados.
+Deberías ver los 4 usuarios listados (3 votantes + 1 observador).
 
 ---
 
@@ -294,11 +300,12 @@ Visita: `http://localhost:4321/comision-vigilancia/login`
 
 ### Usuarios de prueba:
 
-| Usuario | Contraseña |
-|---------|------------|
-| rodrigo | `R0dr1g0$Cv43!2026` |
-| arturo | `Artur0*Cv43@2026` |
-| carlos | `Carl0s#Cv43!2026` |
+| Usuario | Contraseña | Rol |
+|---------|------------|-----|
+| rodrigo | `R0dr1g0$Cv43!2026` | Votante |
+| arturo | `Artur0*Cv43@2026` | Votante |
+| carlos | `Carl0s#Cv43!2026` | Votante |
+| miguel | `Migu3l&Cv43!2026` | Observador (solo lectura) |
 
 **NOTA**: Cambia estas contraseñas en producción. Consulta `docs/USUARIOS-COMISION.md` (archivo gitignored).
 

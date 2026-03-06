@@ -1,12 +1,23 @@
 ---
 interface Props {
   slug: string;
+  userRol: 'votante' | 'observador';
 }
 
-const { slug } = Astro.props;
+const { slug, userRol } = Astro.props;
+const isObservador = userRol === 'observador';
 ---
 
 <div id="vote-buttons" class="voting-section bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] p-8 shadow-xl border-2 border-slate-200" data-slug={slug}>
+  {isObservador && (
+    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-6 text-center">
+      <p class="text-blue-800 font-bold flex items-center justify-center gap-2">
+        <span class="text-xl">👁️</span>
+        <span>Tienes acceso como observador. Solo puedes ver las votaciones, no votar.</span>
+      </p>
+    </div>
+  )}
+  
   <div class="text-center mb-8">
     <h3 class="font-black text-3xl mb-3 text-slate-900">🗳️ Emite tu voto</h3>
     <p class="text-slate-600 text-lg">Selecciona tu posición sobre este proyecto</p>
@@ -17,6 +28,7 @@ const { slug } = Astro.props;
       id="btn-a-favor"
       class="vote-button vote-button-favor group relative overflow-hidden px-8 py-8 rounded-[1.5rem] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       data-voto="a_favor"
+      disabled={isObservador}
     >
       <div class="relative z-10">
         <div class="text-5xl mb-3">👍</div>
@@ -30,6 +42,7 @@ const { slug } = Astro.props;
       id="btn-en-contra"
       class="vote-button vote-button-contra group relative overflow-hidden px-8 py-8 rounded-[1.5rem] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       data-voto="en_contra"
+      disabled={isObservador}
     >
       <div class="relative z-10">
         <div class="text-5xl mb-3">👎</div>

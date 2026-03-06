@@ -9,6 +9,7 @@ const usuarios = [
   { username: 'rodrigo', password: 'R0dr1g0$Cv43!2026' },
   { username: 'arturo', password: 'Artur0*Cv43@2026' },
   { username: 'carlos', password: 'Carl0s#Cv43!2026' },
+  { username: 'miguel', password: 'Migu3l&Cv43!2026' },
 ];
 
 async function hashPasswords() {

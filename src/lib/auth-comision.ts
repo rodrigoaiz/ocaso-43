@@ -9,6 +9,7 @@ import { createSupabaseClient, type ComisionUsuario } from './supabase';
 interface SessionData {
   userId: string;
   username: string;
+  rol: 'votante' | 'observador';
 }
 
 const COOKIE_NAME = 'comision_session';
@@ -52,6 +53,7 @@ export function createComisionSession(cookies: AstroCookies, user: ComisionUsuar
   const sessionData: SessionData = {
     userId: user.id,
     username: user.username,
+    rol: user.rol,
   };
 
   cookies.set(COOKIE_NAME, JSON.stringify(sessionData), {

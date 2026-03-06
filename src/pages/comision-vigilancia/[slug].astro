@@ -130,7 +130,7 @@ const { Content } = await proyecto.render();
         </div>
       ) : (
         <!-- Usuario no ha votado -->
-        <VoteButtons slug={slug} />
+        <VoteButtons slug={slug} userRol={comisionUser.rol} />
       )}
 
       <!-- Resultados (solo si votación completa) -->
