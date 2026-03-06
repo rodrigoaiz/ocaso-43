@@ -33,6 +33,7 @@ const proyectosVotacion = defineCollection({
     presupuesto_estimado: z.number().optional(),
     proveedor: z.string().optional(),
     descripcion_corta: z.string().optional(),
+    votacion_abierta: z.boolean().default(true), // Si false, la votación está cerrada
   }),
 });
 

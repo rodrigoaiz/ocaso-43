@@ -50,7 +50,7 @@ export async function autoSyncProyectos(): Promise<SyncResult> {
             categoria: proyecto.data.categoria || null,
             presupuesto_estimado: proyecto.data.presupuesto_estimado || null,
             proveedor: proyecto.data.proveedor || null,
-            activo: true,
+            activo: proyecto.data.votacion_abierta ?? true, // Mapear votacion_abierta a activo
             updated_at: new Date().toISOString()
           }, {
             onConflict: 'slug',

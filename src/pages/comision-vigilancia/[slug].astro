@@ -59,6 +59,9 @@ const hasUserVoted = !!votoUsuario;
 // Votación completa si hay 2 o más votos
 const votacionCompleta = (votosCount || 0) >= 2;
 
+// Verificar si la votación está abierta (desde MDX)
+const votacionAbierta = proyecto.data.votacion_abierta ?? true;
+
 // Renderizar contenido MDX
 const { Content } = await proyecto.render();
 ---
@@ -116,7 +119,22 @@ const { Content } = await proyecto.render();
 
     <!-- Sección de Votación (PRIMERO) -->
     <div class="space-y-8 mb-12">
-      {hasUserVoted ? (
+      {!votacionAbierta ? (
+        <!-- Votación cerrada -->
+        <div class="bg-gradient-to-br from-slate-100 to-slate-200 rounded-[2rem] p-8 text-center border-2 border-slate-300 shadow-xl">
+          <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-8 py-6 mb-4">
+            <p class="text-slate-700 text-lg mb-3">🔒 Esta votación ha sido cerrada</p>
+            <p class="font-black text-3xl text-slate-600">
+              Votación cerrada
+            </p>
+          </div>
+          <div class="bg-slate-50 border-2 border-slate-300 rounded-xl p-4 inline-block">
+            <p class="text-sm text-slate-700 font-bold">
+              Ya no es posible emitir o modificar votos en este proyecto
+            </p>
+          </div>
+        </div>
+      ) : hasUserVoted ? (
         <!-- Usuario ya votó -->
         <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] p-8 text-center border-2 border-slate-200 shadow-xl">
           <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-8 py-6 mb-4">

@@ -9,6 +9,7 @@ interface Proyecto {
     mes?: number;
     anio?: number;
     presupuesto_estimado?: number;
+    votacion_abierta?: boolean;
   };
 }
 
@@ -20,6 +21,8 @@ interface Props {
 }
 
 const { proyecto, votosCount, votacionCompleta, hasUserVoted } = Astro.props;
+
+const votacionAbierta = proyecto.data.votacion_abierta ?? true;
 
 const formatPresupuesto = (monto?: number) => {
   if (!monto) return null;
@@ -63,18 +66,25 @@ const formatPresupuesto = (monto?: number) => {
       <ProjectStatus 
         votosCount={votosCount} 
         votacionCompleta={votacionCompleta} 
-        hasUserVoted={hasUserVoted} 
+        hasUserVoted={hasUserVoted}
+        votacionAbierta={votacionAbierta}
       />
     </div>
   </div>
   
-  <a 
-    href={`/comision-vigilancia/${proyecto.slug}`}
-    class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-black py-3 px-6 rounded-[1rem] transition-all shadow-lg hover:shadow-xl hover:scale-105"
-  >
-    {votacionCompleta ? '📊 Ver resultados' : '🗳️ Ver y votar'}
-    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-    </svg>
-  </a>
+  {votacionAbierta ? (
+    <a 
+      href={`/comision-vigilancia/${proyecto.slug}`}
+      class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white font-black py-3 px-6 rounded-[1rem] transition-all shadow-lg hover:shadow-xl hover:scale-105"
+    >
+      {votacionCompleta ? '📊 Ver resultados' : '🗳️ Ver y votar'}
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+      </svg>
+    </a>
+  ) : (
+    <div class="inline-flex items-center gap-2 bg-slate-300 text-slate-600 font-black py-3 px-6 rounded-[1rem] cursor-not-allowed opacity-75">
+      🔒 Votación cerrada
+    </div>
+  )}
 </article>
