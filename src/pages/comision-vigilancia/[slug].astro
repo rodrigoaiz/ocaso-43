@@ -144,14 +144,21 @@ const { Content } = await proyecto.render();
     </header>
 
     <!-- Contenido del Proyecto (MDX) - PRIMERO -->
-    <div id="detalles-proyecto" class="mb-10 scroll-mt-20">
+    <div id="detalles-proyecto" class="mb-32 scroll-mt-20">
       <h2 class="font-black text-2xl text-slate-900 mb-6 flex items-center gap-3">
         <span class="text-3xl">📄</span>
         <span>Detalles del Proyecto</span>
       </h2>
-      <article class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 shadow-xl border border-slate-100">
+      <article class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 pb-16 shadow-xl border border-slate-100">
         <Content />
       </article>
+    </div>
+
+    <!-- Separador visual -->
+    <div class="mb-8 flex items-center gap-4">
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
+      <span class="text-slate-400 font-bold text-sm uppercase tracking-wider">Sección de Votación</span>
+      <div class="flex-1 h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"></div>
     </div>
 
     <!-- Sección de Votación - DESPUÉS -->
