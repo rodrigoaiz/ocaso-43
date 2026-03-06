@@ -149,10 +149,65 @@ const { Content } = await proyecto.render();
         <span class="text-3xl">📄</span>
         <span>Detalles del Proyecto</span>
       </h2>
-      <article class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 pb-16 shadow-xl border border-slate-100">
-        <Content />
-      </article>
+      
+      <!-- Contenedor con efecto de colapso -->
+      <div id="content-container" class="relative">
+        <!-- Máscara de degradado cuando está colapsado -->
+        <div id="fade-overlay" class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-slate-50 to-transparent pointer-events-none rounded-b-[2rem] z-10"></div>
+        
+        <!-- Contenido con altura máxima inicial -->
+        <article id="project-content" class="prose prose-orange prose-lg max-w-none rounded-[2rem] bg-white/80 backdrop-blur-sm p-8 pb-16 shadow-xl border border-slate-100 overflow-hidden transition-all duration-500 max-h-[500px]">
+          <Content />
+        </article>
+      </div>
+      
+      <!-- Botón Ver más -->
+      <div class="text-center mt-6">
+        <button
+          id="toggle-content-btn"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white font-black rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 text-sm uppercase tracking-wide"
+        >
+          <span id="btn-text">Ver detalles completos</span>
+          <svg id="btn-icon" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+          </svg>
+        </button>
+      </div>
     </div>
+    
+    <script>
+      // Script para expandir/colapsar contenido
+      const toggleBtn = document.getElementById('toggle-content-btn');
+      const content = document.getElementById('project-content');
+      const fadeOverlay = document.getElementById('fade-overlay');
+      const btnText = document.getElementById('btn-text');
+      const btnIcon = document.getElementById('btn-icon');
+      
+      let isExpanded = false;
+      
+      toggleBtn?.addEventListener('click', () => {
+        isExpanded = !isExpanded;
+        
+        if (isExpanded) {
+          // Expandir
+          content?.classList.remove('max-h-[500px]');
+          content?.classList.add('max-h-[9999px]');
+          fadeOverlay?.classList.add('opacity-0');
+          btnText!.textContent = 'Ver menos';
+          btnIcon?.classList.add('rotate-180');
+        } else {
+          // Colapsar
+          content?.classList.remove('max-h-[9999px]');
+          content?.classList.add('max-h-[500px]');
+          fadeOverlay?.classList.remove('opacity-0');
+          btnText!.textContent = 'Ver detalles completos';
+          btnIcon?.classList.remove('rotate-180');
+          
+          // Scroll suave hacia arriba del contenido
+          document.getElementById('detalles-proyecto')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    </script>
 
     <!-- Separador visual -->
     <div class="mb-8 flex items-center gap-4">
