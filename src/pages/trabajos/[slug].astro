@@ -198,6 +198,20 @@ const formattedSavings = savings
     </div>
   </div>
 
+  <!-- Resumen Section (moved from notas) -->
+  {
+    notas && (
+      <div class="mb-12">
+        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200">
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-3">
+            Resumen del Trabajo
+          </p>
+          <p class="text-slate-700 font-medium leading-relaxed text-lg">{notas}</p>
+        </div>
+      </div>
+    )
+  }
+
   <!-- Content Section with Expandable Details -->
   <div class="mb-12">
     <div
@@ -287,20 +301,6 @@ const formattedSavings = savings
               ))}
             </ul>
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  <!-- Notes Section (if any) -->
-  {
-    notas && (
-      <div class="mb-12">
-        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200">
-          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-3">
-            Notas Adicionales
-          </p>
-          <p class="text-slate-700 font-medium leading-relaxed">{notas}</p>
         </div>
       </div>
     )
