@@ -6,19 +6,12 @@ import Footer from "../components/Footer.astro";
 interface Props {
   title: string;
   description?: string;
-  ogImage?: string;
 }
 
 const {
   title,
   description = "Portal administrativo del Condominio Ocaso 43. Consulta minutas, reglamentos y documentos oficiales.",
-  ogImage = "/og-image.png",
 } = Astro.props;
-
-// Make ogImage absolute URL for social media
-const absoluteOgImage = ogImage.startsWith('http') 
-  ? ogImage 
-  : new URL(ogImage, Astro.site || Astro.url).toString();
 ---
 
 <!doctype html>
@@ -41,9 +34,7 @@ const absoluteOgImage = ogImage.startsWith('http')
       content={`${title} | Ocaso 43 - Administración`}
     />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={absoluteOgImage} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image" content="/og-image.png" />
     <meta property="og:logo" content="/favicon.svg" />
 
     <!-- Twitter -->
@@ -53,10 +44,7 @@ const absoluteOgImage = ogImage.startsWith('http')
       content={`${title} | Ocaso 43 - Administración`}
     />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={absoluteOgImage} />
-
-    <!-- WhatsApp specific (uses Open Graph) -->
-    <meta property="og:site_name" content="Ocaso 43 - Administración" />
+    <meta property="twitter:image" content="/og-image.png" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
