@@ -74,9 +74,13 @@ const formattedSavings = savings
       minimumFractionDigits: 0,
     }).format(Math.abs(savings))
   : null;
+
+// Extract "después" image for Open Graph preview
+const despuesImage = imagenes.find((img: any) => img.tipo === 'despues');
+const ogImage = despuesImage?.url || imagenes[0]?.url || null;
 ---
 
-<Layout title={titulo}>
+<Layout title={titulo} description={descripcion_corta} ogImage={ogImage}>
   <!-- Back Link -->
   <div class="mb-8">
     <a
