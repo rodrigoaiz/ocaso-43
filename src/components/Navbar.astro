@@ -34,7 +34,7 @@
     <!-- Navegación Escritorio -->
     <nav class="hidden lg:block">
       <ul
-        class="flex gap-8 text-sm font-bold uppercase tracking-widest text-slate-500"
+        class="flex gap-8 text-sm font-bold uppercase tracking-widest text-slate-700"
       >
         <li>
           <a href="/" class="hover:text-orange-500 transition-colors">Inicio</a>
@@ -47,6 +47,11 @@
         <li>
           <a href="/documentos" class="hover:text-orange-500 transition-colors"
             >Documentos</a
+          >
+        </li>
+        <li>
+          <a href="/trabajos" class="hover:text-pink-500 transition-colors"
+            >Trabajos</a
           >
         </li>
         <li>
@@ -120,12 +125,27 @@
           </li>
           <li>
             <a
+              href="/trabajos"
+              class="mobile-nav-link group flex flex-col items-center"
+            >
+              <span
+                class="text-xs font-black uppercase tracking-[0.4em] text-pink-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
+                >04</span
+              >
+              <span
+                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-pink-500 transition-all"
+                >Trabajos</span
+              >
+            </a>
+          </li>
+          <li>
+            <a
               href={Astro.locals.comisionUser ? "/comision-vigilancia" : "/comision-vigilancia/login"}
               class="mobile-nav-link group flex flex-col items-center"
             >
               <span
                 class="text-xs font-black uppercase tracking-[0.4em] text-violet-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >04</span
+                >05</span
               >
               <span
                 class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-violet-500 transition-all"

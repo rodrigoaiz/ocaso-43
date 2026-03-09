@@ -1,0 +1,353 @@
+---
+/**
+ * /trabajos/[slug] - Detail page for completed work
+ */
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import TrabajoGallery from '../../components/TrabajoGallery.astro';
+import { autoSyncTrabajosSilent } from '../../lib/auto-sync-trabajos';
+
+// Auto-sync trabajos from MDX to database (SSR mode)
+await autoSyncTrabajosSilent();
+
+// Get the trabajo by slug
+const { slug } = Astro.params;
+const trabajo = await getEntry('trabajos-realizados', slug!);
+
+if (!trabajo) {
+  return Astro.redirect('/404');
+}
+
+const { Content } = await trabajo.render();
+
+const {
+  titulo,
+  categoria,
+  fecha_realizacion,
+  fecha_aprobacion_comision,
+  costo_final,
+  presupuesto_estimado,
+  proveedor,
+  contacto_proveedor,
+  descripcion_corta,
+  imagenes,
+  documentos,
+  notas,
+  proyecto_slug,
+} = trabajo.data;
+
+const categoriaColors: Record<string, string> = {
+  Mantenimiento: 'bg-slate-100 text-slate-700',
+  Compras: 'bg-orange-100 text-orange-700',
+  Mejoras: 'bg-pink-100 text-pink-700',
+  Emergencias: 'bg-red-100 text-red-700',
+  Reparaciones: 'bg-amber-100 text-amber-700',
+};
+
+const categoriaColor = categoriaColors[categoria] || categoriaColors.Mantenimiento;
+
+const formattedDate = fecha_realizacion.toLocaleDateString('es-MX', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const formattedCost = new Intl.NumberFormat('es-MX', {
+  style: 'currency',
+  currency: 'MXN',
+  minimumFractionDigits: 0,
+}).format(costo_final);
+
+const formattedBudget = presupuesto_estimado
+  ? new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: 0,
+    }).format(presupuesto_estimado)
+  : null;
+
+const savings = presupuesto_estimado ? presupuesto_estimado - costo_final : null;
+const formattedSavings = savings
+  ? new Intl.NumberFormat('es-MX', {
+      style: 'currency',
+      currency: 'MXN',
+      minimumFractionDigits: 0,
+    }).format(Math.abs(savings))
+  : null;
+---
+
+<Layout title={titulo}>
+  <!-- Back Link -->
+  <div class="mb-8">
+    <a
+      href="/trabajos"
+      class="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-orange-500 transition-colors"
+    >
+      <span class="text-xl">&larr;</span>
+      Volver a Trabajos Realizados
+    </a>
+  </div>
+
+  <!-- Header Section -->
+  <section class="mb-12">
+    <div class="flex flex-wrap items-center gap-3 mb-4">
+      <span
+        class={`inline-block px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest ${categoriaColor}`}
+      >
+        {categoria}
+      </span>
+      {
+        proyecto_slug && (
+          <a
+            href={`/comision-vigilancia/${proyecto_slug}`}
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+          >
+            <span>✓ Ver Proyecto Original</span>
+            <span class="text-xs">&rarr;</span>
+          </a>
+        )
+      }
+    </div>
+
+    <h1
+      class="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter mb-4 leading-tight"
+    >
+      {titulo}
+    </h1>
+    <p class="text-lg text-slate-500 font-medium">{descripcion_corta}</p>
+  </section>
+
+  <!-- Info Grid -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+    <!-- Cost -->
+    <div
+      class="p-6 rounded-2xl bg-orange-50 border border-orange-100"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-400 mb-2"
+      >
+        Costo Final
+      </p>
+      <p class="text-3xl font-black text-orange-500">{formattedCost}</p>
+      {
+        formattedBudget && (
+          <p class="text-xs font-medium text-orange-600 mt-1">
+            Presupuesto: {formattedBudget}
+          </p>
+        )
+      }
+      {
+        formattedSavings && savings !== null && (
+          <p
+            class={`text-xs font-bold mt-2 ${savings > 0 ? 'text-green-600' : 'text-red-600'}`}
+          >
+            {savings > 0 ? `Ahorro: ${formattedSavings}` : `Sobrecosto: ${formattedSavings}`}
+          </p>
+        )
+      }
+    </div>
+
+    <!-- Date -->
+    <div
+      class="p-6 rounded-2xl bg-white border border-slate-100"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2"
+      >
+        Fecha de Realización
+      </p>
+      <p class="text-lg font-bold text-slate-700">{formattedDate}</p>
+      {
+        fecha_aprobacion_comision && (
+          <p class="text-xs font-medium text-slate-500 mt-1">
+            Aprobado: {fecha_aprobacion_comision.toLocaleDateString('es-MX')}
+          </p>
+        )
+      }
+    </div>
+
+    <!-- Provider -->
+    <div
+      class="p-6 rounded-2xl bg-white border border-slate-100"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2"
+      >
+        Proveedor
+      </p>
+      <p class="text-lg font-bold text-slate-700">{proveedor}</p>
+      {
+        contacto_proveedor && (
+          <p class="text-xs font-medium text-slate-500 mt-1">
+            {contacto_proveedor}
+          </p>
+        )
+      }
+    </div>
+
+    <!-- Status -->
+    <div
+      class="p-6 rounded-2xl bg-green-50 border border-green-100"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-green-400 mb-2"
+      >
+        Estado
+      </p>
+      <p class="text-lg font-bold text-green-700">✓ Completado</p>
+    </div>
+  </div>
+
+  <!-- Resumen Section (moved from notas) -->
+  {
+    notas && (
+      <div class="mb-12">
+        <div class="p-8 rounded-3xl bg-slate-50 border border-slate-200">
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-3">
+            Resumen del Trabajo
+          </p>
+          <p class="text-slate-700 font-medium leading-relaxed text-lg">{notas}</p>
+        </div>
+      </div>
+    )
+  }
+
+  <!-- Content Section with Expandable Details -->
+  <div class="mb-12">
+    <div
+      id="content-container"
+      class="relative overflow-hidden transition-all duration-300"
+      style="max-height: 500px;"
+    >
+      <div
+        class="prose prose-lg max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-a:text-orange-500 prose-strong:text-slate-900 prose-code:text-orange-500 prose-code:bg-orange-50 prose-code:px-1 prose-code:rounded"
+      >
+        <Content />
+      </div>
+
+      <!-- Gradient fade overlay -->
+      <div
+        id="fade-overlay"
+        class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-white to-transparent pointer-events-none"
+      >
+      </div>
+    </div>
+
+    <!-- Expand/Collapse Button -->
+    <div class="text-center mt-6">
+      <button
+        id="toggle-content"
+        class="px-8 py-3 rounded-2xl bg-slate-100 hover:bg-orange-500 hover:text-white text-slate-700 font-black text-sm uppercase tracking-widest transition-colors"
+      >
+        Ver detalles completos
+      </button>
+    </div>
+
+    <!-- Skip to Gallery Button -->
+    <div class="text-center mt-4">
+      <a
+        href="#galeria"
+        class="text-xs font-bold text-slate-400 hover:text-orange-500 transition-colors"
+      >
+        Saltar a galería &darr;
+      </a>
+    </div>
+  </div>
+
+  <!-- Gallery Section -->
+  <div id="galeria" class="mb-12">
+    <TrabajoGallery imagenes={imagenes} />
+  </div>
+
+  <!-- Documents Section (if any) -->
+  {
+    documentos && documentos.length > 0 && (
+      <div class="mb-12">
+        <div class="rounded-3xl bg-white border border-slate-100 overflow-hidden">
+          <div class="p-6 border-b border-slate-100">
+            <h3 class="text-2xl font-black text-slate-900">
+              Documentos Adjuntos
+            </h3>
+            <p class="text-sm text-slate-500 font-medium mt-1">
+              Facturas, contratos y garantías
+            </p>
+          </div>
+          <div class="p-6">
+            <ul class="space-y-3">
+              {documentos.map((doc: any) => (
+                <li>
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 hover:border-orange-200 transition-all group"
+                  >
+                    <div class="flex items-center gap-4">
+                      <span class="text-2xl">📄</span>
+                      <div>
+                        <p class="font-bold text-slate-900 group-hover:text-orange-500 transition-colors">
+                          {doc.nombre}
+                        </p>
+                        <p class="text-xs text-slate-500 uppercase tracking-wide">
+                          {doc.tipo}
+                        </p>
+                      </div>
+                    </div>
+                    <span class="text-slate-300 group-hover:text-orange-500 transition-colors text-xl">
+                      &rarr;
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  <!-- Footer Actions -->
+  <div class="flex flex-col sm:flex-row gap-4 justify-center mt-16">
+    <a
+      href="/trabajos"
+      class="px-8 py-4 rounded-2xl bg-slate-900 hover:bg-orange-500 text-white font-black text-sm uppercase tracking-widest transition-colors text-center"
+    >
+      Ver Más Trabajos
+    </a>
+    <a
+      href="/"
+      class="px-8 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-black text-sm uppercase tracking-widest transition-colors text-center"
+    >
+      Volver a Inicio
+    </a>
+  </div>
+</Layout>
+
+<script>
+  // Expandable content functionality
+  document.addEventListener('DOMContentLoaded', () => {
+    const container = document.getElementById('content-container');
+    const button = document.getElementById('toggle-content');
+    const fadeOverlay = document.getElementById('fade-overlay');
+
+    if (!container || !button || !fadeOverlay) return;
+
+    let isExpanded = false;
+
+    button.addEventListener('click', () => {
+      if (isExpanded) {
+        // Collapse
+        container.style.maxHeight = '500px';
+        fadeOverlay.classList.remove('opacity-0');
+        button.textContent = 'Ver detalles completos';
+        isExpanded = false;
+      } else {
+        // Expand
+        container.style.maxHeight = 'none';
+        fadeOverlay.classList.add('opacity-0');
+        button.textContent = 'Ver menos';
+        isExpanded = true;
+      }
+    });
+  });
+</script>

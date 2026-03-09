@@ -94,3 +94,50 @@ export interface VotoConOpcion extends Voto {
     username: string;
   };
 }
+
+export interface TrabajoRealizado {
+  id: string;
+  slug: string;
+  titulo: string;
+  descripcion: string | null;
+  proyecto_id: string | null;
+  fecha_realizacion: string;
+  fecha_aprobacion_comision: string | null;
+  costo_final: number;
+  presupuesto_estimado: number | null;
+  proveedor: string;
+  contacto_proveedor: string | null;
+  categoria: 'Mantenimiento' | 'Compras' | 'Mejoras' | 'Emergencias' | 'Reparaciones';
+  contenido: string | null;
+  notas: string | null;
+  visible: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TrabajoImagen {
+  id: string;
+  trabajo_id: string;
+  url: string;
+  tipo: 'antes' | 'durante' | 'despues';
+  descripcion: string | null;
+  orden: number;
+  created_at: string;
+}
+
+export interface TrabajoDocumento {
+  id: string;
+  trabajo_id: string;
+  nombre: string;
+  url: string;
+  tipo: 'factura' | 'contrato' | 'garantia' | 'otro';
+  created_at: string;
+}
+
+export interface TrabajoConImagenes extends TrabajoRealizado {
+  imagenes: TrabajoImagen[];
+}
+
+export interface TrabajoConProyecto extends TrabajoRealizado {
+  proyecto?: ProyectoVotacion;
+}
