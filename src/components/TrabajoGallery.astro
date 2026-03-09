@@ -1,0 +1,189 @@
+---
+/**
+ * TrabajoGallery - Before/During/After image gallery component
+ * Interactive tabs to switch between stages
+ */
+
+interface ImageData {
+  url: string;
+  tipo: 'antes' | 'durante' | 'despues';
+  descripcion?: string;
+}
+
+interface Props {
+  imagenes: ImageData[];
+}
+
+const { imagenes } = Astro.props;
+
+// Group images by tipo
+const imagesByTipo = {
+  antes: imagenes.filter((img) => img.tipo === 'antes'),
+  durante: imagenes.filter((img) => img.tipo === 'durante'),
+  despues: imagenes.filter((img) => img.tipo === 'despues'),
+};
+
+const hasBefore = imagesByTipo.antes.length > 0;
+const hasDuring = imagesByTipo.durante.length > 0;
+const hasAfter = imagesByTipo.despues.length > 0;
+
+const tipoLabels = {
+  antes: 'Antes',
+  durante: 'Durante',
+  despues: 'Después',
+};
+---
+
+{
+  imagenes.length > 0 && (
+    <div class="rounded-3xl bg-white border border-slate-100 overflow-hidden">
+      <div class="p-6 border-b border-slate-100">
+        <h3 class="text-2xl font-black text-slate-900">Galería del Trabajo</h3>
+        <p class="text-sm text-slate-500 font-medium mt-1">
+          Documentación visual del proceso
+        </p>
+      </div>
+
+      {/* Tab Navigation */}
+      <div class="flex border-b border-slate-100 px-6 gap-2">
+        {hasBefore && (
+          <button
+            data-tab="antes"
+            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
+            data-active="true"
+          >
+            {tipoLabels.antes}
+          </button>
+        )}
+        {hasDuring && (
+          <button
+            data-tab="durante"
+            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
+            data-active={!hasBefore ? 'true' : 'false'}
+          >
+            {tipoLabels.durante}
+          </button>
+        )}
+        {hasAfter && (
+          <button
+            data-tab="despues"
+            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
+            data-active={!hasBefore && !hasDuring ? 'true' : 'false'}
+          >
+            {tipoLabels.despues}
+          </button>
+        )}
+      </div>
+
+      {/* Tab Content */}
+      <div class="p-6">
+        {hasBefore && (
+          <div
+            data-content="antes"
+            class="tab-content"
+            data-active="true"
+          >
+            <div class="grid gap-4">
+              {imagesByTipo.antes.map((img) => (
+                <div class="rounded-2xl overflow-hidden bg-slate-50">
+                  <img
+                    src={img.url}
+                    alt={img.descripcion || 'Antes del trabajo'}
+                    class="w-full h-auto"
+                  />
+                  {img.descripcion && (
+                    <p class="p-4 text-sm text-slate-600 font-medium italic">
+                      {img.descripcion}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {hasDuring && (
+          <div
+            data-content="durante"
+            class="tab-content hidden"
+            data-active={!hasBefore ? 'true' : 'false'}
+          >
+            <div class="grid gap-4">
+              {imagesByTipo.durante.map((img) => (
+                <div class="rounded-2xl overflow-hidden bg-slate-50">
+                  <img
+                    src={img.url}
+                    alt={img.descripcion || 'Durante el trabajo'}
+                    class="w-full h-auto"
+                  />
+                  {img.descripcion && (
+                    <p class="p-4 text-sm text-slate-600 font-medium italic">
+                      {img.descripcion}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {hasAfter && (
+          <div
+            data-content="despues"
+            class="tab-content hidden"
+            data-active={!hasBefore && !hasDuring ? 'true' : 'false'}
+          >
+            <div class="grid gap-4">
+              {imagesByTipo.despues.map((img) => (
+                <div class="rounded-2xl overflow-hidden bg-slate-50">
+                  <img
+                    src={img.url}
+                    alt={img.descripcion || 'Después del trabajo'}
+                    class="w-full h-auto"
+                  />
+                  {img.descripcion && (
+                    <p class="p-4 text-sm text-slate-600 font-medium italic">
+                      {img.descripcion}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+<script>
+  // Tab switching logic
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const targetTab = button.getAttribute('data-tab');
+
+        // Update buttons
+        tabButtons.forEach((btn) => {
+          btn.setAttribute('data-active', 'false');
+        });
+        button.setAttribute('data-active', 'true');
+
+        // Update content
+        tabContents.forEach((content) => {
+          const contentType = content.getAttribute('data-content');
+          if (contentType === targetTab) {
+            content.classList.remove('hidden');
+            content.setAttribute('data-active', 'true');
+          } else {
+            content.classList.add('hidden');
+            content.setAttribute('data-active', 'false');
+          }
+        });
+      });
+    });
+  });
+</script>

@@ -63,8 +63,57 @@ const proyectosVotacion = defineCollection({
   ),
 });
 
+const trabajosRealizados = defineCollection({
+  type: "content",
+  schema: z.object({
+    titulo: z.string(),
+    fecha_realizacion: z.date(),
+    categoria: z.enum(['Mantenimiento', 'Compras', 'Mejoras', 'Emergencias', 'Reparaciones']),
+    
+    // Optional link to approved project
+    proyecto_slug: z.string().optional(),
+    fecha_aprobacion_comision: z.date().optional(),
+    
+    // Costs
+    costo_final: z.number(),
+    presupuesto_estimado: z.number().optional(),
+    
+    // Provider
+    proveedor: z.string(),
+    contacto_proveedor: z.string().optional(),
+    
+    // Short description for card display
+    descripcion_corta: z.string(),
+    
+    // Images (stored in /public/img/trabajos/)
+    imagenes: z.array(
+      z.object({
+        url: z.string(),
+        tipo: z.enum(['antes', 'durante', 'despues']),
+        descripcion: z.string().optional(),
+      })
+    ).default([]),
+    
+    // Optional documents
+    documentos: z.array(
+      z.object({
+        nombre: z.string(),
+        url: z.string(),
+        tipo: z.enum(['factura', 'contrato', 'garantia', 'otro']),
+      })
+    ).default([]),
+    
+    // Additional notes
+    notas: z.string().optional(),
+    
+    // Visibility
+    visible: z.boolean().default(true),
+  }),
+});
+
 export const collections = {
   minutas: minutas,
   documentos: documentos,
   "proyectos-votacion": proyectosVotacion,
+  "trabajos-realizados": trabajosRealizados,
 };

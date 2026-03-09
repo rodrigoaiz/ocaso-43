@@ -1,0 +1,184 @@
+---
+/**
+ * /trabajos - Public list of completed work
+ */
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import TrabajoCard from '../../components/TrabajoCard.astro';
+import { autoSyncTrabajosSilent } from '../../lib/auto-sync-trabajos';
+
+// Auto-sync trabajos from MDX to database
+await autoSyncTrabajosSilent();
+
+// Get all visible completed work, sorted by date (newest first)
+const trabajos = (await getCollection('trabajos-realizados'))
+  .filter((trabajo) => trabajo.data.visible)
+  .sort((a, b) => b.data.fecha_realizacion.getTime() - a.data.fecha_realizacion.getTime());
+
+// Calculate stats
+const totalCost = trabajos.reduce((sum, t) => sum + t.data.costo_final, 0);
+const currentYear = new Date().getFullYear();
+const thisYearTrabajos = trabajos.filter(
+  (t) => t.data.fecha_realizacion.getFullYear() === currentYear
+);
+const thisYearCost = thisYearTrabajos.reduce((sum, t) => sum + t.data.costo_final, 0);
+
+// Get unique categories with counts
+const categoryCounts = trabajos.reduce((acc, t) => {
+  acc[t.data.categoria] = (acc[t.data.categoria] || 0) + 1;
+  return acc;
+}, {} as Record<string, number>);
+
+const formattedTotal = new Intl.NumberFormat('es-MX', {
+  style: 'currency',
+  currency: 'MXN',
+  minimumFractionDigits: 0,
+}).format(totalCost);
+
+const formattedThisYear = new Intl.NumberFormat('es-MX', {
+  style: 'currency',
+  currency: 'MXN',
+  minimumFractionDigits: 0,
+}).format(thisYearCost);
+---
+
+<Layout title="Trabajos Realizados">
+  <!-- Hero Section -->
+  <section class="mb-16 lg:mb-24 relative">
+    <div
+      class="absolute -top-10 -right-10 w-64 h-64 bg-orange-100/50 rounded-full blur-3xl -z-10"
+    >
+    </div>
+    <div class="max-w-3xl">
+      <h1
+        class="text-4xl sm:text-7xl font-black text-slate-900 tracking-tighter mb-6 lg:mb-8 leading-[1]"
+      >
+        Trabajos <span class="text-orange-500">Realizados</span>
+      </h1>
+      <p class="text-lg lg:text-xl text-slate-500 font-medium leading-relaxed">
+        Registro transparente de los trabajos y mejoras realizadas en nuestro
+        condominio. Cada proyecto documenta el proceso, costos y resultados.
+      </p>
+    </div>
+  </section>
+
+  <!-- Stats Cards -->
+  <div class="grid sm:grid-cols-3 gap-6 mb-16">
+    <!-- Total Trabajos -->
+    <div
+      class="p-8 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-lg transition-shadow"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2"
+      >
+        Total Trabajos
+      </p>
+      <p class="text-4xl font-black text-slate-900">{trabajos.length}</p>
+    </div>
+
+    <!-- This Year -->
+    <div
+      class="p-8 rounded-3xl bg-orange-50 border border-orange-100 shadow-sm hover:shadow-lg transition-shadow"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-400 mb-2"
+      >
+        Este Año ({currentYear})
+      </p>
+      <p class="text-4xl font-black text-orange-500">{thisYearTrabajos.length}</p>
+      <p class="text-sm font-bold text-orange-600 mt-2">{formattedThisYear}</p>
+    </div>
+
+    <!-- Total Investment -->
+    <div
+      class="p-8 rounded-3xl bg-slate-900 text-white shadow-sm hover:shadow-lg transition-shadow"
+    >
+      <p
+        class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-500 mb-2"
+      >
+        Inversión Total
+      </p>
+      <p class="text-4xl font-black text-white">{formattedTotal}</p>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="grid lg:grid-cols-12 gap-10 lg:gap-16">
+    <!-- List of Trabajos -->
+    <div class="lg:col-span-8">
+      <div class="mb-10">
+        <span
+          class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-500 mb-2 block"
+          >Historial</span
+        >
+        <h2 class="text-3xl font-black text-slate-900">
+          Todos los Trabajos Realizados
+        </h2>
+      </div>
+
+      {
+        trabajos.length > 0 ? (
+          <div class="grid gap-6">
+            {trabajos.map((trabajo) => (
+              <TrabajoCard
+                slug={trabajo.slug}
+                titulo={trabajo.data.titulo}
+                categoria={trabajo.data.categoria}
+                fecha_realizacion={trabajo.data.fecha_realizacion}
+                costo_final={trabajo.data.costo_final}
+                proveedor={trabajo.data.proveedor}
+                descripcion_corta={trabajo.data.descripcion_corta}
+                imagen_principal={
+                  trabajo.data.imagenes.find((img) => img.tipo === 'despues')
+                    ?.url ||
+                  trabajo.data.imagenes.find((img) => img.tipo === 'antes')
+                    ?.url
+                }
+                proyecto_slug={trabajo.data.proyecto_slug}
+              />
+            ))}
+          </div>
+        ) : (
+          <div class="p-16 text-center bg-white/50 backdrop-blur-sm rounded-[2rem] border border-dashed border-orange-200">
+            <p class="text-slate-300 font-bold uppercase tracking-widest text-xs">
+              Aún no hay trabajos registrados
+            </p>
+          </div>
+        )
+      }
+    </div>
+
+    <!-- Sidebar - Categories -->
+    <aside class="lg:col-span-4">
+      <div
+        class="p-10 rounded-[2.5rem] bg-slate-900 text-white shadow-2xl shadow-slate-200 sticky top-32"
+      >
+        <h2 class="text-2xl font-black mb-8 tracking-tight">
+          Por <span class="text-orange-400">Categoría</span>
+        </h2>
+
+        <ul class="space-y-4">
+          {
+            Object.entries(categoryCounts).map(([categoria, count]) => (
+              <li class="flex items-center justify-between p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 transition-colors">
+                <span class="text-sm font-bold text-white">{categoria}</span>
+                <span class="text-xs font-black text-orange-400 bg-orange-500/10 px-3 py-1 rounded-lg">
+                  {count}
+                </span>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="mt-12 pt-8 border-t border-slate-800">
+          <a
+            href="/"
+            class="block p-4 rounded-2xl bg-slate-800 hover:bg-orange-500 transition-colors text-center font-black text-[10px] uppercase tracking-widest"
+          >
+            Volver a Inicio
+          </a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</Layout>
