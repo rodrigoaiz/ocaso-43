@@ -2,27 +2,22 @@
 /**
  * /trabajos/[slug] - Detail page for completed work
  */
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, getEntry, type CollectionEntry } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 import TrabajoGallery from '../../components/TrabajoGallery.astro';
 import { autoSyncTrabajosSilent } from '../../lib/auto-sync-trabajos';
 
-export async function getStaticPaths() {
-  // Auto-sync trabajos from MDX to database
-  await autoSyncTrabajosSilent();
-  
-  const trabajos = await getCollection('trabajos-realizados');
-  return trabajos.map((trabajo) => ({
-    params: { slug: trabajo.slug },
-    props: { trabajo },
-  }));
+// Auto-sync trabajos from MDX to database (SSR mode)
+await autoSyncTrabajosSilent();
+
+// Get the trabajo by slug
+const { slug } = Astro.params;
+const trabajo = await getEntry('trabajos-realizados', slug!);
+
+if (!trabajo) {
+  return Astro.redirect('/404');
 }
 
-interface Props {
-  trabajo: CollectionEntry<'trabajos-realizados'>;
-}
-
-const { trabajo } = Astro.props;
 const { Content } = await trabajo.render();
 
 const {
@@ -265,7 +260,7 @@ const formattedSavings = savings
           </div>
           <div class="p-6">
             <ul class="space-y-3">
-              {documentos.map((doc) => (
+              {documentos.map((doc: any) => (
                 <li>
                   <a
                     href={doc.url}
