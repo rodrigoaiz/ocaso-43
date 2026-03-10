@@ -130,7 +130,7 @@ export interface TrabajoDocumento {
   trabajo_id: string;
   nombre: string;
   url: string;
-  tipo: 'factura' | 'contrato' | 'garantia' | 'otro';
+  tipo: 'factura' | 'contrato' | 'garantia' | 'cotizacion' | 'otro';
   created_at: string;
 }
 
