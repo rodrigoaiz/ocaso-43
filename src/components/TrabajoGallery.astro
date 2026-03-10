@@ -27,6 +27,9 @@ const hasBefore = imagesByTipo.antes.length > 0;
 const hasDuring = imagesByTipo.durante.length > 0;
 const hasAfter = imagesByTipo.despues.length > 0;
 
+// Determine default tab (priority: despues > durante > antes)
+const defaultTab = hasAfter ? 'despues' : (hasDuring ? 'durante' : 'antes');
+
 const tipoLabels = {
   antes: 'Antes',
   durante: 'Durante',
@@ -50,7 +53,7 @@ const tipoLabels = {
           <button
             data-tab="antes"
             class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
-            data-active="true"
+            data-active={defaultTab === 'antes' ? 'true' : 'false'}
           >
             {tipoLabels.antes}
           </button>
@@ -59,7 +62,7 @@ const tipoLabels = {
           <button
             data-tab="durante"
             class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
-            data-active={!hasBefore ? 'true' : 'false'}
+            data-active={defaultTab === 'durante' ? 'true' : 'false'}
           >
             {tipoLabels.durante}
           </button>
@@ -68,7 +71,7 @@ const tipoLabels = {
           <button
             data-tab="despues"
             class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
-            data-active={!hasBefore && !hasDuring ? 'true' : 'false'}
+            data-active={defaultTab === 'despues' ? 'true' : 'false'}
           >
             {tipoLabels.despues}
           </button>
@@ -80,8 +83,8 @@ const tipoLabels = {
         {hasBefore && (
           <div
             data-content="antes"
-            class="tab-content"
-            data-active="true"
+            class={defaultTab === 'antes' ? 'tab-content' : 'tab-content hidden'}
+            data-active={defaultTab === 'antes' ? 'true' : 'false'}
           >
             <div class="grid sm:grid-cols-2 gap-4">
               {imagesByTipo.antes.map((img, index) => (
@@ -112,8 +115,8 @@ const tipoLabels = {
         {hasDuring && (
           <div
             data-content="durante"
-            class="tab-content hidden"
-            data-active={!hasBefore ? 'true' : 'false'}
+            class={defaultTab === 'durante' ? 'tab-content' : 'tab-content hidden'}
+            data-active={defaultTab === 'durante' ? 'true' : 'false'}
           >
             <div class="grid sm:grid-cols-2 gap-4">
               {imagesByTipo.durante.map((img, index) => (
@@ -144,8 +147,8 @@ const tipoLabels = {
         {hasAfter && (
           <div
             data-content="despues"
-            class="tab-content hidden"
-            data-active={!hasBefore && !hasDuring ? 'true' : 'false'}
+            class={defaultTab === 'despues' ? 'tab-content' : 'tab-content hidden'}
+            data-active={defaultTab === 'despues' ? 'true' : 'false'}
           >
             <div class="grid sm:grid-cols-2 gap-4">
               {imagesByTipo.despues.map((img, index) => (
@@ -178,15 +181,15 @@ const tipoLabels = {
 }
 
 {/* Lightbox Modal */}
-<div id="lightbox-modal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+<div id="lightbox-modal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
   <button 
     id="lightbox-close" 
-    class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-orange-500 transition-colors z-10"
+    class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-orange-500 transition-colors z-10 cursor-pointer"
     aria-label="Cerrar"
   >
     ×
   </button>
-  <div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
+  <div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center pointer-events-none">
     <img 
       id="lightbox-img" 
       src="" 
@@ -194,7 +197,7 @@ const tipoLabels = {
       class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl"
     />
   </div>
-  <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-6 py-3 bg-black/50 rounded-full max-w-2xl"></p>
+  <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-6 py-3 bg-black/50 rounded-full max-w-2xl pointer-events-none"></p>
 </div>
 
 <script>
@@ -259,16 +262,18 @@ const tipoLabels = {
       }
     };
 
+    // Close on X button click
     if (lightboxClose) {
-      lightboxClose.addEventListener('click', closeLightbox);
+      lightboxClose.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent modal click handler
+        closeLightbox();
+      });
     }
 
-    // Close on background click
+    // Close on any click on the modal (background or anywhere)
     if (lightboxModal) {
-      lightboxModal.addEventListener('click', (e) => {
-        if (e.target === lightboxModal) {
-          closeLightbox();
-        }
+      lightboxModal.addEventListener('click', () => {
+        closeLightbox();
       });
     }
 
