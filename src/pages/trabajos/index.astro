@@ -51,7 +51,7 @@ const formattedThisYear = new Intl.NumberFormat('es-MX', {
     </div>
     <div class="max-w-3xl">
       <h1
-        class="text-4xl sm:text-7xl font-black text-slate-900 tracking-tighter mb-6 lg:mb-8 leading-[1]"
+        class="text-4xl sm:text-7xl font-black text-slate-900 tracking-tighter mb-6 lg:mb-8 leading-none"
       >
         Trabajos <span class="text-orange-500">Realizados</span>
       </h1>
@@ -138,7 +138,7 @@ const formattedThisYear = new Intl.NumberFormat('es-MX', {
             ))}
           </div>
         ) : (
-          <div class="p-16 text-center bg-white/50 backdrop-blur-sm rounded-[2rem] border border-dashed border-orange-200">
+          <div class="p-16 text-center bg-white/50 backdrop-blur-sm rounded-4xl border border-dashed border-orange-200">
             <p class="text-slate-300 font-bold uppercase tracking-widest text-xs">
               Aún no hay trabajos registrados
             </p>
