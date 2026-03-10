@@ -83,14 +83,21 @@ const tipoLabels = {
             class="tab-content"
             data-active="true"
           >
-            <div class="grid gap-4">
-              {imagesByTipo.antes.map((img) => (
-                <div class="rounded-2xl overflow-hidden bg-slate-50">
-                  <img
-                    src={img.url}
-                    alt={img.descripcion || 'Antes del trabajo'}
-                    class="w-full h-auto"
-                  />
+            <div class="grid sm:grid-cols-2 gap-4">
+              {imagesByTipo.antes.map((img, index) => (
+                <div class="rounded-2xl overflow-hidden bg-slate-50 group">
+                  <div class="relative overflow-hidden cursor-pointer" data-lightbox-trigger data-img-url={img.url} data-img-alt={img.descripcion || 'Antes del trabajo'}>
+                    <img
+                      src={img.url}
+                      alt={img.descripcion || 'Antes del trabajo'}
+                      class="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span class="text-white text-4xl font-bold drop-shadow-lg">🔍</span>
+                    </div>
+                  </div>
                   {img.descripcion && (
                     <p class="p-4 text-sm text-slate-600 font-medium italic">
                       {img.descripcion}
@@ -108,14 +115,21 @@ const tipoLabels = {
             class="tab-content hidden"
             data-active={!hasBefore ? 'true' : 'false'}
           >
-            <div class="grid gap-4">
-              {imagesByTipo.durante.map((img) => (
-                <div class="rounded-2xl overflow-hidden bg-slate-50">
-                  <img
-                    src={img.url}
-                    alt={img.descripcion || 'Durante el trabajo'}
-                    class="w-full h-auto"
-                  />
+            <div class="grid sm:grid-cols-2 gap-4">
+              {imagesByTipo.durante.map((img, index) => (
+                <div class="rounded-2xl overflow-hidden bg-slate-50 group">
+                  <div class="relative overflow-hidden cursor-pointer" data-lightbox-trigger data-img-url={img.url} data-img-alt={img.descripcion || 'Durante el trabajo'}>
+                    <img
+                      src={img.url}
+                      alt={img.descripcion || 'Durante el trabajo'}
+                      class="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span class="text-white text-4xl font-bold drop-shadow-lg">🔍</span>
+                    </div>
+                  </div>
                   {img.descripcion && (
                     <p class="p-4 text-sm text-slate-600 font-medium italic">
                       {img.descripcion}
@@ -133,14 +147,21 @@ const tipoLabels = {
             class="tab-content hidden"
             data-active={!hasBefore && !hasDuring ? 'true' : 'false'}
           >
-            <div class="grid gap-4">
-              {imagesByTipo.despues.map((img) => (
-                <div class="rounded-2xl overflow-hidden bg-slate-50">
-                  <img
-                    src={img.url}
-                    alt={img.descripcion || 'Después del trabajo'}
-                    class="w-full h-auto"
-                  />
+            <div class="grid sm:grid-cols-2 gap-4">
+              {imagesByTipo.despues.map((img, index) => (
+                <div class="rounded-2xl overflow-hidden bg-slate-50 group">
+                  <div class="relative overflow-hidden cursor-pointer" data-lightbox-trigger data-img-url={img.url} data-img-alt={img.descripcion || 'Después del trabajo'}>
+                    <img
+                      src={img.url}
+                      alt={img.descripcion || 'Después del trabajo'}
+                      class="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <span class="text-white text-4xl font-bold drop-shadow-lg">🔍</span>
+                    </div>
+                  </div>
                   {img.descripcion && (
                     <p class="p-4 text-sm text-slate-600 font-medium italic">
                       {img.descripcion}
@@ -155,6 +176,26 @@ const tipoLabels = {
     </div>
   )
 }
+
+{/* Lightbox Modal */}
+<div id="lightbox-modal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm">
+  <button 
+    id="lightbox-close" 
+    class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-orange-500 transition-colors z-10"
+    aria-label="Cerrar"
+  >
+    ×
+  </button>
+  <div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center">
+    <img 
+      id="lightbox-img" 
+      src="" 
+      alt="" 
+      class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl"
+    />
+  </div>
+  <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-6 py-3 bg-black/50 rounded-full max-w-2xl"></p>
+</div>
 
 <script>
   // Tab switching logic
@@ -184,6 +225,58 @@ const tipoLabels = {
           }
         });
       });
+    });
+
+    // Lightbox functionality
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxCaption = document.getElementById('lightbox-caption');
+    const lightboxClose = document.getElementById('lightbox-close');
+    const triggers = document.querySelectorAll('[data-lightbox-trigger]');
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const imgUrl = trigger.getAttribute('data-img-url');
+        const imgAlt = trigger.getAttribute('data-img-alt');
+        
+        if (lightboxImg && lightboxCaption && lightboxModal) {
+          lightboxImg.src = imgUrl || '';
+          lightboxImg.alt = imgAlt || '';
+          lightboxCaption.textContent = imgAlt || '';
+          lightboxModal.classList.remove('hidden');
+          lightboxModal.classList.add('flex');
+          document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+      });
+    });
+
+    // Close lightbox
+    const closeLightbox = () => {
+      if (lightboxModal) {
+        lightboxModal.classList.add('hidden');
+        lightboxModal.classList.remove('flex');
+        document.body.style.overflow = ''; // Restore scrolling
+      }
+    };
+
+    if (lightboxClose) {
+      lightboxClose.addEventListener('click', closeLightbox);
+    }
+
+    // Close on background click
+    if (lightboxModal) {
+      lightboxModal.addEventListener('click', (e) => {
+        if (e.target === lightboxModal) {
+          closeLightbox();
+        }
+      });
+    }
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
     });
   });
 </script>
