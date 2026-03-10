@@ -99,7 +99,7 @@ const trabajosRealizados = defineCollection({
       z.object({
         nombre: z.string(),
         url: z.string(),
-        tipo: z.enum(['factura', 'contrato', 'garantia', 'otro']),
+        tipo: z.enum(['factura', 'contrato', 'garantia', 'cotizacion', 'otro']),
       })
     ).default([]),
     
