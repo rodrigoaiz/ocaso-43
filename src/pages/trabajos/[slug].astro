@@ -81,7 +81,7 @@ const formattedSavings = savings
   <div class="mb-8">
     <a
       href="/trabajos"
-      class="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-orange-500 transition-colors"
+      class="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-orange-500 transition-colors duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded-lg px-2 py-1"
     >
       <span class="text-xl">&larr;</span>
       Volver a Trabajos Realizados
@@ -100,7 +100,7 @@ const formattedSavings = savings
         proyecto_slug && (
           <a
             href={`/comision-vigilancia/${proyecto_slug}`}
-            class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700 hover:bg-green-200 transition-colors"
+            class="inline-flex items-center gap-2 px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700 hover:bg-green-200 transition-colors duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
           >
             <span>✓ Ver Proyecto Original</span>
             <span class="text-xs">&rarr;</span>
@@ -114,7 +114,7 @@ const formattedSavings = savings
     >
       {titulo}
     </h1>
-    <p class="text-lg text-slate-500 font-medium">{descripcion_corta}</p>
+    <p class="text-lg text-slate-500 font-medium leading-relaxed">{descripcion_corta}</p>
   </section>
 
   <!-- Info Grid -->
@@ -237,7 +237,7 @@ const formattedSavings = savings
     <div class="text-center mt-6">
       <button
         id="toggle-content"
-        class="px-8 py-3 rounded-2xl bg-slate-100 hover:bg-orange-500 hover:text-white text-slate-700 font-black text-sm uppercase tracking-widest transition-colors"
+        class="px-8 py-3 rounded-2xl bg-slate-100 hover:bg-orange-500 hover:text-white text-slate-700 font-black text-sm uppercase tracking-widest transition-[background-color,color] duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
       >
         Ver detalles completos
       </button>
@@ -247,7 +247,7 @@ const formattedSavings = savings
     <div class="text-center mt-4">
       <a
         href="#galeria"
-        class="text-xs font-bold text-slate-400 hover:text-orange-500 transition-colors"
+        class="text-xs font-bold text-slate-400 hover:text-orange-500 transition-colors duration-200 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 rounded px-2 py-1"
       >
         Saltar a galería &darr;
       </a>
@@ -280,12 +280,13 @@ const formattedSavings = savings
                     href={doc.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 hover:border-orange-200 transition-all group"
+                    class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 hover:bg-orange-50 border border-slate-100 hover:border-orange-200 transition-[background-color,border-color] duration-200 ease-out group focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                    aria-label={`Abrir documento: ${doc.nombre}`}
                   >
                     <div class="flex items-center gap-4">
                       <span class="text-2xl">📄</span>
                       <div>
-                        <p class="font-bold text-slate-900 group-hover:text-orange-500 transition-colors">
+                        <p class="font-bold text-slate-900 group-hover:text-orange-500 transition-colors duration-200 ease-out">
                           {doc.nombre}
                         </p>
                         <p class="text-xs text-slate-500 uppercase tracking-wide">
@@ -293,7 +294,7 @@ const formattedSavings = savings
                         </p>
                       </div>
                     </div>
-                    <span class="text-slate-300 group-hover:text-orange-500 transition-colors text-xl">
+                    <span class="text-slate-300 group-hover:text-orange-500 transition-colors duration-200 ease-out text-xl">
                       &rarr;
                     </span>
                   </a>
@@ -310,13 +311,13 @@ const formattedSavings = savings
   <div class="flex flex-col sm:flex-row gap-4 justify-center mt-16">
     <a
       href="/trabajos"
-      class="px-8 py-4 rounded-2xl bg-slate-900 hover:bg-orange-500 text-white font-black text-sm uppercase tracking-widest transition-colors text-center"
+      class="px-8 py-4 rounded-2xl bg-slate-900 hover:bg-orange-500 text-white font-black text-sm uppercase tracking-widest transition-colors duration-200 ease-out text-center focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
     >
       Ver Más Trabajos
     </a>
     <a
       href="/"
-      class="px-8 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-black text-sm uppercase tracking-widest transition-colors text-center"
+      class="px-8 py-4 rounded-2xl bg-white hover:bg-slate-50 text-slate-900 border border-slate-200 font-black text-sm uppercase tracking-widest transition-[background-color,border-color] duration-200 ease-out text-center focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
     >
       Volver a Inicio
     </a>

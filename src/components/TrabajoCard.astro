@@ -53,7 +53,7 @@ const formattedCost = new Intl.NumberFormat('es-MX', {
 
 <a
   href={`/trabajos/${slug}`}
-  class="group block p-6 rounded-3xl bg-white border border-slate-100 hover:border-orange-200 transition-all shadow-sm hover:shadow-xl hover:shadow-orange-500/5"
+  class="group block p-6 rounded-3xl bg-white border border-slate-100 hover:border-orange-200 shadow-sm hover:shadow-xl hover:shadow-orange-500/5 transition-[border-color,box-shadow] duration-300 ease-out focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 >
   <div class="flex flex-col sm:flex-row gap-6">
     <!-- Image Section -->
@@ -63,7 +63,7 @@ const formattedCost = new Intl.NumberFormat('es-MX', {
           <img
             src={imagen_principal}
             alt={titulo}
-            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
         </div>
       )
@@ -90,13 +90,13 @@ const formattedCost = new Intl.NumberFormat('es-MX', {
 
         <!-- Title -->
         <h3
-          class="text-xl font-black text-slate-900 group-hover:text-orange-500 transition-colors mb-2"
+          class="text-xl font-black text-slate-900 group-hover:text-orange-500 transition-colors duration-200 ease-out mb-2 leading-tight"
         >
           {titulo}
         </h3>
 
         <!-- Description -->
-        <p class="text-slate-500 text-sm line-clamp-2 font-medium mb-4">
+        <p class="text-slate-500 text-sm line-clamp-2 font-medium mb-4 leading-relaxed">
           {descripcion_corta}
         </p>
       </div>
@@ -116,7 +116,7 @@ const formattedCost = new Intl.NumberFormat('es-MX', {
           <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">
             Realizado
           </p>
-          <p class="text-sm font-bold text-slate-700">{formattedDate}</p>
+          <p class="text-sm font-bold text-slate-700 leading-snug">{formattedDate}</p>
         </div>
 
         <!-- Provider -->
@@ -131,7 +131,7 @@ const formattedCost = new Intl.NumberFormat('es-MX', {
 
     <!-- Arrow indicator -->
     <div
-      class="self-center text-slate-300 group-hover:text-orange-500 transition-all font-black text-2xl group-hover:translate-x-2"
+      class="self-center text-slate-300 group-hover:text-orange-500 transition-[color,transform] duration-300 ease-out font-black text-2xl group-hover:translate-x-2"
     >
       &rarr;
     </div>

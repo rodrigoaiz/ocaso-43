@@ -47,12 +47,15 @@ const tipoLabels = {
         </p>
       </div>
 
-      {/* Tab Navigation */}
-      <div class="flex border-b border-slate-100 px-6 gap-2">
+      <!-- Tab Navigation -->
+      <div class="flex border-b border-slate-100 px-6 gap-2" role="tablist" aria-label="Etapas del trabajo">
         {hasBefore && (
           <button
             data-tab="antes"
-            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
+            role="tab"
+            aria-selected={defaultTab === 'antes' ? 'true' : 'false'}
+            aria-controls="panel-antes"
+            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-[color,border-color] duration-200 ease-out"
             data-active={defaultTab === 'antes' ? 'true' : 'false'}
           >
             {tipoLabels.antes}
@@ -61,7 +64,10 @@ const tipoLabels = {
         {hasDuring && (
           <button
             data-tab="durante"
-            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
+            role="tab"
+            aria-selected={defaultTab === 'durante' ? 'true' : 'false'}
+            aria-controls="panel-durante"
+            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-[color,border-color] duration-200 ease-out"
             data-active={defaultTab === 'durante' ? 'true' : 'false'}
           >
             {tipoLabels.durante}
@@ -70,7 +76,10 @@ const tipoLabels = {
         {hasAfter && (
           <button
             data-tab="despues"
-            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent transition-all hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500"
+            role="tab"
+            aria-selected={defaultTab === 'despues' ? 'true' : 'false'}
+            aria-controls="panel-despues"
+            class="tab-button px-6 py-4 text-sm font-black uppercase tracking-widest border-b-2 border-transparent hover:text-orange-500 hover:border-orange-200 data-[active=true]:text-orange-500 data-[active=true]:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-[color,border-color] duration-200 ease-out"
             data-active={defaultTab === 'despues' ? 'true' : 'false'}
           >
             {tipoLabels.despues}
@@ -78,31 +87,41 @@ const tipoLabels = {
         )}
       </div>
 
-      {/* Tab Content */}
+      <!-- Tab Content -->
       <div class="p-6">
         {hasBefore && (
           <div
+            id="panel-antes"
             data-content="antes"
+            role="tabpanel"
+            aria-labelledby="tab-antes"
             class={defaultTab === 'antes' ? 'tab-content' : 'tab-content hidden'}
             data-active={defaultTab === 'antes' ? 'true' : 'false'}
           >
             <div class="grid sm:grid-cols-2 gap-4">
               {imagesByTipo.antes.map((img, index) => (
                 <div class="rounded-2xl overflow-hidden bg-slate-50 group">
-                  <div class="relative overflow-hidden cursor-pointer" data-lightbox-trigger data-img-url={img.url} data-img-alt={img.descripcion || 'Antes del trabajo'}>
+                  <button 
+                    type="button"
+                    class="relative overflow-hidden cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2" 
+                    data-lightbox-trigger 
+                    data-img-url={img.url} 
+                    data-img-alt={img.descripcion || 'Antes del trabajo'}
+                    aria-label={`Ver imagen ampliada: ${img.descripcion || 'Antes del trabajo'}`}
+                  >
                     <img
                       src={img.url}
                       alt={img.descripcion || 'Antes del trabajo'}
-                      class="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      class="w-full h-auto transition-transform duration-300 ease-out group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200 ease-out"></div>
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out">
                       <span class="text-white text-4xl font-bold drop-shadow-lg">🔍</span>
                     </div>
-                  </div>
+                  </button>
                   {img.descripcion && (
-                    <p class="p-4 text-sm text-slate-600 font-medium italic">
+                    <p class="p-4 text-sm text-slate-600 font-medium italic leading-relaxed">
                       {img.descripcion}
                     </p>
                   )}
@@ -114,27 +133,37 @@ const tipoLabels = {
 
         {hasDuring && (
           <div
+            id="panel-durante"
             data-content="durante"
+            role="tabpanel"
+            aria-labelledby="tab-durante"
             class={defaultTab === 'durante' ? 'tab-content' : 'tab-content hidden'}
             data-active={defaultTab === 'durante' ? 'true' : 'false'}
           >
             <div class="grid sm:grid-cols-2 gap-4">
               {imagesByTipo.durante.map((img, index) => (
                 <div class="rounded-2xl overflow-hidden bg-slate-50 group">
-                  <div class="relative overflow-hidden cursor-pointer" data-lightbox-trigger data-img-url={img.url} data-img-alt={img.descripcion || 'Durante el trabajo'}>
+                  <button 
+                    type="button"
+                    class="relative overflow-hidden cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2" 
+                    data-lightbox-trigger 
+                    data-img-url={img.url} 
+                    data-img-alt={img.descripcion || 'Durante el trabajo'}
+                    aria-label={`Ver imagen ampliada: ${img.descripcion || 'Durante el trabajo'}`}
+                  >
                     <img
                       src={img.url}
                       alt={img.descripcion || 'Durante el trabajo'}
-                      class="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      class="w-full h-auto transition-transform duration-300 ease-out group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200 ease-out"></div>
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out">
                       <span class="text-white text-4xl font-bold drop-shadow-lg">🔍</span>
                     </div>
-                  </div>
+                  </button>
                   {img.descripcion && (
-                    <p class="p-4 text-sm text-slate-600 font-medium italic">
+                    <p class="p-4 text-sm text-slate-600 font-medium italic leading-relaxed">
                       {img.descripcion}
                     </p>
                   )}
@@ -146,27 +175,37 @@ const tipoLabels = {
 
         {hasAfter && (
           <div
+            id="panel-despues"
             data-content="despues"
+            role="tabpanel"
+            aria-labelledby="tab-despues"
             class={defaultTab === 'despues' ? 'tab-content' : 'tab-content hidden'}
             data-active={defaultTab === 'despues' ? 'true' : 'false'}
           >
             <div class="grid sm:grid-cols-2 gap-4">
               {imagesByTipo.despues.map((img, index) => (
                 <div class="rounded-2xl overflow-hidden bg-slate-50 group">
-                  <div class="relative overflow-hidden cursor-pointer" data-lightbox-trigger data-img-url={img.url} data-img-alt={img.descripcion || 'Después del trabajo'}>
+                  <button 
+                    type="button"
+                    class="relative overflow-hidden cursor-pointer w-full text-left focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2" 
+                    data-lightbox-trigger 
+                    data-img-url={img.url} 
+                    data-img-alt={img.descripcion || 'Después del trabajo'}
+                    aria-label={`Ver imagen ampliada: ${img.descripcion || 'Después del trabajo'}`}
+                  >
                     <img
                       src={img.url}
                       alt={img.descripcion || 'Después del trabajo'}
-                      class="w-full h-auto transition-transform duration-300 group-hover:scale-105"
+                      class="w-full h-auto transition-transform duration-300 ease-out group-hover:scale-105"
                       loading="lazy"
                     />
-                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div class="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-200 ease-out"></div>
+                    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-out">
                       <span class="text-white text-4xl font-bold drop-shadow-lg">🔍</span>
                     </div>
-                  </div>
+                  </button>
                   {img.descripcion && (
-                    <p class="p-4 text-sm text-slate-600 font-medium italic">
+                    <p class="p-4 text-sm text-slate-600 font-medium italic leading-relaxed">
                       {img.descripcion}
                     </p>
                   )}
@@ -180,12 +219,19 @@ const tipoLabels = {
   )
 }
 
-{/* Lightbox Modal */}
-<div id="lightbox-modal" class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm cursor-pointer">
+<!-- Lightbox Modal -->
+<div 
+  id="lightbox-modal" 
+  class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm cursor-pointer transition-opacity duration-200 ease-out" 
+  role="dialog" 
+  aria-modal="true" 
+  aria-label="Visualización ampliada de imagen"
+>
   <button 
     id="lightbox-close" 
-    class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-orange-500 transition-colors z-10 cursor-pointer"
-    aria-label="Cerrar"
+    type="button"
+    class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-orange-500 hover:scale-110 transition-[color,transform] duration-200 ease-out z-10 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 w-12 h-12 flex items-center justify-center"
+    aria-label="Cerrar visualización ampliada"
   >
     ×
   </button>
@@ -194,10 +240,10 @@ const tipoLabels = {
       id="lightbox-img" 
       src="" 
       alt="" 
-      class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl"
+      class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl transition-transform duration-200 ease-out"
     />
   </div>
-  <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-6 py-3 bg-black/50 rounded-full max-w-2xl pointer-events-none"></p>
+  <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-6 py-3 bg-black/50 rounded-full max-w-2xl pointer-events-none backdrop-blur-sm"></p>
 </div>
 
 <script>
@@ -210,11 +256,13 @@ const tipoLabels = {
       button.addEventListener('click', () => {
         const targetTab = button.getAttribute('data-tab');
 
-        // Update buttons
+        // Update buttons and ARIA attributes
         tabButtons.forEach((btn) => {
           btn.setAttribute('data-active', 'false');
+          btn.setAttribute('aria-selected', 'false');
         });
         button.setAttribute('data-active', 'true');
+        button.setAttribute('aria-selected', 'true');
 
         // Update content
         tabContents.forEach((content) => {
@@ -228,11 +276,26 @@ const tipoLabels = {
           }
         });
       });
+
+      // Keyboard navigation for tabs
+      button.addEventListener('keydown', (e) => {
+        const evt = e as KeyboardEvent;
+        if (evt.key === 'ArrowRight' || evt.key === 'ArrowLeft') {
+          evt.preventDefault();
+          const buttons = Array.from(tabButtons);
+          const currentIndex = buttons.indexOf(button);
+          const nextIndex = evt.key === 'ArrowRight' 
+            ? (currentIndex + 1) % buttons.length 
+            : (currentIndex - 1 + buttons.length) % buttons.length;
+          (buttons[nextIndex] as HTMLElement).focus();
+          (buttons[nextIndex] as HTMLElement).click();
+        }
+      });
     });
 
     // Lightbox functionality
     const lightboxModal = document.getElementById('lightbox-modal');
-    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
     const lightboxCaption = document.getElementById('lightbox-caption');
     const lightboxClose = document.getElementById('lightbox-close');
     const triggers = document.querySelectorAll('[data-lightbox-trigger]');
@@ -249,6 +312,11 @@ const tipoLabels = {
           lightboxModal.classList.remove('hidden');
           lightboxModal.classList.add('flex');
           document.body.style.overflow = 'hidden'; // Prevent scrolling
+          
+          // Focus trap on modal
+          setTimeout(() => {
+            lightboxClose?.focus();
+          }, 100);
         }
       });
     });
