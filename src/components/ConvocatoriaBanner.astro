@@ -124,6 +124,7 @@ const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-"
 <dialog
   id={modalId}
   class="w-full max-w-3xl max-h-[90vh] rounded-[2rem] p-0 shadow-2xl backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm open:flex open:flex-col"
+  style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); margin: 0;"
   aria-labelledby={`${modalId}-title`}
   aria-modal="true"
 >
