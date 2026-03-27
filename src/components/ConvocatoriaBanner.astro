@@ -40,8 +40,8 @@ const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-"
       <rect width="100%" height="100%" fill="url(#dots)"/>
     </svg>
     <!-- Resplandor naranja en esquina superior derecha -->
-    <div class="absolute -top-20 -right-20 w-80 h-80 bg-orange-500/20 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+    <div class="absolute -top-20 -right-20 w-80 h-80 bg-orange-500/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-amber-500/5 rounded-full blur-2xl pointer-events-none"></div>
   </div>
 
   <!-- Contenido -->
@@ -108,7 +108,7 @@ const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-"
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-6 border-t border-white/10">
         {data.administrator && (
           <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">
-            Adm. {data.administrator}
+            Convoca la Administración
           </p>
         )}
         <div class="flex gap-3 sm:ml-auto">
