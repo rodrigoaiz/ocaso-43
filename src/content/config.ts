@@ -111,9 +111,27 @@ const trabajosRealizados = defineCollection({
   }),
 });
 
+const convocatorias = defineCollection({
+  type: "content",
+  schema: z.object({
+    title: z.string(),
+    assemblyDate: z.date(),
+    assemblyType: z.enum(["ordinaria", "extraordinaria"]),
+    location: z.string(),
+    firstCallTime: z.string(),   // "19:00"
+    secondCallTime: z.string(),  // "19:30"
+    thirdCallTime: z.string(),   // "20:00"
+    active: z.boolean().default(true),
+    publishedAt: z.date(),
+    pdfUrl: z.string().optional(),
+    administrator: z.string().optional(),
+  }),
+});
+
 export const collections = {
   minutas: minutas,
   documentos: documentos,
   "proyectos-votacion": proyectosVotacion,
   "trabajos-realizados": trabajosRealizados,
+  convocatorias: convocatorias,
 };

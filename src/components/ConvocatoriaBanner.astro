@@ -1,0 +1,237 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { render } from "astro:content";
+
+interface Props {
+  convocatoria: CollectionEntry<"convocatorias">;
+}
+
+const { convocatoria } = Astro.props;
+const { data } = convocatoria;
+const { Content } = await render(convocatoria);
+
+const assemblyDate = data.assemblyDate;
+const day = assemblyDate.getDate().toString().padStart(2, "0");
+const month = assemblyDate.toLocaleDateString("es-MX", { month: "long" });
+const year = assemblyDate.getFullYear();
+const weekday = assemblyDate.toLocaleDateString("es-MX", { weekday: "long" });
+
+const assemblyTypeLabel =
+  data.assemblyType === "ordinaria" ? "Ordinaria" : "Extraordinaria";
+
+const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-")}`;
+---
+
+<!-- Banner compacto -->
+<div
+  class="mb-12 lg:mb-16 rounded-[2rem] overflow-hidden border border-orange-200 shadow-xl shadow-orange-500/10 bg-white"
+  role="region"
+  aria-label="Convocatoria de Asamblea"
+>
+  <!-- Franja superior de acento -->
+  <div class="h-1.5 bg-gradient-to-r from-orange-400 via-orange-500 to-amber-400"></div>
+
+  <div class="p-6 sm:p-8 lg:p-10">
+    <div class="flex flex-col sm:flex-row gap-6 sm:items-center">
+
+      <!-- Ícono calendario -->
+      <div
+        class="w-20 h-20 shrink-0 rounded-2xl bg-orange-500 flex flex-col items-center justify-center shadow-lg shadow-orange-500/30"
+      >
+        <span class="text-[9px] font-black text-orange-200 uppercase tracking-[0.25em] leading-none">
+          {assemblyDate.toLocaleDateString("es-MX", { month: "short" })}
+        </span>
+        <span class="text-3xl font-black text-white leading-none mt-0.5">{day}</span>
+        <span class="text-[9px] font-black text-orange-200 leading-none mt-0.5">{year}</span>
+      </div>
+
+      <!-- Info principal -->
+      <div class="flex-grow min-w-0">
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span
+            class="text-[9px] font-black uppercase tracking-[0.4em] text-orange-500 bg-orange-50 border border-orange-100 rounded-full px-3 py-1"
+          >
+            Convocatoria
+          </span>
+          <span
+            class="text-[9px] font-black uppercase tracking-[0.35em] text-slate-400 bg-slate-50 border border-slate-100 rounded-full px-3 py-1"
+          >
+            Asamblea {assemblyTypeLabel}
+          </span>
+        </div>
+
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-tight mb-3">
+          {data.title}
+        </h2>
+
+        <div class="flex flex-wrap gap-x-6 gap-y-1.5 text-sm font-medium text-slate-500">
+          <span class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+            </svg>
+            <span class="capitalize">{weekday} {day} de {month} de {year}</span>
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+            </svg>
+            1a: {data.firstCallTime} · 2a: {data.secondCallTime} · 3a: {data.thirdCallTime} hrs
+          </span>
+          <span class="flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-orange-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+            </svg>
+            {data.location}
+          </span>
+        </div>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="flex flex-col sm:flex-col gap-2 shrink-0">
+        <button
+          id={`btn-open-${modalId}`}
+          class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-black text-[11px] uppercase tracking-widest transition-all shadow-md shadow-orange-500/25 hover:shadow-lg hover:shadow-orange-500/30 cursor-pointer"
+          aria-controls={modalId}
+          aria-expanded="false"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          </svg>
+          Ver convocatoria
+        </button>
+
+        {data.pdfUrl && (
+          <a
+            href={data.pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 font-black text-[11px] uppercase tracking-widest transition-all"
+          >
+            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>
+            Descargar PDF
+          </a>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal con texto completo -->
+<dialog
+  id={modalId}
+  class="w-full max-w-3xl max-h-[90vh] rounded-[2rem] p-0 shadow-2xl backdrop:bg-slate-900/60 backdrop:backdrop-blur-sm open:flex open:flex-col"
+  aria-labelledby={`${modalId}-title`}
+  aria-modal="true"
+>
+  <!-- Header del modal -->
+  <div class="flex items-center justify-between p-6 sm:p-8 border-b border-slate-100 shrink-0">
+    <div>
+      <span class="text-[9px] font-black uppercase tracking-[0.4em] text-orange-500 block mb-1">
+        Convocatoria Oficial
+      </span>
+      <h3
+        id={`${modalId}-title`}
+        class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-tight"
+      >
+        {data.title}
+      </h3>
+    </div>
+    <button
+      id={`btn-close-${modalId}`}
+      class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors shrink-0 ml-4 cursor-pointer"
+      aria-label="Cerrar"
+    >
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Contenido scrollable -->
+  <div class="overflow-y-auto p-6 sm:p-8 grow">
+    <div class="prose prose-slate prose-sm sm:prose-base max-w-none
+      prose-headings:font-black prose-headings:tracking-tight prose-headings:text-slate-900
+      prose-h2:text-base prose-h2:uppercase prose-h2:tracking-wider prose-h2:text-orange-600 prose-h2:border-b prose-h2:border-orange-100 prose-h2:pb-2
+      prose-h3:text-sm prose-h3:uppercase prose-h3:tracking-widest prose-h3:text-slate-500
+      prose-strong:text-slate-900 prose-strong:font-black
+      prose-p:text-slate-600 prose-p:leading-relaxed
+      prose-ol:text-slate-600
+      prose-hr:border-slate-100
+      prose-a:text-orange-500 prose-a:no-underline hover:prose-a:underline
+    ">
+      <Content />
+    </div>
+  </div>
+
+  <!-- Footer del modal -->
+  <div class="p-6 sm:p-8 border-t border-slate-100 shrink-0 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-50/50 rounded-b-[2rem]">
+    <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">
+      {data.administrator && `Administrador: ${data.administrator}`}
+    </p>
+    <div class="flex gap-2">
+      {data.pdfUrl && (
+        <a
+          href={data.pdfUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 hover:border-orange-200 text-slate-600 hover:text-orange-600 font-black text-[10px] uppercase tracking-widest transition-all"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Descargar PDF
+        </a>
+      )}
+      <button
+        id={`btn-close2-${modalId}`}
+        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-widest transition-colors cursor-pointer"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<script define:vars={{ modalId }}>
+  const modal = document.getElementById(modalId);
+  const btnOpen = document.getElementById(`btn-open-${modalId}`);
+  const btnClose = document.getElementById(`btn-close-${modalId}`);
+  const btnClose2 = document.getElementById(`btn-close2-${modalId}`);
+
+  function openModal() {
+    modal.showModal();
+    btnOpen.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    modal.close();
+    btnOpen.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  }
+
+  btnOpen?.addEventListener("click", openModal);
+  btnClose?.addEventListener("click", closeModal);
+  btnClose2?.addEventListener("click", closeModal);
+
+  // Cerrar al hacer clic en el backdrop
+  modal?.addEventListener("click", (e) => {
+    const rect = modal.getBoundingClientRect();
+    const isInDialog =
+      rect.top <= e.clientY &&
+      e.clientY <= rect.top + rect.height &&
+      rect.left <= e.clientX &&
+      e.clientX <= rect.left + rect.width;
+    if (!isInDialog) closeModal();
+  });
+
+  // Cerrar con Escape
+  modal?.addEventListener("cancel", (e) => {
+    e.preventDefault();
+    closeModal();
+  });
+</script>

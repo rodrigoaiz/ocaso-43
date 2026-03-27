@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { autoSyncTrabajosSilent } from "../lib/auto-sync-trabajos";
+import ConvocatoriaBanner from "../components/ConvocatoriaBanner.astro";
 
 // Auto-sync trabajos
 await autoSyncTrabajosSilent();
@@ -12,6 +13,13 @@ const trabajos = (await getCollection("trabajos-realizados"))
   .filter((t) => t.data.visible)
   .sort((a, b) => b.data.fecha_realizacion.getTime() - a.data.fecha_realizacion.getTime())
   .slice(0, 3); // Latest 3 trabajos
+
+// Obtener la convocatoria activa más próxima (se oculta automáticamente después de la asamblea)
+const convocatorias = await getCollection("convocatorias");
+const now = new Date();
+const activeConvocatoria = convocatorias
+  .filter((c) => c.data.active && c.data.assemblyDate > now)
+  .sort((a, b) => a.data.assemblyDate.getTime() - b.data.assemblyDate.getTime())[0];
 
 // Ordenar minutas por fecha descendente
 const sortedMinutas = minutas.sort(
@@ -43,6 +51,8 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
       </p>
     </div>
   </section>
+
+  {activeConvocatoria && <ConvocatoriaBanner convocatoria={activeConvocatoria} />}
 
   <div class="grid lg:grid-cols-12 gap-10 lg:gap-16">
     <div class="lg:col-span-8">
