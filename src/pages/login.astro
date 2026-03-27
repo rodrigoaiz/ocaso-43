@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
 
 let error = "";
 
@@ -8,11 +8,10 @@ if (Astro.request.method === "POST") {
     const data = await Astro.request.formData();
     const password = data.get("password");
 
-    // Password simple para vecinos
     if (password === "ocaso43adm") {
       Astro.cookies.set("ocaso_session", "active", {
         path: "/",
-        maxAge: 60 * 60 * 24 * 7, // 1 semana
+        maxAge: 60 * 60 * 24 * 7,
       });
       return Astro.redirect("/");
     } else {
@@ -26,113 +25,522 @@ if (Astro.request.method === "POST") {
 }
 ---
 
-<Layout
-  title="Acceso para Residentes"
-  description="Portal de acceso exclusivo para los residentes de Ocaso No. 43. Ingrese su código para consultar minutas y documentos oficiales."
->
-  <div class="max-w-xl mx-auto mt-12 mb-24">
-    <div
-      class="relative group p-1 lg:p-2 rounded-[3.5rem] bg-gradient-to-br from-orange-400 via-pink-500 to-violet-600 shadow-2xl shadow-orange-200 overflow-hidden"
-    >
-      <div
-        class="absolute inset-0 bg-white/20 backdrop-blur-3xl group-hover:scale-110 transition-transform duration-700"
-      >
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Acceso | Ocaso 43</title>
+    <meta name="description" content="Portal de acceso exclusivo para los residentes de Ocaso No. 43." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet" />
+  </head>
+
+  <body class="login-body">
+
+    <!-- Fondo oscuro con patrón y resplandores -->
+    <div class="login-bg">
+      <div class="glow-top"></div>
+      <div class="glow-bottom"></div>
+      <!-- Grid pattern -->
+      <svg class="grid-pattern" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="grid" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M 48 0 L 0 0 0 48" fill="none" stroke="white" stroke-width="0.5" opacity="0.06"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+      </svg>
+    </div>
+
+    <!-- "O" gigante de fondo decorativa -->
+    <div class="bg-letter" aria-hidden="true">43</div>
+
+    <!-- Contenedor principal: dos columnas en desktop -->
+    <div class="login-shell">
+
+      <!-- Lado izquierdo: branding -->
+      <div class="brand-side">
+        <div class="brand-content">
+          <div class="brand-logo">
+            <span>O</span>
+          </div>
+          <h1 class="brand-title">Ocaso <span>43</span></h1>
+          <p class="brand-sub">Portal de Administración</p>
+
+          <div class="brand-divider"></div>
+
+          <ul class="brand-features">
+            <li>
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z" /></svg>
+              Minutas de asamblea
+            </li>
+            <li>
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+              Documentos oficiales
+            </li>
+            <li>
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17 17.25 21A2.652 2.652 0 0 0 21 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 1 1-3.586-3.586l5.654-4.654m5.292-5.292 2.496-3.03a1.75 1.75 0 0 0-2.475-2.475l-3.03 2.496" /></svg>
+              Trabajos realizados
+            </li>
+          </ul>
+        </div>
       </div>
 
-      <div class="relative bg-white rounded-[3rem] p-8 sm:p-12 lg:p-16">
-        <div class="flex flex-col items-center mb-12">
-          <div
-            class="w-16 h-16 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 mb-6 font-black text-2xl italic shadow-inner"
-          >
-            O
-          </div>
-          <h1
-            class="text-4xl font-black text-slate-900 mb-3 tracking-tighter text-center"
-          >
-            Acceso Comunidad
-          </h1>
-          <p
-            class="text-slate-400 text-center font-bold text-xs uppercase tracking-[0.3em] leading-relaxed"
-          >
-            Administración Ocaso 43
-          </p>
-        </div>
+      <!-- Lado derecho: formulario -->
+      <div class="form-side">
+        <div class="form-card">
 
-        <form method="POST" class="space-y-8">
-          <div class="space-y-2">
-            <label
-              for="password"
-              class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2"
-              >Contraseña del Edificio</label
-            >
-            <input
-              type="password"
-              name="password"
-              id="password"
-              required
-              class="w-full px-6 py-5 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-orange-500 focus:bg-white outline-none transition-all font-bold text-slate-900 placeholder:text-slate-300 shadow-inner"
-              placeholder="Ingrese código de acceso"
-            />
+          <div class="form-header">
+            <span class="form-eyebrow">Acceso seguro</span>
+            <h2 class="form-title">Bienvenido</h2>
+            <p class="form-subtitle">Ingrese la contraseña del edificio para continuar</p>
           </div>
 
-          {
-            error && (
-              <div class="flex items-center gap-3 p-4 rounded-xl bg-red-50 text-red-500 border border-red-100 animate-shake">
-                <span class="text-lg">×</span>
-                <p class="text-[11px] font-black uppercase tracking-widest">
-                  {error}
-                </p>
+          <form method="POST" class="form-body">
+            <div class="field-group">
+              <label for="password" class="field-label">Contraseña del Edificio</label>
+              <input
+                type="password"
+                name="password"
+                id="password"
+                required
+                autocomplete="current-password"
+                class="field-input"
+                placeholder="••••••••••"
+              />
+            </div>
+
+            {error && (
+              <div class="error-box">
+                <svg class="error-icon" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+                <p>{error}</p>
               </div>
-            )
-          }
+            )}
 
-          <button
-            type="submit"
-            class="w-full h-16 bg-slate-900 text-white font-black text-xs uppercase tracking-[0.4em] rounded-2xl hover:bg-orange-600 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-slate-900/10"
-          >
-            Entrar al Portal
-          </button>
-        </form>
+            <button type="submit" class="submit-btn">
+              <span>Entrar al Portal</span>
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </button>
+          </form>
 
-        <div class="mt-8 text-center">
-          <a
-            href="/comision-vigilancia/login"
-            class="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-violet-50 to-pink-50 text-violet-600 hover:from-violet-100 hover:to-pink-100 font-bold text-xs uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-95 border border-violet-100"
-          >
-            <span>🗳️</span>
-            <span>Comisión de Vigilancia</span>
-          </a>
-          <p class="text-[9px] text-slate-300 font-bold uppercase tracking-widest mt-2">
-            Acceso exclusivo para miembros de la comisión
-          </p>
-        </div>
+          <div class="form-footer">
+            <div class="comision-link-wrap">
+              <a href="/comision-vigilancia/login" class="comision-link">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                </svg>
+                Comisión de Vigilancia
+              </a>
+              <p class="comision-note">Acceso exclusivo para miembros de la comisión</p>
+            </div>
+          </div>
 
-        <div class="mt-10 pt-10 border-t border-slate-50 text-center">
-          <p
-            class="text-[10px] text-slate-300 font-bold uppercase tracking-widest leading-loose"
-          >
-            Si no cuenta con su acceso, favor de solicitarlo al administrador.
-          </p>
         </div>
       </div>
     </div>
-  </div>
-</Layout>
+
+  </body>
+</html>
 
 <style>
-  @keyframes shake {
-    0%,
-    100% {
-      transform: translateX(0);
-    }
-    25% {
-      transform: translateX(-4px);
-    }
-    75% {
-      transform: translateX(4px);
-    }
+  :root {
+    --font-outfit: "Outfit", sans-serif;
+    --font-inter: "Inter", sans-serif;
   }
-  .animate-shake {
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .login-body {
+    font-family: var(--font-inter), sans-serif;
+    min-height: 100vh;
+    background: #0f172a;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: stretch;
+  }
+
+  /* Fondo */
+  .login-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: #0f172a;
+  }
+
+  .glow-top {
+    position: absolute;
+    top: -200px;
+    right: -100px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(249,115,22,0.18) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .glow-bottom {
+    position: absolute;
+    bottom: -200px;
+    left: -150px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+
+  .grid-pattern {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Número decorativo de fondo */
+  .bg-letter {
+    position: fixed;
+    right: -2rem;
+    bottom: -4rem;
+    font-family: var(--font-outfit), sans-serif;
+    font-size: clamp(12rem, 28vw, 28rem);
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255,255,255,0.04);
+    line-height: 1;
+    pointer-events: none;
+    z-index: 1;
+    user-select: none;
+    letter-spacing: -0.05em;
+  }
+
+  /* Shell de dos columnas */
+  .login-shell {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* --- Lado izquierdo: Branding --- */
+  .brand-side {
+    display: none;
+    flex: 1;
+    padding: 3rem;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+
+  @media (min-width: 1024px) {
+    .brand-side { display: flex; }
+  }
+
+  .brand-content {
+    max-width: 380px;
+  }
+
+  .brand-logo {
+    width: 64px;
+    height: 64px;
+    background: #f97316;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-outfit), sans-serif;
+    font-weight: 900;
+    font-size: 1.75rem;
+    font-style: italic;
+    color: white;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 0 1px rgba(249,115,22,0.3), 0 20px 40px rgba(249,115,22,0.25);
+  }
+
+  .brand-title {
+    font-family: var(--font-outfit), sans-serif;
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.75rem;
+  }
+
+  .brand-title span {
+    color: #f97316;
+  }
+
+  .brand-sub {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    color: #475569;
+    margin-bottom: 2.5rem;
+  }
+
+  .brand-divider {
+    width: 40px;
+    height: 2px;
+    background: #f97316;
+    margin-bottom: 2.5rem;
+    border-radius: 2px;
+  }
+
+  .brand-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .brand-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  .brand-features li svg {
+    width: 18px;
+    height: 18px;
+    color: #f97316;
+    flex-shrink: 0;
+  }
+
+  /* --- Lado derecho: formulario --- */
+  .form-side {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .form-side { flex: 0 0 480px; padding: 3rem 3.5rem; }
+  }
+
+  .form-card {
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* Header del form */
+  .form-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .form-eyebrow {
+    display: inline-block;
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.45em;
+    color: #f97316;
+    background: rgba(249,115,22,0.12);
+    border: 1px solid rgba(249,115,22,0.25);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .form-title {
+    font-family: var(--font-outfit), sans-serif;
+    font-size: clamp(2.5rem, 6vw, 3.5rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.75rem;
+  }
+
+  .form-subtitle {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    line-height: 1.5;
+  }
+
+  /* Form body */
+  .form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .field-label {
+    font-size: 0.625rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: #475569;
+  }
+
+  .field-input {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: var(--font-inter), sans-serif;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.1em;
+  }
+
+  .field-input::placeholder {
+    color: #1e293b;
+    letter-spacing: 0.3em;
+  }
+
+  .field-input:focus {
+    border-color: #f97316;
+    background: rgba(249,115,22,0.05);
+    box-shadow: 0 0 0 4px rgba(249,115,22,0.1);
+  }
+
+  /* Error */
+  .error-box {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 12px;
+    color: #fca5a5;
     animation: shake 0.3s ease-in-out;
+  }
+
+  .error-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    color: #ef4444;
+  }
+
+  .error-box p {
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* Botón submit */
+  .submit-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    padding: 1.125rem 1.5rem;
+    background: #f97316;
+    color: #ffffff;
+    font-family: var(--font-outfit), sans-serif;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.35em;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 8px 24px rgba(249,115,22,0.35);
+    margin-top: 0.5rem;
+  }
+
+  .submit-btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s;
+  }
+
+  .submit-btn:hover {
+    background: #ea6c0a;
+    box-shadow: 0 12px 32px rgba(249,115,22,0.45);
+    transform: translateY(-1px);
+  }
+
+  .submit-btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  /* Footer del form */
+  .form-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .comision-link-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .comision-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+  }
+
+  .comision-link svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .comision-link:hover {
+    border-color: rgba(255,255,255,0.25);
+    color: #ffffff;
+    background: rgba(255,255,255,0.05);
+  }
+
+  .comision-note {
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: #1e293b;
+    text-align: center;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
   }
 </style>
