@@ -1,0 +1,192 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { supabase } from '../../../lib/supabase';
+import type { Ticket } from '../../../lib/supabase';
+
+const comisionUser = Astro.locals.comisionUser;
+if (!comisionUser) return Astro.redirect('/comision-vigilancia/login');
+
+// Filtro de estado desde URL
+const filtro = (Astro.url.searchParams.get('estado') ?? 'todos') as string;
+const filtrosValidos = ['todos', 'abierto', 'en_proceso', 'resuelto'];
+const filtroActivo = filtrosValidos.includes(filtro) ? filtro : 'todos';
+
+// Query
+let query = supabase.from('tickets').select('*').order('created_at', { ascending: false });
+if (filtroActivo !== 'todos') {
+  query = query.eq('estado', filtroActivo);
+}
+
+const { data: tickets } = await query;
+const allTickets: Ticket[] = tickets ?? [];
+
+// Contadores globales (siempre sin filtro)
+const { data: allForCount } = await supabase.from('tickets').select('estado');
+const counts = {
+  todos:      allForCount?.length ?? 0,
+  abierto:    allForCount?.filter(t => t.estado === 'abierto').length ?? 0,
+  en_proceso: allForCount?.filter(t => t.estado === 'en_proceso').length ?? 0,
+  resuelto:   allForCount?.filter(t => t.estado === 'resuelto').length ?? 0,
+};
+
+function formatFecha(iso: string): string {
+  return new Date(iso).toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  });
+}
+
+const CATEGORIA_LABELS: Record<string, string> = {
+  queja: 'Queja', solicitud: 'Solicitud', sugerencia: 'Sugerencia',
+};
+
+const ESTADO_LABELS: Record<string, string> = {
+  abierto: 'Abierto', en_proceso: 'En proceso', resuelto: 'Resuelto',
+};
+
+const FILTROS = [
+  { value: 'todos',     label: 'Todos' },
+  { value: 'abierto',   label: 'Abiertos' },
+  { value: 'en_proceso', label: 'En proceso' },
+  { value: 'resuelto',  label: 'Resueltos' },
+];
+---
+
+<Layout title="Tickets - Comisión de Vigilancia">
+  <div class="max-w-4xl mx-auto">
+
+    <!-- Header -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-4">
+        <a href="/comision-vigilancia" class="text-[10px] font-black uppercase tracking-[0.35em] text-slate-400 hover:text-orange-500 transition-colors">
+          ← Dashboard
+        </a>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+          <span class="inline-block text-[9px] font-black uppercase tracking-[0.5em] text-orange-500 bg-orange-50 border border-orange-200 rounded-full px-3 py-1 mb-4">
+            Gestión
+          </span>
+          <h1 class="font-black text-4xl sm:text-5xl text-slate-900 tracking-tight leading-none"
+              style="font-family: 'Outfit', sans-serif;">
+            Solicitudes<br/>Vecinales
+          </h1>
+        </div>
+
+        <!-- Stats rápidos -->
+        <div class="flex gap-3 shrink-0">
+          <div class="text-center">
+            <div class="text-2xl font-black text-slate-900" style="font-family: 'Outfit', sans-serif;">{counts.abierto}</div>
+            <div class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Abiertos</div>
+          </div>
+          <div class="w-px bg-slate-200 self-stretch mx-1"></div>
+          <div class="text-center">
+            <div class="text-2xl font-black text-amber-500" style="font-family: 'Outfit', sans-serif;">{counts.en_proceso}</div>
+            <div class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">En proceso</div>
+          </div>
+          <div class="w-px bg-slate-200 self-stretch mx-1"></div>
+          <div class="text-center">
+            <div class="text-2xl font-black text-emerald-500" style="font-family: 'Outfit', sans-serif;">{counts.resuelto}</div>
+            <div class="text-[9px] font-black uppercase tracking-[0.3em] text-slate-400">Resueltos</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="flex flex-wrap gap-2 mb-6">
+      {FILTROS.map(f => (
+        <a
+          href={`/comision-vigilancia/tickets${f.value !== 'todos' ? `?estado=${f.value}` : ''}`}
+          class:list={[
+            "inline-flex items-center gap-2 px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-[0.35em] transition-all",
+            filtroActivo === f.value
+              ? "bg-slate-900 text-white shadow-md"
+              : "bg-white border border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700"
+          ]}
+        >
+          {f.label}
+          <span class:list={[
+            "text-[9px] px-1.5 py-0.5 rounded-full font-black",
+            filtroActivo === f.value ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"
+          ]}>
+            {counts[f.value as keyof typeof counts]}
+          </span>
+        </a>
+      ))}
+    </div>
+
+    <!-- Lista -->
+    {allTickets.length === 0 ? (
+      <div class="text-center py-20 bg-white rounded-3xl border border-slate-100">
+        <p class="text-[11px] font-black uppercase tracking-[0.4em] text-slate-400">Sin tickets en esta categoría</p>
+      </div>
+    ) : (
+      <div class="flex flex-col gap-3">
+        {allTickets.map((ticket) => (
+          <a
+            href={`/comision-vigilancia/tickets/${ticket.id}`}
+            class="group block bg-white border border-slate-100 hover:border-orange-200 rounded-2xl p-5 sm:p-6 transition-all hover:shadow-md hover:-translate-y-0.5"
+          >
+            <div class="flex items-start gap-4">
+              <div class:list={[
+                "mt-1.5 w-2.5 h-2.5 rounded-full shrink-0",
+                ticket.estado === 'abierto'    && "bg-slate-300",
+                ticket.estado === 'en_proceso' && "bg-amber-400",
+                ticket.estado === 'resuelto'   && "bg-emerald-400",
+              ]}></div>
+
+              <div class="flex-grow min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-2">
+                  <span class:list={[
+                    "text-[9px] font-black uppercase tracking-[0.4em] px-2.5 py-1 rounded-full border",
+                    ticket.categoria === 'queja'      && "text-red-600 bg-red-50 border-red-200",
+                    ticket.categoria === 'solicitud'  && "text-blue-600 bg-blue-50 border-blue-200",
+                    ticket.categoria === 'sugerencia' && "text-violet-600 bg-violet-50 border-violet-200",
+                  ]}>
+                    {CATEGORIA_LABELS[ticket.categoria]}
+                  </span>
+                  <span class:list={[
+                    "text-[9px] font-black uppercase tracking-[0.35em] px-2.5 py-1 rounded-full border",
+                    ticket.estado === 'abierto'    && "text-slate-500 bg-slate-50 border-slate-200",
+                    ticket.estado === 'en_proceso' && "text-amber-600 bg-amber-50 border-amber-200",
+                    ticket.estado === 'resuelto'   && "text-emerald-600 bg-emerald-50 border-emerald-200",
+                  ]}>
+                    {ESTADO_LABELS[ticket.estado]}
+                  </span>
+                  <span class="ml-auto text-[10px] font-bold text-slate-400">{formatFecha(ticket.created_at)}</span>
+                </div>
+
+                <h2 class="font-black text-slate-900 text-base sm:text-lg leading-tight tracking-tight mb-1.5 group-hover:text-orange-500 transition-colors"
+                    style="font-family: 'Outfit', sans-serif;">
+                  {ticket.titulo}
+                </h2>
+
+                <p class="text-slate-500 text-sm line-clamp-2 leading-relaxed mb-3">
+                  {ticket.descripcion}
+                </p>
+
+                <div class="flex flex-wrap gap-x-4 gap-y-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  <span>Depto. {ticket.departamento}</span>
+                  <span>·</span>
+                  <span>{ticket.nombre}</span>
+                  {ticket.estado === 'resuelto' && ticket.respondido_por && (
+                    <>
+                      <span>·</span>
+                      <span class="text-emerald-500">Respondido por {ticket.respondido_por}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <svg class="w-4 h-4 text-slate-300 group-hover:text-orange-400 shrink-0 mt-1 transition-colors" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </div>
+          </a>
+        ))}
+      </div>
+    )}
+
+  </div>
+</Layout>

@@ -141,3 +141,22 @@ export interface TrabajoConImagenes extends TrabajoRealizado {
 export interface TrabajoConProyecto extends TrabajoRealizado {
   proyecto?: ProyectoVotacion;
 }
+
+// ── Tickets / Solicitudes de Residentes ──────────────────────────────────────
+
+export type TicketCategoria = 'queja' | 'solicitud' | 'sugerencia';
+export type TicketEstado    = 'abierto' | 'en_proceso' | 'resuelto';
+
+export interface Ticket {
+  id:             string;
+  created_at:     string;
+  titulo:         string;
+  descripcion:    string;
+  categoria:      TicketCategoria;
+  nombre:         string;
+  departamento:   string;
+  estado:         TicketEstado;
+  respuesta:      string | null;
+  respondido_at:  string | null;
+  respondido_por: string | null;
+}

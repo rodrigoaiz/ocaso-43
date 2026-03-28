@@ -1,0 +1,290 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { supabase } from '../../../lib/supabase';
+import type { Ticket, TicketEstado } from '../../../lib/supabase';
+
+const comisionUser = Astro.locals.comisionUser;
+if (!comisionUser) return Astro.redirect('/comision-vigilancia/login');
+
+const { id } = Astro.params;
+if (!id) return Astro.redirect('/comision-vigilancia/tickets');
+
+const { data, error } = await supabase
+  .from('tickets')
+  .select('*')
+  .eq('id', id)
+  .single();
+
+if (error || !data) return Astro.redirect('/comision-vigilancia/tickets');
+
+const ticket: Ticket = data;
+
+function formatFecha(iso: string): string {
+  return new Date(iso).toLocaleDateString('es-MX', {
+    weekday: 'long', day: '2-digit', month: 'long', year: 'numeric',
+  });
+}
+
+function formatFechaCorta(iso: string): string {
+  return new Date(iso).toLocaleDateString('es-MX', {
+    day: '2-digit', month: 'short', year: 'numeric',
+  });
+}
+
+const CATEGORIA_LABELS: Record<string, string> = {
+  queja: 'Queja', solicitud: 'Solicitud', sugerencia: 'Sugerencia',
+};
+
+const ESTADO_LABELS: Record<string, string> = {
+  abierto: 'Abierto', en_proceso: 'En proceso', resuelto: 'Resuelto',
+};
+---
+
+<Layout title={`Ticket: ${ticket.titulo}`}>
+  <div class="max-w-2xl mx-auto">
+
+    <!-- Back -->
+    <a
+      href="/comision-vigilancia/tickets"
+      class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.35em] text-slate-400 hover:text-orange-500 transition-colors mb-8"
+    >
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+      </svg>
+      Volver a solicitudes
+    </a>
+
+    <!-- Ticket principal -->
+    <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm mb-6">
+      <div class:list={[
+        "h-1.5 w-full",
+        ticket.estado === 'abierto'    && "bg-slate-300",
+        ticket.estado === 'en_proceso' && "bg-amber-400",
+        ticket.estado === 'resuelto'   && "bg-emerald-400",
+      ]}></div>
+
+      <div class="p-6 sm:p-8">
+        <div class="flex flex-wrap items-center gap-2 mb-5">
+          <span class:list={[
+            "text-[9px] font-black uppercase tracking-[0.4em] px-2.5 py-1 rounded-full border",
+            ticket.categoria === 'queja'      && "text-red-600 bg-red-50 border-red-200",
+            ticket.categoria === 'solicitud'  && "text-blue-600 bg-blue-50 border-blue-200",
+            ticket.categoria === 'sugerencia' && "text-violet-600 bg-violet-50 border-violet-200",
+          ]}>
+            {CATEGORIA_LABELS[ticket.categoria]}
+          </span>
+          <span class:list={[
+            "text-[9px] font-black uppercase tracking-[0.35em] px-2.5 py-1 rounded-full border",
+            ticket.estado === 'abierto'    && "text-slate-500 bg-slate-50 border-slate-200",
+            ticket.estado === 'en_proceso' && "text-amber-600 bg-amber-50 border-amber-200",
+            ticket.estado === 'resuelto'   && "text-emerald-600 bg-emerald-50 border-emerald-200",
+          ]}>
+            {ESTADO_LABELS[ticket.estado]}
+          </span>
+          <span class="ml-auto text-[10px] font-bold text-slate-400 capitalize">{formatFecha(ticket.created_at)}</span>
+        </div>
+
+        <h1 class="font-black text-2xl sm:text-3xl text-slate-900 tracking-tight leading-tight mb-4"
+            style="font-family: 'Outfit', sans-serif;">
+          {ticket.titulo}
+        </h1>
+
+        <p class="text-slate-600 leading-relaxed text-sm sm:text-base whitespace-pre-wrap mb-6">
+          {ticket.descripcion}
+        </p>
+
+        <div class="pt-5 border-t border-slate-100 flex flex-wrap gap-x-6 gap-y-2 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+          <span>Depto. <span class="text-slate-600">{ticket.departamento}</span></span>
+          <span>Reportado por <span class="text-slate-600">{ticket.nombre}</span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cambio de estado rápido -->
+    <div class="bg-white border border-slate-100 rounded-2xl p-5 sm:p-6 mb-6">
+      <p class="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400 mb-4">Cambiar estado</p>
+      <div class="flex flex-wrap gap-2" id="estado-buttons">
+        {(['abierto', 'en_proceso', 'resuelto'] as TicketEstado[]).map(est => (
+          <button
+            data-estado={est}
+            data-ticket-id={ticket.id}
+            class:list={[
+              "estado-btn px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-[0.3em] border transition-all",
+              ticket.estado === est
+                ? est === 'abierto'    ? "bg-slate-100 border-slate-300 text-slate-700 cursor-default"
+                : est === 'en_proceso' ? "bg-amber-100 border-amber-300 text-amber-700 cursor-default"
+                :                        "bg-emerald-100 border-emerald-300 text-emerald-700 cursor-default"
+                : "bg-white border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-600"
+            ]}
+          >
+            {ESTADO_LABELS[est]}
+          </button>
+        ))}
+      </div>
+      <p id="estado-feedback" class="text-[10px] font-bold text-slate-400 mt-3 hidden"></p>
+    </div>
+
+    <!-- Respuesta existente -->
+    {ticket.respuesta && (
+      <div class="bg-emerald-50 border border-emerald-200 rounded-3xl overflow-hidden mb-6">
+        <div class="px-6 sm:px-8 py-4 border-b border-emerald-100 flex items-center gap-3">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center shrink-0">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-[9px] font-black uppercase tracking-[0.4em] text-emerald-600">Respuesta enviada</p>
+            <p class="text-[11px] font-bold text-emerald-700">
+              {ticket.respondido_por}
+              {ticket.respondido_at && <span class="font-normal text-emerald-600"> · {formatFechaCorta(ticket.respondido_at)}</span>}
+            </p>
+          </div>
+        </div>
+        <div class="p-6 sm:p-8">
+          <p class="text-emerald-800 leading-relaxed text-sm whitespace-pre-wrap">{ticket.respuesta}</p>
+        </div>
+      </div>
+    )}
+
+    <!-- Formulario de respuesta -->
+    <div class="bg-white border border-slate-100 rounded-3xl p-6 sm:p-8">
+      <h2 class="font-black text-lg text-slate-900 tracking-tight mb-1" style="font-family: 'Outfit', sans-serif;">
+        {ticket.respuesta ? 'Actualizar respuesta' : 'Responder solicitud'}
+      </h2>
+      <p class="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-5">
+        Como: <span class="text-orange-500">{comisionUser.username}</span>
+      </p>
+
+      <form id="respuesta-form">
+        <input type="hidden" name="id" value={ticket.id} />
+
+        <div class="mb-5">
+          <label for="respuesta" class="block text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 mb-2">
+            Respuesta <span class="text-orange-500">*</span>
+          </label>
+          <textarea
+            id="respuesta"
+            name="respuesta"
+            rows="6"
+            required
+            maxlength="3000"
+            placeholder="Escribe la respuesta oficial de la Comisión de Vigilancia..."
+            class="w-full p-4 bg-slate-50 border-1.5 border-slate-200 focus:border-orange-400 focus:bg-white rounded-2xl text-slate-800 text-sm font-medium leading-relaxed resize-none outline-none transition-all focus:shadow-[0_0_0_3px_rgba(249,115,22,0.1)]"
+          >{ticket.respuesta ?? ''}</textarea>
+        </div>
+
+        <div id="resp-error" class="hidden items-center gap-3 p-3.5 bg-red-50 border border-red-200 rounded-xl text-red-700 mb-4">
+          <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+          </svg>
+          <p id="resp-error-msg" class="text-[11px] font-black uppercase tracking-widest"></p>
+        </div>
+
+        <button
+          type="submit"
+          id="resp-submit"
+          class="w-full flex items-center justify-center gap-2.5 py-3.5 px-6 bg-slate-900 hover:bg-slate-800 text-white font-black text-[11px] uppercase tracking-[0.35em] rounded-2xl transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
+          </svg>
+          <span id="resp-label">{ticket.respuesta ? 'Actualizar respuesta' : 'Enviar respuesta'}</span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+</Layout>
+
+<script>
+  // === Cambio de estado ===
+  const estadoBtns = document.querySelectorAll<HTMLButtonElement>('.estado-btn');
+  const estadoFeedback = document.getElementById('estado-feedback')!;
+
+  estadoBtns.forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const nuevoEstado = btn.dataset.estado!;
+      const ticketId    = btn.dataset.ticketId!;
+
+      try {
+        const res = await fetch('/api/tickets/estado', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: ticketId, estado: nuevoEstado }),
+        });
+
+        if (res.ok) {
+          estadoFeedback.textContent = '✓ Estado actualizado';
+          estadoFeedback.className = 'text-[10px] font-bold text-emerald-500 mt-3';
+          estadoFeedback.classList.remove('hidden');
+          // Recargar para reflejar cambios
+          setTimeout(() => window.location.reload(), 800);
+        } else {
+          const json = await res.json();
+          estadoFeedback.textContent = json.error ?? 'Error al actualizar';
+          estadoFeedback.className = 'text-[10px] font-bold text-red-500 mt-3';
+          estadoFeedback.classList.remove('hidden');
+        }
+      } catch {
+        estadoFeedback.textContent = 'Error de conexión';
+        estadoFeedback.className = 'text-[10px] font-bold text-red-500 mt-3';
+        estadoFeedback.classList.remove('hidden');
+      }
+    });
+  });
+
+  // === Respuesta ===
+  const respForm    = document.getElementById('respuesta-form') as HTMLFormElement;
+  const respSubmit  = document.getElementById('resp-submit') as HTMLButtonElement;
+  const respLabel   = document.getElementById('resp-label') as HTMLSpanElement;
+  const respError   = document.getElementById('resp-error') as HTMLDivElement;
+  const respErrorMsg = document.getElementById('resp-error-msg') as HTMLParagraphElement;
+
+  function showRespError(msg: string) {
+    respErrorMsg.textContent = msg;
+    respError.classList.remove('hidden');
+    respError.classList.add('flex');
+  }
+
+  respForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    respError.classList.add('hidden');
+    respError.classList.remove('flex');
+
+    const data = new FormData(respForm);
+    const payload = {
+      id:        data.get('id') as string,
+      respuesta: (data.get('respuesta') as string)?.trim(),
+    };
+
+    if (!payload.respuesta) {
+      showRespError('La respuesta no puede estar vacía');
+      return;
+    }
+
+    respSubmit.disabled = true;
+    respLabel.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch('/api/tickets/responder', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        const json = await res.json();
+        showRespError(json.error ?? 'Error al enviar');
+        respSubmit.disabled = false;
+        respLabel.textContent = 'Enviar respuesta';
+      }
+    } catch {
+      showRespError('Error de conexión');
+      respSubmit.disabled = false;
+      respLabel.textContent = 'Enviar respuesta';
+    }
+  });
+</script>
