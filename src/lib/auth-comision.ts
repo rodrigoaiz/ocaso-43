@@ -85,6 +85,7 @@ export function getComisionSession(cookies: AstroCookies): SessionData | null {
 
 /**
  * Validar sesión de comisión y obtener usuario
+ * Confía en la cookie si es válida (no consulta Supabase en cada request)
  */
 export async function validateComisionSession(
   cookies: AstroCookies
@@ -95,21 +96,15 @@ export async function validateComisionSession(
     return null;
   }
 
-  const supabase = createSupabaseClient();
-
-  // Verificar que el usuario sigue activo
-  const { data: user, error } = await supabase
-    .from('comision_usuarios')
-    .select('*')
-    .eq('id', session.userId)
-    .eq('activo', true)
-    .single();
-
-  if (error || !user) {
-    return null;
-  }
-
-  return user;
+  // Reconstruir el objeto ComisionUsuario desde la sesión
+  // La cookie ya fue validada contra Supabase al momento del login
+  return {
+    id: session.userId,
+    username: session.username,
+    rol: session.rol,
+    activo: true,
+    created_at: '',
+  };
 }
 
 /**
