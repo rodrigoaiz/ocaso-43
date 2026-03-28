@@ -24,7 +24,7 @@ export const POST: APIRoute = async ({ request, cookies, redirect }) => {
   if (!nombre?.trim())       return new Response(JSON.stringify({ error: 'El nombre es obligatorio' }), { status: 422 });
   if (!departamento?.trim()) return new Response(JSON.stringify({ error: 'El departamento es obligatorio' }), { status: 422 });
 
-  const categorias = ['queja', 'solicitud', 'sugerencia'];
+  const categorias = ['reporte', 'solicitud', 'sugerencia'];
   if (!categorias.includes(categoria)) {
     return new Response(JSON.stringify({ error: 'Categoría inválida' }), { status: 422 });
   }

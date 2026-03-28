@@ -36,7 +36,7 @@ function formatFecha(iso: string): string {
 }
 
 const CATEGORIA_LABELS: Record<string, string> = {
-  queja: 'Queja', solicitud: 'Solicitud', sugerencia: 'Sugerencia',
+  reporte: 'Reporte', solicitud: 'Solicitud', sugerencia: 'Sugerencia',
 };
 
 const ESTADO_LABELS: Record<string, string> = {
@@ -140,7 +140,7 @@ const FILTROS = [
                 <div class="flex flex-wrap items-center gap-2 mb-2">
                   <span class:list={[
                     "text-[9px] font-black uppercase tracking-[0.4em] px-2.5 py-1 rounded-full border",
-                    ticket.categoria === 'queja'      && "text-red-600 bg-red-50 border-red-200",
+                    ticket.categoria === 'reporte'    && "text-red-600 bg-red-50 border-red-200",
                     ticket.categoria === 'solicitud'  && "text-blue-600 bg-blue-50 border-blue-200",
                     ticket.categoria === 'sugerencia' && "text-violet-600 bg-violet-50 border-violet-200",
                   ]}>

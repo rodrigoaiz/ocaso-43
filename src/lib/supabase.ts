@@ -144,7 +144,7 @@ export interface TrabajoConProyecto extends TrabajoRealizado {
 
 // ── Tickets / Solicitudes de Residentes ──────────────────────────────────────
 
-export type TicketCategoria = 'queja' | 'solicitud' | 'sugerencia';
+export type TicketCategoria = 'reporte' | 'solicitud' | 'sugerencia';
 export type TicketEstado    = 'abierto' | 'en_proceso' | 'resuelto';
 
 export interface Ticket {

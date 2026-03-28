@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS tickets (
   created_at      timestamptz DEFAULT now() NOT NULL,
   titulo          text NOT NULL,
   descripcion     text NOT NULL,
-  categoria       text NOT NULL CHECK (categoria IN ('queja', 'solicitud', 'sugerencia')),
+  categoria       text NOT NULL CHECK (categoria IN ('reporte', 'solicitud', 'sugerencia')),
   nombre          text NOT NULL,
   departamento    text NOT NULL,
   estado          text NOT NULL DEFAULT 'abierto' CHECK (estado IN ('abierto', 'en_proceso', 'resuelto')),

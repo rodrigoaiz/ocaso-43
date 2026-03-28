@@ -23,7 +23,7 @@ function formatFecha(iso: string): string {
 }
 
 const CATEGORIA_LABELS: Record<string, string> = {
-  queja:      'Queja',
+  reporte:    'Reporte',
   solicitud:  'Solicitud',
   sugerencia: 'Sugerencia',
 };
@@ -35,7 +35,7 @@ const ESTADO_LABELS: Record<string, string> = {
 };
 ---
 
-<Layout title="Solicitudes y Quejas">
+<Layout title="Solicitudes y Reportes">
   <div class="max-w-4xl mx-auto">
 
     <!-- Header -->
@@ -47,7 +47,7 @@ const ESTADO_LABELS: Record<string, string> = {
           </span>
           <h1 class="font-black text-4xl sm:text-5xl text-slate-900 tracking-tight leading-none mb-3"
               style="font-family: 'Outfit', sans-serif;">
-            Solicitudes &<br/>Quejas
+            Solicitudes &<br/>Reportes
           </h1>
           <p class="text-slate-500 text-sm font-medium max-w-sm leading-relaxed">
             Comunica incidencias, solicitudes de servicio o sugerencias directamente a la Comisión de Vigilancia.
@@ -117,7 +117,7 @@ const ESTADO_LABELS: Record<string, string> = {
                   <!-- Categoría badge -->
                   <span class:list={[
                     "text-[9px] font-black uppercase tracking-[0.4em] px-2.5 py-1 rounded-full border",
-                    ticket.categoria === 'queja'      && "text-red-600 bg-red-50 border-red-200",
+                    ticket.categoria === 'reporte'     && "text-red-600 bg-red-50 border-red-200",
                     ticket.categoria === 'solicitud'  && "text-blue-600 bg-blue-50 border-blue-200",
                     ticket.categoria === 'sugerencia' && "text-violet-600 bg-violet-50 border-violet-200",
                   ]}>
