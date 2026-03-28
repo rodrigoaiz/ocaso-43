@@ -45,16 +45,27 @@ const ESTADO_LABELS: Record<string, string> = {
 <Layout title={ticket.titulo}>
   <div class="max-w-2xl mx-auto">
 
-    <!-- Back -->
-    <a
-      href="/solicitudes"
-      class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.35em] text-slate-400 hover:text-orange-500 transition-colors mb-8"
-    >
-      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-      </svg>
-      Todas las solicitudes
-    </a>
+    <!-- Back + Nueva solicitud -->
+    <div class="flex items-center justify-between mb-8">
+      <a
+        href="/solicitudes"
+        class="inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.35em] text-slate-400 hover:text-orange-500 transition-colors"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Todas las solicitudes
+      </a>
+      <a
+        href="/solicitudes/nuevo"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-black text-[10px] uppercase tracking-[0.3em] rounded-xl transition-all shadow-sm shadow-orange-200 hover:-translate-y-0.5"
+      >
+        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+        Nueva
+      </a>
+    </div>
 
     <!-- Ticket card principal -->
     <div class="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-sm mb-6">
