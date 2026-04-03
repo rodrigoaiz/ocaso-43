@@ -34,6 +34,7 @@ const proyectosVotacion = defineCollection({
     proveedor: z.string().optional(),
     descripcion_corta: z.string().optional(),
     votacion_abierta: z.boolean().default(true), // Si false, la votación está cerrada
+    visible_publico: z.boolean().default(false), // Si true, se muestra en la homepage a todos los residentes
     
     // NUEVO: Tipo de votación
     tipo_votacion: z.enum(['binaria', 'seleccion']).default('binaria'),

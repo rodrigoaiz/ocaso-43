@@ -3,11 +3,17 @@ import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import { autoSyncTrabajosSilent } from "../lib/auto-sync-trabajos";
 import ConvocatoriaBanner from "../components/ConvocatoriaBanner.astro";
+import ProyectoPublicoCard from "../components/ProyectoPublicoCard.astro";
 import { supabase } from "../lib/supabase";
 import type { Ticket } from "../lib/supabase";
 
 // Auto-sync trabajos
 await autoSyncTrabajosSilent();
+
+// Proyectos públicos (visible_publico: true), ordenados por fecha desc
+const proyectosPublicos = (await getCollection("proyectos-votacion"))
+  .filter((p) => p.data.visible_publico)
+  .sort((a, b) => b.data.fecha.getTime() - a.data.fecha.getTime());
 
 // Últimas solicitudes resueltas con respuesta
 const { data: ticketsResueltos } = await supabase
@@ -67,6 +73,29 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
   </section>
 
   {activeConvocatoria && <ConvocatoriaBanner convocatoria={activeConvocatoria} />}
+
+  {proyectosPublicos.length > 0 && (
+    <section class="mb-12 lg:mb-16">
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-3">
+        <div>
+          <span class="text-[10px] font-black uppercase tracking-[0.4em] text-violet-500 mb-2 block">
+            Comisión de Vigilancia
+          </span>
+          <h2 class="text-3xl font-black text-slate-900">
+            Proyectos en Consideración
+          </h2>
+          <p class="text-sm text-slate-500 font-medium mt-1">
+            Propuestas que la comisión está evaluando para el condominio.
+          </p>
+        </div>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-6">
+        {proyectosPublicos.map((proyecto) => (
+          <ProyectoPublicoCard proyecto={proyecto} />
+        ))}
+      </div>
+    </section>
+  )}
 
   <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 overflow-hidden">
     <div class="lg:col-span-8 min-w-0">
