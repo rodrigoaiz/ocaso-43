@@ -4,8 +4,10 @@ import Layout from "../layouts/Layout.astro";
 import { autoSyncTrabajosSilent } from "../lib/auto-sync-trabajos";
 import ConvocatoriaBanner from "../components/ConvocatoriaBanner.astro";
 import ProyectoPublicoCard from "../components/ProyectoPublicoCard.astro";
+import PageNav from "../components/PageNav.astro";
 import { supabase } from "../lib/supabase";
 import type { Ticket } from "../lib/supabase";
+import type { NavSection } from "../components/PageNav.astro";
 
 // Auto-sync trabajos
 await autoSyncTrabajosSilent();
@@ -51,10 +53,20 @@ const latestMinutas = sortedMinutas.slice(0, 3);
 const years = [...new Set(minutas.map((m) => m.data.year))].sort(
   (a, b) => b - a,
 );
+
+// Secciones para PageNav (solo las que tienen contenido)
+const navSections: NavSection[] = [
+  { id: "inicio", label: "Inicio" },
+  ...(activeConvocatoria ? [{ id: "convocatoria", label: "Asamblea", color: "!border-violet-400" }] : []),
+  ...(proyectosPublicos.length > 0 ? [{ id: "proyectos", label: "Proyectos" }] : []),
+  { id: "trabajos", label: "Trabajos" },
+  ...(resueltasRecientes.length > 0 ? [{ id: "solicitudes", label: "Solicitudes" }] : []),
+  { id: "minutas", label: "Minutas" },
+];
 ---
 
 <Layout title="Inicio">
-  <section class="mb-16 lg:mb-24 relative overflow-clip">
+  <section id="inicio" class="mb-16 lg:mb-24 relative overflow-clip">
     <div
       class="absolute top-0 left-0 w-64 h-64 bg-orange-100/50 rounded-full blur-3xl -z-10 -translate-x-1/2 -translate-y-1/2"
     >
@@ -72,10 +84,10 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
     </div>
   </section>
 
-  {activeConvocatoria && <ConvocatoriaBanner convocatoria={activeConvocatoria} />}
+  {activeConvocatoria && <div id="convocatoria"><ConvocatoriaBanner convocatoria={activeConvocatoria} /></div>}
 
   {proyectosPublicos.length > 0 && (
-    <section class="mb-12 lg:mb-16">
+    <section id="proyectos" class="mb-12 lg:mb-16">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-3">
         <div>
           <span class="text-[10px] font-black uppercase tracking-[0.4em] text-violet-500 mb-2 block">
@@ -100,7 +112,7 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
   <div class="grid lg:grid-cols-12 gap-10 lg:gap-16 overflow-hidden">
     <div class="lg:col-span-8 min-w-0">
       <!-- Trabajos Realizados Section (moved up) -->
-      <div class="mb-20">
+      <div id="trabajos" class="mb-20">
         <div
           class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4"
         >
@@ -229,7 +241,7 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
 
       <!-- Widget: Solicitudes resueltas -->
       {resueltasRecientes.length > 0 && (
-        <div class="mb-20">
+        <div id="solicitudes" class="mb-20">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-3">
             <div>
               <span class="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-600 mb-2 block">
@@ -298,7 +310,7 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
       )}
 
       <!-- Últimas Sesiones Section (moved down) -->
-      <div
+      <div id="minutas"
         class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-10 gap-4"
       >
         <div>
@@ -418,4 +430,6 @@ const years = [...new Set(minutas.map((m) => m.data.year))].sort(
       </div>
     </aside>
   </div>
+
+  <PageNav sections={navSections} />
 </Layout>

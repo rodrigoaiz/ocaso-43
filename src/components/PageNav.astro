@@ -1,0 +1,91 @@
+---
+export interface NavSection {
+  id: string;
+  label: string;
+  color?: string; // tailwind text color class for the dot
+}
+
+interface Props {
+  sections: NavSection[];
+}
+
+const { sections } = Astro.props;
+---
+
+<!-- Sidebar nav — solo visible en lg+, fixed a la derecha -->
+<nav
+  id="page-nav"
+  aria-label="Navegación de secciones"
+  class="hidden lg:flex fixed right-6 xl:right-8 top-1/2 -translate-y-1/2 z-40 flex-col items-end gap-3"
+>
+  {sections.map((section) => (
+    <a
+      href={`#${section.id}`}
+      data-section={section.id}
+      class="page-nav-item group flex items-center gap-3 cursor-pointer"
+      aria-label={section.label}
+    >
+      <!-- Label (aparece al hover, desde la derecha) -->
+      <span class="page-nav-label opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-200 text-[10px] font-black uppercase tracking-widest text-slate-500 bg-white/90 backdrop-blur-sm border border-slate-100 px-2.5 py-1 rounded-lg shadow-sm whitespace-nowrap select-none pointer-events-none">
+        {section.label}
+      </span>
+      <!-- Dot -->
+      <span
+        class={`page-nav-dot w-2 h-2 rounded-full border-2 border-slate-300 bg-transparent transition-all duration-200 group-hover:scale-125 group-hover:border-orange-400 ${section.color ?? ''}`}
+      ></span>
+    </a>
+  ))}
+</nav>
+
+<script>
+  const navItems = document.querySelectorAll<HTMLAnchorElement>('.page-nav-item');
+  const dots = document.querySelectorAll<HTMLSpanElement>('.page-nav-dot');
+
+  function getActiveSectionId(): string | null {
+    const ids = Array.from(navItems).map((a) => a.dataset.section!);
+    // Encuentra la sección más cercana al top del viewport (con offset del navbar ~80px)
+    const offset = 120;
+    let active: string | null = null;
+    for (const id of ids) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+      const top = el.getBoundingClientRect().top;
+      if (top <= offset) {
+        active = id;
+      }
+    }
+    return active ?? (ids[0] ?? null);
+  }
+
+  function updateActive() {
+    const activeId = getActiveSectionId();
+    navItems.forEach((item, i) => {
+      const dot = dots[i];
+      if (!dot) return;
+      if (item.dataset.section === activeId) {
+        dot.classList.add('bg-orange-500', 'border-orange-500', 'scale-125');
+        dot.classList.remove('bg-transparent', 'border-slate-300');
+      } else {
+        dot.classList.remove('bg-orange-500', 'border-orange-500', 'scale-125');
+        dot.classList.add('bg-transparent', 'border-slate-300');
+      }
+    });
+  }
+
+  // Scroll suave al hacer click
+  navItems.forEach((item) => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = item.dataset.section;
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      const navbarHeight = 80;
+      const top = target.getBoundingClientRect().top + window.scrollY - navbarHeight;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  });
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+</script>
