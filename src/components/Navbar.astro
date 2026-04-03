@@ -75,139 +75,84 @@
       </ul>
     </nav>
 
-    <!-- Menú Móvil Overlay -->
-    <div
-      id="mobile-menu"
-      class="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-3xl z-50 flex flex-col items-center justify-center lg:hidden transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-[-20px] min-h-[calc(100vh-100%)] w-full"
-    >
-      <!-- Decoración de fondo -->
-      <div
-        class="absolute inset-0 bg-gradient-to-b from-orange-50/50 via-white to-violet-50/50 -z-10"
-      >
-      </div>
-
-      <nav class="relative z-10 w-full px-8 flex flex-col items-center">
-        <ul class="flex flex-col gap-8 text-center">
-          <li>
-            <a
-              href="/"
-              class="mobile-nav-link group flex flex-col items-center"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >01</span
-              >
-              <span
-                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
-                >Inicio</span
-              >
-            </a>
-          </li>
-          <li>
-            <a
-              href="/minutas"
-              class="mobile-nav-link group flex flex-col items-center"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >02</span
-              >
-              <span
-                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
-                >Minutas</span
-              >
-            </a>
-          </li>
-          <li>
-            <a
-              href="/documentos"
-              class="mobile-nav-link group flex flex-col items-center"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >03</span
-              >
-              <span
-                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
-                >Documentos</span
-              >
-            </a>
-          </li>
-          <li>
-            <a
-              href="/trabajos"
-              class="mobile-nav-link group flex flex-col items-center"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-[0.4em] text-pink-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >04</span
-              >
-              <span
-                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-pink-500 transition-all"
-                >Trabajos</span
-              >
-            </a>
-          </li>
-          <li>
-            <a
-              href="/solicitudes"
-              class="mobile-nav-link group flex flex-col items-center"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >05</span
-              >
-              <span
-                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all"
-                >Solicitudes</span
-              >
-            </a>
-          </li>
-          <li>
-            <a
-              href={Astro.locals.comisionUser ? "/comision-vigilancia" : "/comision-vigilancia/login"}
-              class="mobile-nav-link group flex flex-col items-center"
-            >
-              <span
-                class="text-xs font-black uppercase tracking-[0.4em] text-violet-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2"
-                >06</span
-              >
-              <span
-                class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-violet-500 transition-all"
-                >Comisión</span
-              >
-            </a>
-          </li>
-        </ul>
-
-        <div class="mt-20 flex flex-col items-center gap-4">
-          <div class="w-10 h-px bg-slate-200"></div>
-          <p
-            class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400"
-          >
-            Ocaso 43
-          </p>
-        </div>
-      </nav>
-    </div>
   </div>
 </header>
 
+<!-- Menú Móvil Overlay (fixed, fuera del header) -->
+<div
+  id="mobile-menu"
+  class="fixed inset-0 bg-white/95 backdrop-blur-3xl z-[100] flex flex-col items-center justify-center lg:hidden transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-[-20px]"
+>
+  <!-- Decoración de fondo -->
+  <div
+    class="absolute inset-0 bg-gradient-to-b from-orange-50/50 via-white to-violet-50/50 -z-10"
+  ></div>
+
+  <!-- Botón cerrar dentro del overlay -->
+  <button
+    id="menu-close"
+    class="fixed top-6 right-4 z-10 w-10 h-10 flex flex-col items-center justify-center gap-1.5 focus:outline-none"
+    aria-label="Cerrar menú"
+  >
+    <span class="w-6 h-0.5 bg-slate-900 origin-center" style="transform: rotate(45deg) translate(3px, 3px)"></span>
+    <span class="w-6 h-0.5 bg-slate-900 origin-center" style="transform: rotate(-45deg) translate(2px, -3px)"></span>
+  </button>
+
+  <nav class="relative z-10 w-full px-8 flex flex-col items-center">
+    <ul class="flex flex-col gap-8 text-center">
+      <li>
+        <a href="/" class="mobile-nav-link group flex flex-col items-center">
+          <span class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2">01</span>
+          <span class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all">Inicio</span>
+        </a>
+      </li>
+      <li>
+        <a href="/minutas" class="mobile-nav-link group flex flex-col items-center">
+          <span class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2">02</span>
+          <span class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all">Minutas</span>
+        </a>
+      </li>
+      <li>
+        <a href="/documentos" class="mobile-nav-link group flex flex-col items-center">
+          <span class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2">03</span>
+          <span class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all">Documentos</span>
+        </a>
+      </li>
+      <li>
+        <a href="/trabajos" class="mobile-nav-link group flex flex-col items-center">
+          <span class="text-xs font-black uppercase tracking-[0.4em] text-pink-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2">04</span>
+          <span class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-pink-500 transition-all">Trabajos</span>
+        </a>
+      </li>
+      <li>
+        <a href="/solicitudes" class="mobile-nav-link group flex flex-col items-center">
+          <span class="text-xs font-black uppercase tracking-[0.4em] text-orange-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2">05</span>
+          <span class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-orange-500 transition-all">Solicitudes</span>
+        </a>
+      </li>
+      <li>
+        <a href={Astro.locals.comisionUser ? "/comision-vigilancia" : "/comision-vigilancia/login"} class="mobile-nav-link group flex flex-col items-center">
+          <span class="text-xs font-black uppercase tracking-[0.4em] text-violet-400 opacity-0 group-hover:opacity-100 transition-opacity mb-2">06</span>
+          <span class="text-4xl font-black text-slate-900 tracking-tighter group-hover:text-violet-500 transition-all">Comisión</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="mt-20 flex flex-col items-center gap-4">
+      <div class="w-10 h-px bg-slate-200"></div>
+      <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400">Ocaso 43</p>
+    </div>
+  </nav>
+</div>
+
 <script>
   const menuToggle = document.getElementById("menu-toggle");
+  const menuClose = document.getElementById("menu-close");
   const mobileMenu = document.getElementById("mobile-menu");
-  const spans = menuToggle?.querySelectorAll("span");
   const body = document.body;
 
-  menuToggle?.addEventListener("click", () => {
-    const isOpen = mobileMenu?.classList.contains("opacity-100");
-
-    if (isOpen) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
-  });
+  menuToggle?.addEventListener("click", openMenu);
+  menuClose?.addEventListener("click", closeMenu);
 
   // Cerrar al hacer click en un enlace
   const links = document.querySelectorAll(".mobile-nav-link");
@@ -223,12 +168,6 @@
     );
     mobileMenu?.classList.add("opacity-100", "translate-y-0");
     body.style.overflow = "hidden";
-
-    if (spans) {
-      spans[0].style.transform = "rotate(45deg) translate(6px, 6px)";
-      spans[1].style.opacity = "0";
-      spans[2].style.transform = "rotate(-45deg) translate(5px, -5px)";
-    }
   }
 
   function closeMenu() {
@@ -239,12 +178,6 @@
     );
     mobileMenu?.classList.remove("opacity-100", "translate-y-0");
     body.style.overflow = "";
-
-    if (spans) {
-      spans[0].style.transform = "";
-      spans[1].style.opacity = "1";
-      spans[2].style.transform = "";
-    }
   }
 
   // Opacidad del header al hacer scroll
