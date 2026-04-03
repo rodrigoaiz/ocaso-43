@@ -18,6 +18,7 @@ const formatMonto = (monto: number) =>
 const categoriaIcons: Record<string, string> = {
   "Seguridad": "🔒",
   "Mantenimiento": "🔧",
+  "Mantenimiento Urgente": "⚠️",
   "Compras y Suministros": "🛒",
   "Compras": "🛒",
   "Mejoras": "✨",
@@ -25,42 +26,63 @@ const categoriaIcons: Record<string, string> = {
   "Emergencias": "🚨",
 };
 const icon = data.categoria ? (categoriaIcons[data.categoria] ?? "📋") : "📋";
+
+// Lógica de presupuesto: rango o valor único
+const hasRange = data.presupuesto_min != null || data.presupuesto_max != null;
+const presupuestoDisplay = (() => {
+  if (hasRange) {
+    if (data.presupuesto_min != null && data.presupuesto_max != null) {
+      return `${formatMonto(data.presupuesto_min)} – ${formatMonto(data.presupuesto_max)}`;
+    }
+    if (data.presupuesto_max != null) return `hasta ${formatMonto(data.presupuesto_max)}`;
+    if (data.presupuesto_min != null) return `desde ${formatMonto(data.presupuesto_min)}`;
+  }
+  if (data.presupuesto_estimado != null) return formatMonto(data.presupuesto_estimado);
+  return null;
+})();
+const isRange = hasRange && data.presupuesto_min != null && data.presupuesto_max != null;
 ---
 
-<article class="rounded-[2rem] overflow-hidden border border-slate-200 bg-white shadow-sm">
-
+<a
+  href={`/proyectos/${proyecto.slug}`}
+  class="group block rounded-[2rem] overflow-hidden border border-slate-200 bg-white shadow-sm hover:shadow-xl hover:shadow-violet-500/5 hover:border-violet-200 transition-all duration-200 hover:-translate-y-0.5"
+>
   <!-- Header -->
-  <div class="bg-slate-900 px-6 py-5 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-    <div class="flex-1 min-w-0">
-      <div class="flex flex-wrap items-center gap-2 mb-2">
+  <div class="bg-slate-900 px-6 py-5">
+    <div class="flex items-start justify-between gap-4 mb-3">
+      <!-- Badges -->
+      <div class="flex flex-wrap items-center gap-2 min-w-0">
         {data.categoria && (
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-[10px] font-black uppercase tracking-widest">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-orange-500/20 border border-orange-500/30 text-orange-300 text-[10px] font-black uppercase tracking-widest shrink-0">
             <span>{icon}</span>
             {data.categoria}
           </span>
         )}
-        <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest">
+        <span class="inline-flex items-center px-3 py-1 rounded-full bg-white/10 text-slate-400 text-[10px] font-black uppercase tracking-widest shrink-0">
           En consideración
         </span>
       </div>
-      <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight">
-        {data.titulo}
-      </h3>
-      {data.descripcion_corta && (
-        <p class="mt-1.5 text-sm text-slate-400 font-medium leading-relaxed">
-          {data.descripcion_corta}
-        </p>
-      )}
     </div>
 
-    {data.presupuesto_estimado && (
-      <div class="shrink-0 text-right">
-        <div class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500 mb-0.5">
-          Presupuesto est.
-        </div>
-        <div class="text-2xl sm:text-3xl font-black text-orange-400 leading-none">
-          {formatMonto(data.presupuesto_estimado)}
-        </div>
+    <!-- Título -->
+    <h3 class="text-xl sm:text-2xl font-black text-white tracking-tight leading-tight group-hover:text-orange-300 transition-colors mb-1.5">
+      {data.titulo}
+    </h3>
+    {data.descripcion_corta && (
+      <p class="text-sm text-slate-400 font-medium leading-relaxed">
+        {data.descripcion_corta}
+      </p>
+    )}
+
+    <!-- Presupuesto debajo del título, ancho completo -->
+    {presupuestoDisplay && (
+      <div class="mt-4 pt-4 border-t border-white/10 flex items-baseline gap-2 flex-wrap">
+        <span class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">
+          {isRange ? "Rango estimado" : "Presupuesto est."}
+        </span>
+        <span class={`font-black text-orange-400 leading-none ${isRange ? "text-lg" : "text-2xl"}`}>
+          {presupuestoDisplay}
+        </span>
       </div>
     )}
   </div>
@@ -84,26 +106,24 @@ const icon = data.categoria ? (categoriaIcons[data.categoria] ?? "📋") : "📋
         <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-3">
           Opciones en evaluación
         </p>
-        <div class="grid sm:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-2">
           {data.opciones_votacion.map((opcion, i) => (
-            <div class="flex flex-col gap-1.5 p-4 rounded-2xl bg-slate-50 border border-slate-100">
-              <div class="flex items-start justify-between gap-2">
-                <div class="flex items-center gap-2 min-w-0">
-                  <span class="w-6 h-6 rounded-lg bg-slate-200 text-slate-600 text-[10px] font-black flex items-center justify-center shrink-0">
-                    {i + 1}
-                  </span>
-                  <span class="font-black text-slate-900 text-sm leading-tight">
-                    {opcion.nombre}
-                  </span>
-                </div>
-                {opcion.precio && (
-                  <span class="shrink-0 text-sm font-black text-orange-500">
-                    {formatMonto(opcion.precio)}
-                  </span>
-                )}
+            <div class="flex flex-col gap-1 p-3 rounded-xl bg-slate-50 border border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-5 h-5 rounded-md bg-slate-200 text-slate-600 text-[10px] font-black flex items-center justify-center shrink-0">
+                  {i + 1}
+                </span>
+                <span class="font-black text-slate-900 text-sm leading-tight">
+                  {opcion.nombre}
+                </span>
               </div>
+              {opcion.precio && (
+                <span class="ml-7 text-xs font-black text-orange-500">
+                  {formatMonto(opcion.precio)}
+                </span>
+              )}
               {opcion.descripcion_corta && (
-                <p class="text-xs text-slate-500 font-medium leading-relaxed pl-8">
+                <p class="text-xs text-slate-500 font-medium leading-relaxed ml-7">
                   {opcion.descripcion_corta}
                 </p>
               )}
@@ -113,8 +133,8 @@ const icon = data.categoria ? (categoriaIcons[data.categoria] ?? "📋") : "📋
       </div>
     )}
 
-    <!-- Para tipo binaria sin opciones: solo nota informativa -->
-    {data.tipo_votacion === "binaria" && !data.proveedor && !data.presupuesto_estimado && (
+    <!-- Para tipo binaria sin contenido extra -->
+    {data.tipo_votacion === "binaria" && !data.proveedor && !presupuestoDisplay && (
       <p class="text-xs text-slate-400 font-medium italic">
         Proyecto en evaluación por la Comisión de Vigilancia.
       </p>
@@ -123,13 +143,18 @@ const icon = data.categoria ? (categoriaIcons[data.categoria] ?? "📋") : "📋
   </div>
 
   <!-- Footer -->
-  <div class="px-6 py-3 border-t border-slate-100 flex items-center gap-2">
-    <svg class="w-3.5 h-3.5 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-      Revisado por la Comisión de Vigilancia
-    </p>
+  <div class="px-6 py-3 border-t border-slate-100 flex items-center justify-between gap-2">
+    <div class="flex items-center gap-2">
+      <svg class="w-3.5 h-3.5 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        Revisado por la Comisión de Vigilancia
+      </p>
+    </div>
+    <span class="text-[10px] font-black uppercase tracking-widest text-violet-400 group-hover:text-violet-600 transition-colors flex items-center gap-1">
+      Ver detalle
+      <span class="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
+    </span>
   </div>
-
-</article>
+</a>

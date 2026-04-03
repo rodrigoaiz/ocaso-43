@@ -1,0 +1,226 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+
+const { slug } = Astro.params;
+const proyecto = await getEntry("proyectos-votacion", slug!);
+
+if (!proyecto || !proyecto.data.visible_publico) {
+  return Astro.redirect("/");
+}
+
+const { Content } = await proyecto.render();
+const { data } = proyecto;
+
+const formatMonto = (monto: number) =>
+  new Intl.NumberFormat("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    minimumFractionDigits: 0,
+  }).format(monto);
+
+const categoriaIcons: Record<string, string> = {
+  "Seguridad": "🔒",
+  "Mantenimiento": "🔧",
+  "Mantenimiento Urgente": "⚠️",
+  "Compras y Suministros": "🛒",
+  "Compras": "🛒",
+  "Mejoras": "✨",
+  "Reparaciones": "🏗️",
+  "Emergencias": "🚨",
+};
+const icon = data.categoria ? (categoriaIcons[data.categoria] ?? "📋") : "📋";
+
+// Presupuesto: rango o valor único
+const hasMin = data.presupuesto_min != null;
+const hasMax = data.presupuesto_max != null;
+const hasSingle = data.presupuesto_estimado != null;
+const presupuestoLabel = (hasMin || hasMax) ? "Presupuesto estimado" : "Presupuesto";
+const presupuestoRango = (() => {
+  if (hasMin && hasMax) return `${formatMonto(data.presupuesto_min!)} – ${formatMonto(data.presupuesto_max!)}`;
+  if (hasMax) return `hasta ${formatMonto(data.presupuesto_max!)}`;
+  if (hasMin) return `desde ${formatMonto(data.presupuesto_min!)}`;
+  if (hasSingle) return formatMonto(data.presupuesto_estimado!);
+  return null;
+})();
+
+const formattedFecha = data.fecha.toLocaleDateString("es-MX", {
+  year: "numeric",
+  month: "long",
+});
+---
+
+<Layout title={data.titulo}>
+
+  <!-- Back link -->
+  <div class="mb-8">
+    <a
+      href="/#proyectos"
+      class="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-violet-500 transition-colors rounded-lg px-2 py-1"
+    >
+      <span class="text-xl">&larr;</span>
+      Volver al inicio
+    </a>
+  </div>
+
+  <!-- Header -->
+  <section class="mb-10">
+    <!-- Badges -->
+    <div class="flex flex-wrap items-center gap-2 mb-5">
+      {data.categoria && (
+        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-100 text-orange-700 text-[10px] font-black uppercase tracking-widest">
+          <span>{icon}</span>
+          {data.categoria}
+        </span>
+      )}
+      <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-violet-100 text-violet-700 text-[10px] font-black uppercase tracking-widest">
+        En consideración
+      </span>
+      <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-slate-100 text-slate-500 text-[10px] font-black uppercase tracking-widest">
+        {formattedFecha}
+      </span>
+    </div>
+
+    <h1 class="text-4xl sm:text-6xl font-black text-slate-900 tracking-tighter mb-4 leading-[1.05]">
+      {data.titulo}
+    </h1>
+    {data.descripcion_corta && (
+      <p class="text-lg text-slate-500 font-medium leading-relaxed max-w-2xl">
+        {data.descripcion_corta}
+      </p>
+    )}
+  </section>
+
+  <!-- Info cards row -->
+  <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-12">
+    <!-- Presupuesto -->
+    {presupuestoRango && (
+      <div class="p-6 rounded-2xl bg-orange-50 border border-orange-100">
+        <p class="text-[10px] font-black uppercase tracking-[0.4em] text-orange-400 mb-2">
+          {presupuestoLabel}
+        </p>
+        <p class="text-2xl font-black text-orange-500 leading-tight">
+          {presupuestoRango}
+        </p>
+        {(hasMin && hasMax) && (
+          <p class="text-xs text-orange-400 font-medium mt-1">Según la opción elegida</p>
+        )}
+      </div>
+    )}
+
+    <!-- Proveedor -->
+    {data.proveedor && (
+      <div class="p-6 rounded-2xl bg-white border border-slate-100">
+        <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">
+          Proveedor
+        </p>
+        <p class="text-lg font-bold text-slate-700">{data.proveedor}</p>
+      </div>
+    )}
+
+    <!-- Estado -->
+    <div class="p-6 rounded-2xl bg-violet-50 border border-violet-100">
+      <p class="text-[10px] font-black uppercase tracking-[0.4em] text-violet-400 mb-2">
+        Estado
+      </p>
+      <p class="text-lg font-bold text-violet-700">En evaluación</p>
+      <p class="text-xs text-violet-500 font-medium mt-1">Comisión de Vigilancia</p>
+    </div>
+  </div>
+
+  <!-- Opciones de selección (si aplica) -->
+  {data.tipo_votacion === "seleccion" && data.opciones_votacion && data.opciones_votacion.length > 0 && (
+    <section class="mb-12">
+      <div class="mb-5">
+        <span class="text-[10px] font-black uppercase tracking-[0.4em] text-violet-500 mb-1 block">
+          Votación
+        </span>
+        <h2 class="text-2xl font-black text-slate-900">Opciones en evaluación</h2>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        {data.opciones_votacion.map((opcion, i) => (
+          <div class="p-6 rounded-2xl bg-white border border-slate-100 flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 text-sm font-black flex items-center justify-center shrink-0">
+                {i + 1}
+              </span>
+              <h3 class="font-black text-slate-900 text-base leading-tight">
+                {opcion.nombre}
+              </h3>
+            </div>
+            {opcion.precio && (
+              <div class="flex items-baseline gap-2">
+                <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Precio</span>
+                <span class="text-xl font-black text-orange-500">{formatMonto(opcion.precio)}</span>
+              </div>
+            )}
+            {opcion.descripcion_corta && (
+              <p class="text-sm text-slate-500 font-medium leading-relaxed">
+                {opcion.descripcion_corta}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- MDX Content -->
+  <div class="grid lg:grid-cols-12 gap-10 lg:gap-16">
+    <div class="lg:col-span-8 min-w-0">
+      <div class="prose prose-slate max-w-none
+        prose-headings:font-black prose-headings:tracking-tight
+        prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4
+        prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-2
+        prose-p:text-slate-600 prose-p:leading-relaxed
+        prose-li:text-slate-600
+        prose-strong:text-slate-800
+        prose-a:text-orange-500 prose-a:font-bold prose-a:no-underline hover:prose-a:underline
+        prose-table:text-sm
+        prose-th:font-black prose-th:text-slate-700 prose-th:bg-slate-50
+        prose-td:text-slate-600
+        prose-img:rounded-2xl
+      ">
+        <Content />
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="lg:col-span-4 min-w-0">
+      <div class="sticky top-32 flex flex-col gap-4">
+
+        <!-- Sello comisión -->
+        <div class="p-6 rounded-2xl bg-slate-900 text-white">
+          <div class="flex items-center gap-3 mb-3">
+            <svg class="w-5 h-5 text-green-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400">
+              Comisión de Vigilancia
+            </p>
+          </div>
+          <p class="text-sm text-slate-300 font-medium leading-relaxed">
+            Este proyecto ha sido revisado y está siendo evaluado por la Comisión de Vigilancia del Condominio Ocaso 43.
+          </p>
+        </div>
+
+        <!-- Volver -->
+        <a
+          href="/#proyectos"
+          class="block p-4 rounded-2xl bg-white border border-slate-100 hover:border-violet-200 hover:bg-violet-50 transition-all text-center font-black text-[10px] uppercase tracking-widest text-slate-500 hover:text-violet-600"
+        >
+          ← Volver al inicio
+        </a>
+
+        <!-- Ver todos los documentos -->
+        <a
+          href="/documentos"
+          class="block p-4 rounded-2xl bg-white border border-slate-100 hover:border-orange-200 transition-all text-center font-black text-[10px] uppercase tracking-widest text-slate-500 hover:text-orange-500"
+        >
+          Biblioteca de documentos
+        </a>
+      </div>
+    </aside>
+  </div>
+
+</Layout>

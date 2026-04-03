@@ -31,6 +31,8 @@ const proyectosVotacion = defineCollection({
     anio: z.number().optional(),
     categoria: z.string().optional(),
     presupuesto_estimado: z.number().optional(),
+    presupuesto_min: z.number().optional(),
+    presupuesto_max: z.number().optional(),
     proveedor: z.string().optional(),
     descripcion_corta: z.string().optional(),
     votacion_abierta: z.boolean().default(true), // Si false, la votación está cerrada
