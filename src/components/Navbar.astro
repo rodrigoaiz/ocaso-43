@@ -154,10 +154,14 @@
   menuToggle?.addEventListener("click", openMenu);
   menuClose?.addEventListener("click", closeMenu);
 
-  // Cerrar al hacer click en un enlace
+  // Cerrar al hacer click en un enlace — sin animación, navegar directo
   const links = document.querySelectorAll(".mobile-nav-link");
   links.forEach((link) => {
-    link.addEventListener("click", closeMenu);
+    link.addEventListener("click", () => {
+      // Quitar transición para que no haya fade antes de navegar
+      mobileMenu?.classList.remove("transition-all");
+      closeMenu();
+    });
   });
 
   function openMenu() {
@@ -167,6 +171,7 @@
       "translate-y-[-20px]",
     );
     mobileMenu?.classList.add("opacity-100", "translate-y-0");
+    document.documentElement.style.overflow = "hidden";
     body.style.overflow = "hidden";
   }
 
@@ -177,6 +182,7 @@
       "translate-y-[-10px]",
     );
     mobileMenu?.classList.remove("opacity-100", "translate-y-0");
+    document.documentElement.style.overflow = "";
     body.style.overflow = "";
   }
 
