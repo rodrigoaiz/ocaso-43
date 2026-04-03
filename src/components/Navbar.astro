@@ -154,13 +154,16 @@
   menuToggle?.addEventListener("click", openMenu);
   menuClose?.addEventListener("click", closeMenu);
 
-  // Cerrar al hacer click en un enlace — sin animación, navegar directo
+  // Cerrar con fade y luego navegar
   const links = document.querySelectorAll(".mobile-nav-link");
   links.forEach((link) => {
-    link.addEventListener("click", () => {
-      // Quitar transición para que no haya fade antes de navegar
-      mobileMenu?.classList.remove("transition-all");
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const href = (link as HTMLAnchorElement).href;
       closeMenu();
+      setTimeout(() => {
+        window.location.href = href;
+      }, 300);
     });
   });
 
