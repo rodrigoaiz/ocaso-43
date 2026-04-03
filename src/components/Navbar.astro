@@ -1,5 +1,6 @@
 <header
-  class="py-6 lg:py-10 bg-white/30 backdrop-blur-md sticky top-0 z-50 border-b border-orange-100/50"
+  id="main-header"
+  class="py-6 lg:py-10 bg-white/60 backdrop-blur-md sticky top-0 z-50 border-b border-orange-100/50 transition-colors duration-300"
 >
   <!-- Barra de progreso de scroll -->
   <div
@@ -245,6 +246,21 @@
       spans[2].style.transform = "";
     }
   }
+
+  // Opacidad del header al hacer scroll
+  const header = document.getElementById("main-header");
+  function updateHeaderOpacity() {
+    if (!header) return;
+    if (window.scrollY > 10) {
+      header.classList.add("bg-white/90");
+      header.classList.remove("bg-white/60");
+    } else {
+      header.classList.add("bg-white/60");
+      header.classList.remove("bg-white/90");
+    }
+  }
+  window.addEventListener("scroll", updateHeaderOpacity, { passive: true });
+  updateHeaderOpacity();
 
   // Barra de progreso de scroll
   const scrollBar = document.getElementById("scroll-progress");
