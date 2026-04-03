@@ -1,0 +1,96 @@
+---
+/**
+ * Lightbox global — se renderiza una sola vez en Layout.astro
+ * 
+ * Cualquier elemento con data-lightbox-trigger + data-img-url + data-img-alt
+ * abrirá este modal al hacer click.
+ */
+---
+
+<!-- Lightbox Modal -->
+<div
+  id="lightbox-modal"
+  class="fixed inset-0 bg-black/90 z-[100] hidden items-center justify-center p-4 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Visualización ampliada de imagen"
+>
+  <!-- Botón cerrar -->
+  <button
+    id="lightbox-close"
+    type="button"
+    class="absolute top-5 right-5 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white text-2xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-white/50"
+    aria-label="Cerrar visualización ampliada"
+  >
+    ×
+  </button>
+
+  <!-- Imagen -->
+  <div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center pointer-events-none">
+    <img
+      id="lightbox-img"
+      src=""
+      alt=""
+      class="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-2xl shadow-2xl"
+    />
+  </div>
+
+  <!-- Caption -->
+  <p
+    id="lightbox-caption"
+    class="absolute bottom-5 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-5 py-2.5 bg-black/50 rounded-full max-w-lg pointer-events-none backdrop-blur-sm whitespace-nowrap overflow-hidden text-ellipsis"
+  ></p>
+</div>
+
+<script>
+  const modal    = document.getElementById('lightbox-modal') as HTMLElement | null;
+  const img      = document.getElementById('lightbox-img')  as HTMLImageElement | null;
+  const caption  = document.getElementById('lightbox-caption') as HTMLElement | null;
+  const closeBtn = document.getElementById('lightbox-close') as HTMLElement | null;
+
+  function openLightbox(url: string, alt: string) {
+    if (!modal || !img || !caption) return;
+    img.src = url;
+    img.alt = alt;
+    caption.textContent = alt;
+    caption.style.display = alt ? '' : 'none';
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => closeBtn?.focus(), 50);
+  }
+
+  function closeLightbox() {
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  // Delegación de eventos — captura clicks en cualquier data-lightbox-trigger
+  // presente ahora o agregado dinámicamente
+  document.addEventListener('click', (e) => {
+    const target = (e.target as HTMLElement).closest('[data-lightbox-trigger]') as HTMLElement | null;
+    if (!target) return;
+    e.preventDefault();
+    const url = target.getAttribute('data-img-url') || '';
+    const alt = target.getAttribute('data-img-alt') || '';
+    openLightbox(url, alt);
+  });
+
+  // Cerrar con botón ×
+  closeBtn?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeLightbox();
+  });
+
+  // Cerrar al hacer click en el fondo (no en la imagen)
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeLightbox();
+  });
+
+  // Cerrar con Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeLightbox();
+  });
+</script>

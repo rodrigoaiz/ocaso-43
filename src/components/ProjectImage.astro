@@ -1,19 +1,12 @@
 ---
 /**
- * ProjectImage - Componente optimizado para mostrar imágenes en proyectos MDX
- * 
- * Características:
- * - Lazy loading automático
- * - Estilos consistentes con el diseño Ocaso
- * - Caption opcional
- * - Responsive por defecto
- * - Border y shadow para mejor presentación
- * 
+ * ProjectImage — imagen en MDX con click para zoom via Lightbox global
+ *
  * Uso en MDX:
- * <ProjectImage 
- *   src="/img/proyectos/nombre-imagen.jpg"
- *   alt="Descripción de la imagen"
- *   caption="Texto descriptivo opcional"
+ * <ProjectImage
+ *   src="/img/proyectos/nombre.jpg"
+ *   alt="Descripción"
+ *   caption="Texto opcional"
  * />
  */
 
@@ -28,13 +21,31 @@ const { src, alt, caption, className = '' } = Astro.props;
 ---
 
 <figure class={`my-8 ${className}`}>
-  <img 
-    src={src}
-    alt={alt}
-    loading="lazy"
-    decoding="async"
-    class="rounded-2xl shadow-xl shadow-slate-200 border-2 border-slate-100 w-full h-auto object-cover transition-transform duration-300 hover:scale-[1.02]"
-  />
+  <button
+    type="button"
+    class="group relative block w-full rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 cursor-zoom-in"
+    data-lightbox-trigger
+    data-img-url={src}
+    data-img-alt={caption || alt}
+    aria-label={`Ver imagen ampliada: ${caption || alt}`}
+  >
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      class="w-full h-auto object-cover rounded-2xl shadow-xl shadow-slate-200 border-2 border-slate-100 transition-transform duration-300 group-hover:scale-[1.02]"
+    />
+    <!-- Overlay hover -->
+    <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-200 rounded-2xl"></div>
+    <!-- Ícono zoom -->
+    <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      <span class="w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white text-lg shadow-lg">
+        ⤢
+      </span>
+    </div>
+  </button>
+
   {caption && (
     <figcaption class="text-sm text-slate-500 italic mt-3 text-center px-4">
       {caption}

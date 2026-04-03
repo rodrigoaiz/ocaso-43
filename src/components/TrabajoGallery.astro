@@ -219,33 +219,6 @@ const tipoLabels = {
   )
 }
 
-<!-- Lightbox Modal -->
-<div 
-  id="lightbox-modal" 
-  class="fixed inset-0 bg-black/90 z-50 hidden items-center justify-center p-4 backdrop-blur-sm cursor-pointer transition-opacity duration-200 ease-out" 
-  role="dialog" 
-  aria-modal="true" 
-  aria-label="Visualización ampliada de imagen"
->
-  <button 
-    id="lightbox-close" 
-    type="button"
-    class="absolute top-6 right-6 text-white text-4xl font-bold hover:text-orange-500 hover:scale-110 transition-[color,transform] duration-200 ease-out z-10 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 w-12 h-12 flex items-center justify-center"
-    aria-label="Cerrar visualización ampliada"
-  >
-    ×
-  </button>
-  <div class="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center pointer-events-none">
-    <img 
-      id="lightbox-img" 
-      src="" 
-      alt="" 
-      class="max-w-full max-h-full w-auto h-auto object-contain rounded-2xl shadow-2xl transition-transform duration-200 ease-out"
-    />
-  </div>
-  <p id="lightbox-caption" class="absolute bottom-6 left-1/2 -translate-x-1/2 text-white text-center text-sm font-medium px-6 py-3 bg-black/50 rounded-full max-w-2xl pointer-events-none backdrop-blur-sm"></p>
-</div>
-
 <script>
   // Tab switching logic
   document.addEventListener('DOMContentLoaded', () => {
@@ -284,72 +257,13 @@ const tipoLabels = {
           evt.preventDefault();
           const buttons = Array.from(tabButtons);
           const currentIndex = buttons.indexOf(button);
-          const nextIndex = evt.key === 'ArrowRight' 
-            ? (currentIndex + 1) % buttons.length 
+          const nextIndex = evt.key === 'ArrowRight'
+            ? (currentIndex + 1) % buttons.length
             : (currentIndex - 1 + buttons.length) % buttons.length;
           (buttons[nextIndex] as HTMLElement).focus();
           (buttons[nextIndex] as HTMLElement).click();
         }
       });
-    });
-
-    // Lightbox functionality
-    const lightboxModal = document.getElementById('lightbox-modal');
-    const lightboxImg = document.getElementById('lightbox-img') as HTMLImageElement;
-    const lightboxCaption = document.getElementById('lightbox-caption');
-    const lightboxClose = document.getElementById('lightbox-close');
-    const triggers = document.querySelectorAll('[data-lightbox-trigger]');
-
-    triggers.forEach((trigger) => {
-      trigger.addEventListener('click', () => {
-        const imgUrl = trigger.getAttribute('data-img-url');
-        const imgAlt = trigger.getAttribute('data-img-alt');
-        
-        if (lightboxImg && lightboxCaption && lightboxModal) {
-          lightboxImg.src = imgUrl || '';
-          lightboxImg.alt = imgAlt || '';
-          lightboxCaption.textContent = imgAlt || '';
-          lightboxModal.classList.remove('hidden');
-          lightboxModal.classList.add('flex');
-          document.body.style.overflow = 'hidden'; // Prevent scrolling
-          
-          // Focus trap on modal
-          setTimeout(() => {
-            lightboxClose?.focus();
-          }, 100);
-        }
-      });
-    });
-
-    // Close lightbox
-    const closeLightbox = () => {
-      if (lightboxModal) {
-        lightboxModal.classList.add('hidden');
-        lightboxModal.classList.remove('flex');
-        document.body.style.overflow = ''; // Restore scrolling
-      }
-    };
-
-    // Close on X button click
-    if (lightboxClose) {
-      lightboxClose.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent modal click handler
-        closeLightbox();
-      });
-    }
-
-    // Close on any click on the modal (background or anywhere)
-    if (lightboxModal) {
-      lightboxModal.addEventListener('click', () => {
-        closeLightbox();
-      });
-    }
-
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeLightbox();
-      }
     });
   });
 </script>
