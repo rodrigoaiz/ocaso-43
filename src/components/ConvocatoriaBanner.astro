@@ -21,6 +21,14 @@ const assemblyTypeLabel =
   data.assemblyType === "ordinaria" ? "Ordinaria" : "Extraordinaria";
 
 const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-")}`;
+
+// Countdown
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+const targetDate = new Date(assemblyDate);
+targetDate.setHours(0, 0, 0, 0);
+const msLeft = targetDate.getTime() - today.getTime();
+const daysLeft = Math.round(msLeft / (1000 * 60 * 60 * 24));
 ---
 
 <!-- Banner de Convocatoria -->
@@ -58,6 +66,24 @@ const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-"
           Asamblea {assemblyTypeLabel}
         </span>
       </div>
+      <!-- Countdown -->
+      {daysLeft > 0 && (
+        <div class="hidden lg:flex items-center gap-2 mt-6">
+          <div class="flex flex-col items-start">
+            <span class="text-[9px] font-black uppercase tracking-[0.4em] text-slate-500 leading-none mb-1">Faltan</span>
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-4xl font-black text-white leading-none">{daysLeft}</span>
+              <span class="text-xs font-black text-orange-400 uppercase tracking-widest leading-none">{daysLeft === 1 ? 'día' : 'días'}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {daysLeft === 0 && (
+        <div class="hidden lg:flex mt-6">
+          <span class="text-xs font-black text-orange-400 uppercase tracking-widest">Hoy</span>
+        </div>
+      )}
+
       <!-- Fecha grande solo en desktop -->
       <div class="hidden lg:flex flex-col mt-8">
         <span class="text-[9px] font-black uppercase tracking-[0.4em] text-orange-400/70 leading-none mb-1">{monthShort}</span>
@@ -71,6 +97,18 @@ const modalId = `convocatoria-modal-${convocatoria.id.replace(/[^a-z0-9]/gi, "-"
           <span class="text-2xl font-black text-white leading-none mt-0.5">{day}</span>
           <span class="text-[8px] font-black text-orange-200 leading-none mt-0.5">{year}</span>
         </div>
+        {daysLeft > 0 && (
+          <div class="flex flex-col">
+            <span class="text-[9px] font-black uppercase tracking-[0.35em] text-slate-500 leading-none mb-0.5">Faltan</span>
+            <div class="flex items-baseline gap-1">
+              <span class="text-2xl font-black text-white leading-none">{daysLeft}</span>
+              <span class="text-[10px] font-black text-orange-400 uppercase tracking-widest">{daysLeft === 1 ? 'día' : 'días'}</span>
+            </div>
+          </div>
+        )}
+        {daysLeft === 0 && (
+          <span class="text-sm font-black text-orange-400 uppercase tracking-widest">Hoy</span>
+        )}
       </div>
     </div>
 

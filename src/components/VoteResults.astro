@@ -13,178 +13,193 @@ const { votos, votosCount, tipoVotacion, opciones = [] } = Astro.props;
 let resultados: any = {};
 
 if (tipoVotacion === 'binaria') {
-  // Calcular resultados para votación binaria
   const aFavorCount = votos.filter(v => v.voto === 'a_favor').length;
   const enContraCount = votos.filter(v => v.voto === 'en_contra').length;
-  
-  resultados = {
-    tipo: 'binaria',
-    a_favor: aFavorCount,
-    en_contra: enContraCount,
-  };
+  resultados = { tipo: 'binaria', a_favor: aFavorCount, en_contra: enContraCount };
 } else {
-  // Calcular resultados para votación de selección
   const conteo: Record<string, number> = {};
   opciones.forEach(op => conteo[op.id] = 0);
-  
   votos.forEach(v => {
-    if (v.opcion_producto_id) {
-      conteo[v.opcion_producto_id] = (conteo[v.opcion_producto_id] || 0) + 1;
-    }
+    if (v.opcion_producto_id) conteo[v.opcion_producto_id] = (conteo[v.opcion_producto_id] || 0) + 1;
   });
-  
   const maxVotos = Math.max(...Object.values(conteo), 0);
   const ganadores = Object.keys(conteo).filter(k => conteo[k] === maxVotos && maxVotos > 0);
-  
   resultados = {
     tipo: 'seleccion',
     conteo,
     ganador: ganadores.length === 1 ? ganadores[0] : null,
     empate: ganadores.length > 1 && votos.length === 3,
-    ganadores: ganadores,
+    ganadores,
   };
 }
 ---
 
-<div class="rounded-[2rem] bg-gradient-to-br from-emerald-50 to-slate-50 p-6 border-2 border-emerald-200 shadow-lg">
-  <h3 class="font-black text-xl text-emerald-900 mb-4">
-    ✅ Resultados de la Votación
-  </h3>
-  
-  {tipoVotacion === 'binaria' ? (
-    <>
-      <!-- Votos individuales -->
-      <div class="space-y-2 mb-4">
-        {votos.map((voto) => (
-          <div class="vote-result-row">
-            <span class="font-bold text-slate-700 capitalize">
-              {voto.usuario.username}
-            </span>
-            <span class={voto.voto === 'a_favor' ? 'vote-badge-a-favor' : 'vote-badge-en-contra'}>
-              {voto.voto === 'a_favor' ? '👍 A favor' : '👎 En contra'}
-            </span>
-          </div>
-        ))}
-      </div>
-      
-      <!-- Resumen binario -->
-      <div class="grid grid-cols-2 gap-4 pt-4 border-t-2 border-emerald-200">
-        <div class="text-center">
-          <p class="text-4xl font-black text-emerald-600 mb-1">{resultados.a_favor}</p>
-          <p class="text-xs font-bold text-emerald-700 uppercase tracking-wide">A favor</p>
-        </div>
-        <div class="text-center">
-          <p class="text-4xl font-black text-red-600 mb-1">{resultados.en_contra}</p>
-          <p class="text-xs font-bold text-red-700 uppercase tracking-wide">En contra</p>
-        </div>
-      </div>
-    </>
-  ) : (
-    <>
-      {/* Caso: Empate triple */}
-      {resultados.empate && (
-        <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-4">
-          <div class="text-center">
-            <div class="text-4xl mb-2">⚠️</div>
-            <div class="font-black text-lg text-amber-800 mb-1">
-              Empate Triple Detectado
+<div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+  <!-- Header -->
+  <div class="px-6 pt-6 pb-5 border-b border-slate-100">
+    <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">Resultados</p>
+    <h3 class="text-xl font-black text-slate-900 tracking-tight">Votación registrada</h3>
+  </div>
+
+  <div class="p-6 space-y-5">
+
+    {tipoVotacion === 'binaria' ? (
+      <>
+        {/* Votos individuales */}
+        <div class="space-y-2">
+          {votos.map((voto) => (
+            <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
+              <span class="font-black text-sm text-slate-700 capitalize">{voto.usuario.username}</span>
+              {voto.voto === 'a_favor' ? (
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-50 border border-green-200 text-green-700 text-xs font-black">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"/>
+                  </svg>
+                  A favor
+                </span>
+              ) : (
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-700 text-xs font-black">
+                  <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384"/>
+                  </svg>
+                  En contra
+                </span>
+              )}
             </div>
-            <p class="text-amber-700 text-sm">
-              Cada votante eligió una opción diferente. Se requiere segunda ronda de votación.
-            </p>
+          ))}
+        </div>
+
+        {/* Totales */}
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+          <div class="flex flex-col items-center justify-center px-4 py-5 rounded-xl bg-green-50 border border-green-100">
+            <p class="text-5xl font-black text-green-600 leading-none mb-1">{resultados.a_favor}</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-green-700">A favor</p>
+          </div>
+          <div class="flex flex-col items-center justify-center px-4 py-5 rounded-xl bg-red-50 border border-red-100">
+            <p class="text-5xl font-black text-red-500 leading-none mb-1">{resultados.en_contra}</p>
+            <p class="text-[10px] font-black uppercase tracking-widest text-red-700">En contra</p>
           </div>
         </div>
-      )}
-      
-      {/* Caso: Hay ganador */}
-      {resultados.ganador && !resultados.empate && (
-        <div class="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-4 mb-4">
-          <div class="text-center">
-            <div class="text-4xl mb-2">🏆</div>
-            <div class="font-black text-lg text-green-800 mb-1">
-              Opción Ganadora
+      </>
+    ) : (
+      <>
+        {/* Alerta de empate */}
+        {resultados.empate && (
+          <div class="flex items-start gap-3 px-4 py-3.5 rounded-xl bg-amber-50 border border-amber-200">
+            <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+            </svg>
+            <div>
+              <p class="font-black text-sm text-amber-800 leading-tight">Empate triple detectado</p>
+              <p class="text-xs text-amber-700 mt-0.5">Cada votante eligió una opción diferente. Se requiere segunda ronda.</p>
             </div>
-            {opciones.find(o => o.id === resultados.ganador) && (
-              <>
-                <div class="text-base text-green-700 font-bold mb-1">
-                  {opciones.find(o => o.id === resultados.ganador)!.nombre}
-                </div>
-                {opciones.find(o => o.id === resultados.ganador)!.precio && (
-                  <div class="text-lg font-black text-green-600">
-                    ${opciones.find(o => o.id === resultados.ganador)!.precio} MXN
+          </div>
+        )}
+
+        {/* Banner de ganador */}
+        {resultados.ganador && !resultados.empate && (() => {
+          const opcionGanadora = opciones.find(o => o.id === resultados.ganador);
+          return opcionGanadora ? (
+            <div class="px-5 py-4 rounded-xl bg-slate-900 border border-slate-800">
+              <p class="text-[9px] font-black uppercase tracking-[0.4em] text-slate-400 mb-2">Opción ganadora</p>
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2.5 min-w-0">
+                  <div class="w-6 h-6 rounded-md bg-orange-500 flex items-center justify-center shrink-0">
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                    </svg>
                   </div>
+                  <p class="font-black text-base text-white leading-tight truncate">{opcionGanadora.nombre}</p>
+                </div>
+                {opcionGanadora.precio && (
+                  <p class="font-black text-base text-orange-400 shrink-0">
+                    ${new Intl.NumberFormat('es-MX').format(opcionGanadora.precio)}
+                  </p>
                 )}
-              </>
-            )}
-          </div>
-        </div>
-      )}
-      
-      {/* Votos individuales con su selección */}
-      <div class="space-y-2 mb-4">
-        {votos.map((voto) => {
-          const opcionVotada = opciones.find(o => o.id === voto.opcion_producto_id);
-          return (
-            <div class="vote-result-row">
-              <span class="font-bold text-slate-700 capitalize">
-                {voto.usuario.username}
-              </span>
-              <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
-                {opcionVotada ? opcionVotada.nombre : 'Opción desconocida'}
-              </span>
+              </div>
             </div>
-          );
-        })}
-      </div>
-      
-      {/* Resumen por opciones */}
-      <div class="space-y-3 pt-4 border-t-2 border-emerald-200">
-        <h4 class="font-black text-sm text-slate-800 mb-2">📊 Distribución de votos:</h4>
-        {opciones
-          .sort((a, b) => (resultados.conteo[b.id] || 0) - (resultados.conteo[a.id] || 0))
-          .map(opcion => {
-            const votosOpcion = resultados.conteo[opcion.id] || 0;
-            const porcentaje = votos.length > 0 ? Math.round((votosOpcion / votos.length) * 100) : 0;
-            const esGanador = resultados.ganador === opcion.id;
-            
+          ) : null;
+        })()}
+
+        {/* Votos individuales */}
+        <div class="space-y-2">
+          {votos.map((voto) => {
+            const opcionVotada = opciones.find(o => o.id === voto.opcion_producto_id);
             return (
-              <div class={`bg-slate-50 rounded-xl p-3 border-2 border-slate-200 transition-all ${esGanador ? 'bg-green-50 border-green-300' : ''}`}>
-                <div class="flex items-center justify-between mb-2">
-                  <div class="flex items-center gap-2 flex-1">
-                    {esGanador && <span class="text-xl">🏆</span>}
-                    <span class="font-bold text-slate-900 text-sm">{opcion.nombre}</span>
-                  </div>
-                  <div class="flex items-center gap-3">
-                    {opcion.precio && (
-                      <span class="text-green-600 font-bold text-sm">${opcion.precio}</span>
-                    )}
-                    <span class="font-black text-slate-700 text-sm">
-                      {votosOpcion} {votosOpcion === 1 ? 'voto' : 'votos'} ({porcentaje}%)
-                    </span>
-                  </div>
-                </div>
-                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-gradient-to-r from-orange-400 to-pink-500 transition-all duration-500" style={`width: ${porcentaje}%`}></div>
-                </div>
+              <div class="flex items-center justify-between gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
+                <span class="font-black text-sm text-slate-700 capitalize">{voto.usuario.username}</span>
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-600 text-xs font-black">
+                  {opcionVotada ? opcionVotada.nombre : 'Opción desconocida'}
+                </span>
               </div>
             );
           })}
+        </div>
+
+        {/* Barras de distribución */}
+        <div class="space-y-2 pt-2 border-t border-slate-100">
+          <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-3">Distribución</p>
+          {opciones
+            .sort((a, b) => (resultados.conteo[b.id] || 0) - (resultados.conteo[a.id] || 0))
+            .map(opcion => {
+              const votosOpcion = resultados.conteo[opcion.id] || 0;
+              const porcentaje = votos.length > 0 ? Math.round((votosOpcion / votos.length) * 100) : 0;
+              const esGanador = resultados.ganador === opcion.id;
+              return (
+                <div class={`px-4 py-3.5 rounded-xl border transition-all ${esGanador ? 'bg-slate-900 border-slate-800' : 'bg-slate-50 border-slate-100'}`}>
+                  <div class="flex items-center justify-between gap-2 mb-2">
+                    <div class="flex items-center gap-2 min-w-0">
+                      {esGanador && (
+                        <div class="w-4 h-4 rounded bg-orange-500 flex items-center justify-center shrink-0">
+                          <svg class="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                          </svg>
+                        </div>
+                      )}
+                      <span class={`font-black text-sm leading-tight truncate ${esGanador ? 'text-white' : 'text-slate-800'}`}>{opcion.nombre}</span>
+                    </div>
+                    <div class="flex items-center gap-3 shrink-0">
+                      {opcion.precio && (
+                        <span class={`font-black text-xs ${esGanador ? 'text-orange-400' : 'text-orange-500'}`}>
+                          ${new Intl.NumberFormat('es-MX').format(opcion.precio)}
+                        </span>
+                      )}
+                      <span class={`font-black text-xs ${esGanador ? 'text-slate-300' : 'text-slate-500'}`}>
+                        {votosOpcion} / {porcentaje}%
+                      </span>
+                    </div>
+                  </div>
+                  <div class="w-full h-1.5 bg-slate-200/30 rounded-full overflow-hidden">
+                    <div
+                      class={`h-full rounded-full transition-all duration-500 ${esGanador ? 'bg-orange-500' : 'bg-slate-300'}`}
+                      style={`width: ${porcentaje}%`}
+                    ></div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      </>
+    )}
+
+    {/* Nota de quórum */}
+    {votosCount === 2 && (
+      <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-xs font-bold text-amber-700">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Quórum alcanzado — falta 1 voto para completar
       </div>
-    </>
-  )}
-  
-  <!-- Nota de quórum -->
-  {votosCount === 2 && (
-    <p class="text-slate-600 text-xs mt-4 text-center bg-amber-50 rounded-xl p-2 border border-amber-200">
-      ℹ️ Quórum alcanzado. Falta 1 voto para completar.
-    </p>
-  )}
-  
-  {votosCount === 3 && (
-    <p class="text-emerald-700 text-xs mt-4 text-center bg-emerald-100 rounded-xl p-2 border border-emerald-300 font-bold">
-      ✅ Votación completa - Todos los miembros han votado
-    </p>
-  )}
+    )}
+
+    {votosCount === 3 && (
+      <div class="flex items-center gap-2 px-4 py-3 rounded-xl bg-green-50 border border-green-200 text-xs font-bold text-green-700">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Votación completa — todos los miembros han votado
+      </div>
+    )}
+
+  </div>
 </div>
-
-
