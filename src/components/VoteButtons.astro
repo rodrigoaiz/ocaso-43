@@ -110,109 +110,137 @@ const isObservador = userRol === 'observador';
   <div id="vote-message" class="hidden mt-6"></div>
 </div>
 
+<!-- Modal de confirmación -->
+<div
+  id="confirm-modal"
+  class="fixed inset-0 z-[200] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200"
+>
+  <!-- Fondo -->
+  <div id="confirm-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+
+  <!-- Contenido -->
+  <div class="relative bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full flex flex-col gap-5">
+    <div class="text-center">
+      <div class="text-5xl mb-3" id="confirm-icon">🗳️</div>
+      <h3 class="font-black text-xl text-slate-900 mb-1">¿Confirmas tu voto?</h3>
+      <p class="text-slate-500 text-sm font-medium">Estás a punto de votar por:</p>
+      <p id="confirm-opcion" class="font-black text-lg text-orange-500 mt-2"></p>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
+      <p class="text-amber-800 text-xs font-bold flex items-center justify-center gap-2">
+        <span>⚠️</span>
+        <span>Esta acción es definitiva y no puede revertirse</span>
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <button
+        id="confirm-cancel"
+        class="px-4 py-3 rounded-2xl border-2 border-slate-200 font-black text-sm text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all"
+      >
+        Cancelar
+      </button>
+      <button
+        id="confirm-ok"
+        class="px-4 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 font-black text-sm text-white hover:from-orange-600 hover:to-pink-600 transition-all shadow-lg"
+      >
+        Confirmar
+      </button>
+    </div>
+  </div>
+</div>
+
 <script>
   const voteButtons = document.getElementById('vote-buttons');
   const messageDiv = document.getElementById('vote-message');
-  
+  const modal = document.getElementById('confirm-modal');
+  const backdrop = document.getElementById('confirm-backdrop');
+  const confirmOpcion = document.getElementById('confirm-opcion');
+  const confirmIcon = document.getElementById('confirm-icon');
+  const confirmOk = document.getElementById('confirm-ok');
+  const confirmCancel = document.getElementById('confirm-cancel');
+
+  // Función para mostrar/ocultar modal
+  function showModal(label: string, icon: string, onConfirm: () => void) {
+    if (!modal || !confirmOpcion || !confirmIcon) return;
+    confirmOpcion!.textContent = label;
+    confirmIcon!.textContent = icon;
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+    modal.classList.add('opacity-100');
+
+    const doConfirm = () => {
+      hideModal();
+      onConfirm();
+    };
+    const doCancel = () => hideModal();
+
+    confirmOk?.addEventListener('click', doConfirm, { once: true });
+    confirmCancel?.addEventListener('click', doCancel, { once: true });
+    backdrop?.addEventListener('click', doCancel, { once: true });
+  }
+
+  function hideModal() {
+    modal?.classList.add('opacity-0', 'pointer-events-none');
+    modal?.classList.remove('opacity-100');
+  }
+
+  // Función principal para registrar voto
+  async function submitVote(body: object) {
+    if (!messageDiv) return;
+
+    // Deshabilitar todos los botones de voto
+    document.querySelectorAll<HTMLButtonElement>('.vote-button, .vote-option-card').forEach(b => b.disabled = true);
+
+    try {
+      const response = await fetch('/api/votar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        messageDiv.className = 'mt-4 p-4 bg-emerald-100 border-2 border-emerald-300 rounded-xl text-emerald-800 text-center';
+        messageDiv.textContent = '✅ Tu voto ha sido registrado exitosamente';
+        messageDiv.classList.remove('hidden');
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
+        throw new Error(result.error || 'Error al registrar voto');
+      }
+    } catch (error) {
+      messageDiv.className = 'mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl text-red-800 text-center';
+      messageDiv.textContent = `❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+      messageDiv.classList.remove('hidden');
+      document.querySelectorAll<HTMLButtonElement>('.vote-button, .vote-option-card').forEach(b => b.disabled = false);
+    }
+  }
+
   if (voteButtons && messageDiv) {
     const slug = voteButtons.dataset.slug;
     const tipoVotacion = voteButtons.dataset.tipo;
-    
+
     if (tipoVotacion === 'binaria') {
-      // Votación binaria (código actual)
       const btnAFavor = document.getElementById('btn-a-favor') as HTMLButtonElement;
       const btnEnContra = document.getElementById('btn-en-contra') as HTMLButtonElement;
-      
-      if (btnAFavor && btnEnContra) {
-        const handleVote = async (voto: string) => {
-          // Deshabilitar botones
-          btnAFavor.disabled = true;
-          btnEnContra.disabled = true;
-          btnAFavor.classList.add('btn-loading');
-          btnEnContra.classList.add('btn-loading');
-          
-          try {
-            const response = await fetch('/api/votar', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                proyectoSlug: slug,
-                voto: voto,
-              }),
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              messageDiv.className = 'mt-4 p-4 bg-emerald-100 border-2 border-emerald-300 rounded-xl text-emerald-800 text-center';
-              messageDiv.textContent = '✅ Tu voto ha sido registrado exitosamente';
-              messageDiv.classList.remove('hidden');
-              
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            } else {
-              throw new Error(result.error || 'Error al registrar voto');
-            }
-          } catch (error) {
-            messageDiv.className = 'mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl text-red-800 text-center';
-            messageDiv.textContent = `❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`;
-            messageDiv.classList.remove('hidden');
-            
-            btnAFavor.disabled = false;
-            btnEnContra.disabled = false;
-            btnAFavor.classList.remove('btn-loading');
-            btnEnContra.classList.remove('btn-loading');
-          }
-        };
-        
-        btnAFavor.addEventListener('click', () => handleVote('a_favor'));
-        btnEnContra.addEventListener('click', () => handleVote('en_contra'));
-      }
+
+      btnAFavor?.addEventListener('click', () => {
+        showModal('A FAVOR', '👍', () => submitVote({ proyectoSlug: slug, voto: 'a_favor' }));
+      });
+      btnEnContra?.addEventListener('click', () => {
+        showModal('EN CONTRA', '👎', () => submitVote({ proyectoSlug: slug, voto: 'en_contra' }));
+      });
+
     } else if (tipoVotacion === 'seleccion') {
-      // Votación de selección (nuevo)
-      const opcionCards = document.querySelectorAll('.vote-option-card') as NodeListOf<HTMLButtonElement>;
-      
+      const opcionCards = document.querySelectorAll<HTMLButtonElement>('.vote-option-card');
+
       opcionCards.forEach(card => {
-        card.addEventListener('click', async () => {
+        card.addEventListener('click', () => {
           const opcionId = card.dataset.opcionId;
-          
           if (!opcionId) return;
-          
-          // Deshabilitar todas las opciones
-          opcionCards.forEach(c => c.disabled = true);
-          
-          try {
-            const response = await fetch('/api/votar', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                proyectoSlug: slug,
-                opcionProductoId: opcionId,
-              }),
-            });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-              messageDiv.className = 'mt-4 p-4 bg-emerald-100 border-2 border-emerald-300 rounded-xl text-emerald-800 text-center';
-              messageDiv.textContent = '✅ Tu voto ha sido registrado exitosamente';
-              messageDiv.classList.remove('hidden');
-              
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            } else {
-              throw new Error(result.error || 'Error al registrar voto');
-            }
-          } catch (error) {
-            messageDiv.className = 'mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl text-red-800 text-center';
-            messageDiv.textContent = `❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`;
-            messageDiv.classList.remove('hidden');
-            
-            // Rehabilitar botones
-            opcionCards.forEach(c => c.disabled = false);
-          }
+          const nombre = card.querySelector('.font-black')?.textContent?.trim() || 'esta opción';
+          showModal(nombre, '🛍️', () => submitVote({ proyectoSlug: slug, opcionProductoId: opcionId }));
         });
       });
     }
