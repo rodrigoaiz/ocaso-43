@@ -12,102 +12,99 @@ const { slug, userRol, tipoVotacion, opciones = [] } = Astro.props;
 const isObservador = userRol === 'observador';
 ---
 
-<div id="vote-buttons" class="voting-section bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] p-6 shadow-lg border-2 border-slate-200" data-slug={slug} data-tipo={tipoVotacion}>
-  {isObservador && (
-    <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-3 mb-4 text-center">
-      <p class="text-blue-800 font-bold text-sm flex items-center justify-center gap-2">
-        <span class="text-lg">👁️</span>
-        <span>Tienes acceso como observador. Solo puedes ver las votaciones, no votar.</span>
-      </p>
-    </div>
-  )}
-  
-  {tipoVotacion === 'binaria' ? (
-    <>
-      <div class="text-center mb-6">
-        <h3 class="font-black text-2xl mb-2 text-slate-900">🗳️ Emite tu voto</h3>
-        <p class="text-slate-600 text-base">Selecciona tu posición sobre este proyecto</p>
+<div
+  id="vote-buttons"
+  class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden"
+  data-slug={slug}
+  data-tipo={tipoVotacion}
+>
+  <!-- Header -->
+  <div class="px-6 pt-6 pb-5 border-b border-slate-100">
+    <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">
+      {tipoVotacion === 'binaria' ? 'Votación' : 'Selección de opción'}
+    </p>
+    <h3 class="text-xl font-black text-slate-900 tracking-tight">
+      {tipoVotacion === 'binaria' ? 'Emite tu voto' : 'Elige una opción'}
+    </h3>
+
+    {isObservador && (
+      <div class="mt-3 flex items-center gap-2 text-xs font-bold text-slate-500">
+        <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+        </svg>
+        Modo observador — solo lectura
       </div>
-      
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    )}
+  </div>
+
+  <!-- Botones -->
+  <div class="p-6">
+    {tipoVotacion === 'binaria' ? (
+      <div class="grid grid-cols-2 gap-3">
         <button
           id="btn-a-favor"
-          class="vote-button vote-button-favor group relative overflow-hidden px-6 py-6 rounded-[1.5rem] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          class="vote-button group relative flex flex-col items-center justify-center gap-2 px-4 py-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-green-400 hover:bg-green-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-50 disabled:hover:border-slate-200"
           data-voto="a_favor"
           disabled={isObservador}
         >
-          <div class="relative z-10">
-            <div class="text-4xl mb-2">👍</div>
-            <div class="font-black text-xl mb-1">A FAVOR</div>
-            <div class="text-xs opacity-90">Aprobar este proyecto</div>
-          </div>
-          <div class="absolute inset-0 bg-gradient-to-br from-green-400/20 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <svg class="w-7 h-7 text-slate-400 group-hover:text-green-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"/>
+          </svg>
+          <span class="font-black text-sm text-slate-700 group-hover:text-green-700 transition-colors">A favor</span>
         </button>
-        
+
         <button
           id="btn-en-contra"
-          class="vote-button vote-button-contra group relative overflow-hidden px-6 py-6 rounded-[1.5rem] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+          class="vote-button group relative flex flex-col items-center justify-center gap-2 px-4 py-6 rounded-xl bg-slate-50 border border-slate-200 hover:border-red-400 hover:bg-red-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-50 disabled:hover:border-slate-200"
           data-voto="en_contra"
           disabled={isObservador}
         >
-          <div class="relative z-10">
-            <div class="text-4xl mb-2">👎</div>
-            <div class="font-black text-xl mb-1">EN CONTRA</div>
-            <div class="text-xs opacity-90">Rechazar este proyecto</div>
-          </div>
-          <div class="absolute inset-0 bg-gradient-to-br from-red-400/20 to-rose-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <svg class="w-7 h-7 text-slate-400 group-hover:text-red-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384"/>
+          </svg>
+          <span class="font-black text-sm text-slate-700 group-hover:text-red-700 transition-colors">En contra</span>
         </button>
       </div>
-    </>
-  ) : (
-    <>
-      <div class="text-center mb-6">
-        <h3 class="font-black text-2xl mb-2 text-slate-900">🛍️ Selecciona una opción</h3>
-        <p class="text-slate-600 text-base">Elige el producto que prefieres</p>
-      </div>
-      
-      <div class="grid gap-4 mb-4">
-        {opciones.map((opcion) => (
+    ) : (
+      <div class="flex flex-col gap-2">
+        {opciones.map((opcion, i) => (
           <button
-            class="vote-option-card group relative overflow-hidden bg-white border-2 border-slate-200 rounded-[1.5rem] p-6 transition-all duration-300 hover:border-orange-400 hover:shadow-xl hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+            class="vote-option-card group text-left flex items-center justify-between gap-4 w-full px-5 py-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-orange-400 hover:bg-orange-50 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
             data-opcion-id={opcion.id}
             disabled={isObservador}
           >
-            <div class="flex items-start justify-between">
-              <div class="flex-1">
-                <div class="font-black text-lg text-slate-900 mb-1">
-                  {opcion.nombre}
-                </div>
+            <div class="flex items-center gap-3 min-w-0">
+              <span class="w-7 h-7 rounded-lg bg-white border border-slate-200 group-hover:border-orange-300 text-xs font-black text-slate-500 group-hover:text-orange-500 flex items-center justify-center shrink-0 transition-colors">
+                {i + 1}
+              </span>
+              <div class="min-w-0">
+                <p class="font-black text-sm text-slate-900 leading-tight truncate">{opcion.nombre}</p>
                 {opcion.descripcion_corta && (
-                  <div class="text-sm text-slate-600 mb-2">
-                    {opcion.descripcion_corta}
-                  </div>
+                  <p class="text-xs text-slate-500 mt-0.5 line-clamp-1">{opcion.descripcion_corta}</p>
                 )}
               </div>
-              {opcion.precio && (
-                <div class="ml-4 text-right">
-                  <div class="font-black text-xl text-green-600">
-                    ${opcion.precio}
-                  </div>
-                  <div class="text-xs text-slate-500">MXN</div>
-                </div>
-              )}
             </div>
-            <div class="absolute inset-0 bg-gradient-to-br from-orange-400/10 to-pink-500/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            {opcion.precio && (
+              <span class="font-black text-sm text-orange-500 shrink-0">
+                ${new Intl.NumberFormat('es-MX').format(opcion.precio)}
+              </span>
+            )}
           </button>
         ))}
       </div>
-    </>
-  )}
-  
-  <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 text-center">
-    <p class="text-amber-800 font-bold text-xs flex items-center justify-center gap-2">
-      <span class="text-xl">⚠️</span>
-      <span>Los votos son definitivos y no pueden cambiarse</span>
+    )}
+
+    <!-- Aviso definitivo -->
+    <p class="mt-4 text-center text-[11px] font-bold text-slate-400 flex items-center justify-center gap-1.5">
+      <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+      </svg>
+      Los votos son definitivos y no pueden cambiarse
     </p>
   </div>
-  
-  <div id="vote-message" class="hidden mt-6"></div>
+
+  <div id="vote-message" class="hidden px-6 pb-6"></div>
 </div>
 
 <!-- Modal de confirmación -->
@@ -115,35 +112,36 @@ const isObservador = userRol === 'observador';
   id="confirm-modal"
   class="fixed inset-0 z-[200] flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200"
 >
-  <!-- Fondo -->
-  <div id="confirm-backdrop" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
+  <div id="confirm-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div>
 
-  <!-- Contenido -->
-  <div class="relative bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full flex flex-col gap-5">
-    <div class="text-center">
-      <div class="text-5xl mb-3" id="confirm-icon">🗳️</div>
-      <h3 class="font-black text-xl text-slate-900 mb-1">¿Confirmas tu voto?</h3>
-      <p class="text-slate-500 text-sm font-medium">Estás a punto de votar por:</p>
-      <p id="confirm-opcion" class="font-black text-lg text-orange-500 mt-2"></p>
+  <div class="relative bg-white rounded-2xl shadow-2xl p-6 max-w-xs w-full">
+    <div class="mb-5">
+      <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">Confirmación</p>
+      <h3 class="font-black text-xl text-slate-900 tracking-tight leading-tight">¿Confirmas tu voto?</h3>
     </div>
 
-    <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-center">
-      <p class="text-amber-800 text-xs font-bold flex items-center justify-center gap-2">
-        <span>⚠️</span>
-        <span>Esta acción es definitiva y no puede revertirse</span>
-      </p>
+    <div class="bg-slate-50 rounded-xl px-4 py-3 mb-5 border border-slate-200">
+      <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Tu selección</p>
+      <p id="confirm-opcion" class="font-black text-base text-slate-900 leading-tight"></p>
     </div>
 
-    <div class="grid grid-cols-2 gap-3">
+    <div class="flex items-start gap-2 mb-5 text-xs font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2.5">
+      <svg class="w-4 h-4 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+      </svg>
+      Esta acción es definitiva y no puede revertirse
+    </div>
+
+    <div class="grid grid-cols-2 gap-2">
       <button
         id="confirm-cancel"
-        class="px-4 py-3 rounded-2xl border-2 border-slate-200 font-black text-sm text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all"
+        class="px-4 py-2.5 rounded-xl border border-slate-200 font-black text-sm text-slate-600 hover:bg-slate-50 transition-all"
       >
         Cancelar
       </button>
       <button
         id="confirm-ok"
-        class="px-4 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-pink-500 font-black text-sm text-white hover:from-orange-600 hover:to-pink-600 transition-all shadow-lg"
+        class="px-4 py-2.5 rounded-xl bg-slate-900 font-black text-sm text-white hover:bg-slate-700 transition-all"
       >
         Confirmar
       </button>
@@ -157,27 +155,18 @@ const isObservador = userRol === 'observador';
   const modal = document.getElementById('confirm-modal');
   const backdrop = document.getElementById('confirm-backdrop');
   const confirmOpcion = document.getElementById('confirm-opcion');
-  const confirmIcon = document.getElementById('confirm-icon');
   const confirmOk = document.getElementById('confirm-ok');
   const confirmCancel = document.getElementById('confirm-cancel');
 
-  // Función para mostrar/ocultar modal
-  function showModal(label: string, icon: string, onConfirm: () => void) {
-    if (!modal || !confirmOpcion || !confirmIcon) return;
-    confirmOpcion!.textContent = label;
-    confirmIcon!.textContent = icon;
+  function showModal(label: string, onConfirm: () => void) {
+    if (!modal || !confirmOpcion) return;
+    confirmOpcion.textContent = label;
     modal.classList.remove('opacity-0', 'pointer-events-none');
     modal.classList.add('opacity-100');
 
-    const doConfirm = () => {
-      hideModal();
-      onConfirm();
-    };
-    const doCancel = () => hideModal();
-
-    confirmOk?.addEventListener('click', doConfirm, { once: true });
-    confirmCancel?.addEventListener('click', doCancel, { once: true });
-    backdrop?.addEventListener('click', doCancel, { once: true });
+    confirmOk?.addEventListener('click', () => { hideModal(); onConfirm(); }, { once: true });
+    confirmCancel?.addEventListener('click', hideModal, { once: true });
+    backdrop?.addEventListener('click', hideModal, { once: true });
   }
 
   function hideModal() {
@@ -185,11 +174,8 @@ const isObservador = userRol === 'observador';
     modal?.classList.remove('opacity-100');
   }
 
-  // Función principal para registrar voto
   async function submitVote(body: object) {
     if (!messageDiv) return;
-
-    // Deshabilitar todos los botones de voto
     document.querySelectorAll<HTMLButtonElement>('.vote-button, .vote-option-card').forEach(b => b.disabled = true);
 
     try {
@@ -198,20 +184,19 @@ const isObservador = userRol === 'observador';
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-
       const result = await response.json();
 
       if (result.success) {
-        messageDiv.className = 'mt-4 p-4 bg-emerald-100 border-2 border-emerald-300 rounded-xl text-emerald-800 text-center';
-        messageDiv.textContent = '✅ Tu voto ha sido registrado exitosamente';
+        messageDiv.className = 'px-6 pb-6 text-sm font-bold text-green-700 text-center';
+        messageDiv.textContent = 'Voto registrado correctamente';
         messageDiv.classList.remove('hidden');
-        setTimeout(() => window.location.reload(), 2000);
+        setTimeout(() => window.location.reload(), 1500);
       } else {
         throw new Error(result.error || 'Error al registrar voto');
       }
     } catch (error) {
-      messageDiv.className = 'mt-4 p-4 bg-red-100 border-2 border-red-300 rounded-xl text-red-800 text-center';
-      messageDiv.textContent = `❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`;
+      messageDiv.className = 'px-6 pb-6 text-sm font-bold text-red-600 text-center';
+      messageDiv.textContent = `Error: ${error instanceof Error ? error.message : 'Error desconocido'}`;
       messageDiv.classList.remove('hidden');
       document.querySelectorAll<HTMLButtonElement>('.vote-button, .vote-option-card').forEach(b => b.disabled = false);
     }
@@ -222,25 +207,19 @@ const isObservador = userRol === 'observador';
     const tipoVotacion = voteButtons.dataset.tipo;
 
     if (tipoVotacion === 'binaria') {
-      const btnAFavor = document.getElementById('btn-a-favor') as HTMLButtonElement;
-      const btnEnContra = document.getElementById('btn-en-contra') as HTMLButtonElement;
-
-      btnAFavor?.addEventListener('click', () => {
-        showModal('A FAVOR', '👍', () => submitVote({ proyectoSlug: slug, voto: 'a_favor' }));
+      document.getElementById('btn-a-favor')?.addEventListener('click', () => {
+        showModal('A favor', () => submitVote({ proyectoSlug: slug, voto: 'a_favor' }));
       });
-      btnEnContra?.addEventListener('click', () => {
-        showModal('EN CONTRA', '👎', () => submitVote({ proyectoSlug: slug, voto: 'en_contra' }));
+      document.getElementById('btn-en-contra')?.addEventListener('click', () => {
+        showModal('En contra', () => submitVote({ proyectoSlug: slug, voto: 'en_contra' }));
       });
-
     } else if (tipoVotacion === 'seleccion') {
-      const opcionCards = document.querySelectorAll<HTMLButtonElement>('.vote-option-card');
-
-      opcionCards.forEach(card => {
+      document.querySelectorAll<HTMLButtonElement>('.vote-option-card').forEach(card => {
         card.addEventListener('click', () => {
           const opcionId = card.dataset.opcionId;
           if (!opcionId) return;
           const nombre = card.querySelector('.font-black')?.textContent?.trim() || 'esta opción';
-          showModal(nombre, '🛍️', () => submitVote({ proyectoSlug: slug, opcionProductoId: opcionId }));
+          showModal(nombre, () => submitVote({ proyectoSlug: slug, opcionProductoId: opcionId }));
         });
       });
     }
