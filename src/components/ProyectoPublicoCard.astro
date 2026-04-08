@@ -32,6 +32,8 @@ const isRange = hasRange && data.presupuesto_min != null && data.presupuesto_max
 
 const hasOpciones = data.tipo_votacion === "seleccion" && data.opciones_votacion && data.opciones_votacion.length > 0;
 const hasBodyContent = hasOpciones || data.proveedor;
+const opcionesCount = data.opciones_votacion?.length ?? 0;
+const opcionesGrid = opcionesCount >= 3;
 ---
 
 <a
@@ -104,19 +106,16 @@ const hasBodyContent = hasOpciones || data.proveedor;
             <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-3">
               Opciones en evaluación
             </p>
-            <div class="flex flex-col gap-2">
+            <div class={opcionesGrid ? "grid grid-cols-2 gap-2" : "flex flex-col gap-2"}>
               {data.opciones_votacion!.map((opcion, i) => (
-                <div class="flex items-start gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
-                  <span class="w-5 h-5 rounded-md bg-slate-200 text-slate-600 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
+                <div class="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-50 border border-slate-100">
+                  <span class="w-5 h-5 rounded-md bg-slate-200 text-slate-600 text-[10px] font-black flex items-center justify-center shrink-0">
                     {i + 1}
                   </span>
-                  <div class="min-w-0">
-                    <p class="font-black text-slate-900 text-sm leading-tight">{opcion.nombre}</p>
-                    {opcion.descripcion_corta && (
-                      <p class="text-xs text-slate-500 font-medium leading-relaxed mt-0.5">{opcion.descripcion_corta}</p>
-                    )}
+                  <div class="min-w-0 flex-1">
+                    <p class="font-black text-slate-900 text-sm leading-tight truncate">{opcion.nombre}</p>
                     {opcion.precio && (
-                      <p class="text-xs font-black text-orange-500 mt-1">{formatMonto(opcion.precio)}</p>
+                      <p class="text-xs font-black text-orange-500 mt-0.5">{formatMonto(opcion.precio)}</p>
                     )}
                   </div>
                 </div>
