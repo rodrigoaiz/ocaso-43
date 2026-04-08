@@ -220,44 +220,57 @@ const { Content } = await proyecto.render();
     <div id="seccion-votacion" class="space-y-6 mb-10 scroll-mt-20">
       {!votacionAbierta ? (
         <!-- Votación cerrada -->
-        <div class="bg-gradient-to-br from-slate-100 to-slate-200 rounded-[2rem] p-6 text-center border-2 border-slate-300 shadow-lg">
-          <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-6 py-4 mb-3">
-            <p class="text-slate-700 text-base mb-2">🔒 Esta votación ha sido cerrada</p>
-            <p class="font-black text-2xl text-slate-600">
-              Votación cerrada
-            </p>
+        <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-5 border-b border-slate-100">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">Estado</p>
+            <h3 class="text-xl font-black text-slate-900 tracking-tight">Votación cerrada</h3>
           </div>
-          <div class="bg-slate-50 border-2 border-slate-300 rounded-xl p-3 inline-block">
-            <p class="text-sm text-slate-700 font-bold">
-              Ya no es posible emitir o modificar votos en este proyecto
-            </p>
+          <div class="p-6 flex items-start gap-3">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+              <svg class="w-4.5 h-4.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+              </svg>
+            </div>
+            <p class="text-sm font-bold text-slate-600 leading-relaxed">Ya no es posible emitir o modificar votos en este proyecto.</p>
           </div>
         </div>
       ) : hasUserVoted ? (
         <!-- Usuario ya votó -->
-        <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-[2rem] p-6 text-center border-2 border-slate-200 shadow-lg">
-          <div class="inline-block bg-white/60 backdrop-blur-sm rounded-[1.5rem] px-6 py-4 mb-3">
-            <p class="text-slate-600 text-base mb-2">Ya emitiste tu voto:</p>
+        <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-5 border-b border-slate-100">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">Tu voto</p>
+            <h3 class="text-xl font-black text-slate-900 tracking-tight">Ya emitiste tu voto</h3>
+          </div>
+          <div class="p-6 space-y-4">
             {proyectoBD.tipo_votacion === 'binaria' ? (
-              <p class="font-black text-3xl mb-1">
-                {votoUsuario.voto === 'a_favor' ? '👍 A FAVOR' : '👎 EN CONTRA'}
-              </p>
-            ) : (
-              <div>
-                <p class="font-black text-3xl mb-1">🛍️ Selección emitida</p>
-                {votoUsuario.opcion_producto_id && opciones && (
-                  <p class="text-slate-700 text-lg font-bold">
-                    {opciones.find(o => o.id === votoUsuario.opcion_producto_id)?.nombre || 'Opción seleccionada'}
-                  </p>
+              <div class={`inline-flex items-center gap-2 px-4 py-3 rounded-xl border font-black text-sm ${votoUsuario.voto === 'a_favor' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
+                {votoUsuario.voto === 'a_favor' ? (
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.243-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.173.405.27.602.197.4-.078.898-.523.898h-.908c-.889 0-1.713-.518-1.972-1.368a12 12 0 01-.521-3.507c0-1.553.295-3.036.831-4.398C3.387 10.203 4.167 9.75 5 9.75h1.053c.472 0 .745.556.5.96a8.958 8.958 0 00-1.302 4.665c0 1.194.232 2.333.654 3.375z"/>
+                  </svg>
+                ) : (
+                  <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 15h2.25m8.024-9.75c.011.05.028.1.052.148.591 1.2.924 2.55.924 3.977a8.96 8.96 0 01-.999 4.125m.023-8.25c-.076-.365.183-.75.575-.75h.908c.889 0 1.713.518 1.972 1.368.339 1.11.521 2.287.521 3.507 0 1.553-.295 3.036-.831 4.398C20.613 14.547 19.833 15 19 15h-1.053c-.472 0-.745-.556-.5-.96a8.95 8.95 0 00.303-.54m.023-8.25H16.48a4.5 4.5 0 01-1.423-.23l-3.114-1.04a4.5 4.5 0 00-1.423-.23H6.504c-.618 0-1.217.247-1.605.729A11.95 11.95 0 002.25 12c0 .434.023.863.068 1.285C2.427 14.306 3.346 15 4.372 15h3.126c.618 0 .991.724.725 1.282A7.471 7.471 0 007.5 19.5a2.25 2.25 0 002.25 2.25.75.75 0 00.75-.75v-.633c0-.573.11-1.14.322-1.672.304-.76.93-1.33 1.653-1.715a9.04 9.04 0 002.86-2.4c.498-.634 1.226-1.08 2.032-1.08h.384"/>
+                  </svg>
                 )}
+                {votoUsuario.voto === 'a_favor' ? 'A favor' : 'En contra'}
+              </div>
+            ) : (
+              <div class="px-4 py-3 rounded-xl bg-slate-50 border border-slate-200">
+                <p class="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">Opción seleccionada</p>
+                <p class="font-black text-base text-slate-900">
+                  {votoUsuario.opcion_producto_id && opciones
+                    ? opciones.find(o => o.id === votoUsuario.opcion_producto_id)?.nombre || 'Opción seleccionada'
+                    : 'Opción seleccionada'}
+                </p>
               </div>
             )}
-          </div>
-          <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 inline-block">
-            <p class="text-xs text-amber-800 font-bold flex items-center gap-2">
-              <span>🔒</span>
-              <span>Los votos son definitivos y no pueden cambiarse</span>
-            </p>
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-400">
+              <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"/>
+              </svg>
+              Los votos son definitivos y no pueden cambiarse
+            </div>
           </div>
         </div>
       ) : (
@@ -270,23 +283,27 @@ const { Content } = await proyecto.render();
         <VoteResults votos={votos} votosCount={votosCount || 0} tipoVotacion={proyectoBD.tipo_votacion} opciones={opciones || []} />
       ) : (
         <!-- Votación en proceso -->
-        <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-[2rem] p-5 border-2 border-amber-200 text-center shadow-lg">
-          <p class="text-amber-900 font-black text-xl mb-3">
-            ⏳ Votación en proceso
-          </p>
-          <div class="flex items-center justify-center gap-3 mb-2">
-            <div class="text-4xl font-black text-amber-600">
-              {votosCount || 0}
-            </div>
-            <div class="text-2xl text-amber-400">/</div>
-            <div class="text-3xl font-bold text-amber-500">3</div>
+        <div class="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 pt-6 pb-5 border-b border-slate-100">
+            <p class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-1">Progreso</p>
+            <h3 class="text-xl font-black text-slate-900 tracking-tight">Votación en proceso</h3>
           </div>
-          <p class="text-amber-700 font-semibold text-sm mb-3">
-            votos emitidos
-          </p>
-          <p class="text-amber-600 text-xs font-medium">
-            📊 Los resultados serán visibles cuando al menos 2 miembros voten
-          </p>
+          <div class="p-6 space-y-4">
+            <div class="flex items-end gap-2">
+              <span class="text-5xl font-black text-slate-900 leading-none">{votosCount || 0}</span>
+              <span class="text-xl font-black text-slate-300 leading-none mb-1">/ 3</span>
+              <span class="text-xs font-black uppercase tracking-widest text-slate-400 mb-1.5 ml-1">votos</span>
+            </div>
+            <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-slate-900 rounded-full transition-all duration-500"
+                style={`width: ${Math.round(((votosCount || 0) / 3) * 100)}%`}
+              ></div>
+            </div>
+            <p class="text-xs font-bold text-slate-400">
+              Los resultados serán visibles cuando al menos 2 miembros voten
+            </p>
+          </div>
         </div>
       )}
     </div>
