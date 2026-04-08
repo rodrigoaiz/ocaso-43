@@ -1,0 +1,78 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Trabajo Realizado Schema",
+  "description": "Schema for trabajos-realizados collection frontmatter",
+  "type": "object",
+  "required": ["titulo", "fecha_realizacion", "categoria", "costo_final", "proveedor", "descripcion_corta"],
+  "properties": {
+    "titulo": {
+      "type": "string",
+      "description": "Título del trabajo realizado"
+    },
+    "fecha_realizacion": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha de realización del trabajo (YYYY-MM-DD)"
+    },
+    "categoria": {
+      "type": "string",
+      "enum": ["Mantenimiento", "Compras", "Mejoras", "Emergencias", "Reparaciones"],
+      "description": "Categoría del trabajo"
+    },
+    "proyecto_slug": {
+      "type": "string",
+      "description": "Slug del proyecto aprobado relacionado"
+    },
+    "fecha_aprobacion_comision": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha de aprobación por la comisión"
+    },
+    "costo_final": {
+      "type": "number",
+      "description": "Costo final del trabajo en pesos"
+    },
+    "presupuesto_estimado": {
+      "type": "number",
+      "description": "Presupuesto estimado inicialmente"
+    },
+    "proveedor": {
+      "type": "string",
+      "description": "Nombre del proveedor"
+    },
+    "contacto_proveedor": {
+      "type": "string",
+      "description": "Información de contacto del proveedor"
+    },
+    "descripcion_corta": {
+      "type": "string",
+      "description": "Descripción breve para la tarjeta"
+    },
+    "imagenes": {
+      "type": "array",
+      "description": "Imágenes del trabajo",
+      "items": {
+        "type": "object",
+        "required": ["url", "tipo"],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "URL de la imagen (en /public/img/trabajos/)"
+          },
+          "tipo": {
+            "type": "string",
+            "enum": ["antes", "durante", "despues"],
+            "description": "Tipo de imagen"
+          },
+          "descripcion": {
+            "type": "string",
+            "description": "Descripción de la imagen"
+          }
+        },
+        "additionalProperties": false
+      },
+      "default": []
+    }
+  },
+  "additionalProperties": false
+}

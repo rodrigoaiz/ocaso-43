@@ -9,14 +9,24 @@ presupuesto_max: 72580
 descripcion_corta: "Selecciona la mejor opción para impermeabilizar la azotea y protegerla de las filtraciones."
 visible_publico: false
 tipo_votacion: "seleccion"
+votacion_abierta: false
 opciones_votacion:
   - id: "opcion1"
-    nombre: "Impermeabilización completa con Rojo Acrílico"
-    precio: 72580
-    descripcion_corta: "Aplicación en toda la azotea con material de durabilidad de dos años con sellado y aplicado."
+    nombre: "Mantenimiento Ofman"
+    precio: 38200
+    descripcion_corta: "Sistema A3 Rojo mantenimiento sencillo"
   - id: "opcion2"
-    nombre: "Impermeabilización de mantenimiento en zonas críticas"
-    descripcion_corta: "Una opción más económica que se enfoca en las áreas más vulnerables de la azotea o con daños visibles."
+    nombre: "Mantenimiento Ofman Reforzado"
+    descripcion_corta: "Sistema A3 Rojo con aplicación reforzada en zonas críticas"
+    precio: 72580
+  - id: "opcion3"
+    nombre: "Aplicación de impermeabilizante por Aarón y su padre"
+    descripcion_corta: "Impermeabilización de mantenimiento en zonas críticas"
+    precio: 38510
+  - id : "opcion4"
+    nombre: "Mantenimiento General SanVel"
+    descripcion_corta: "Impermeabilizacion, resanes de grietas y correccion en bajadas de desagues en azotea."
+    precio: 33460
 ---
 
 import ProjectImage from '../../components/ProjectImage.astro';
@@ -35,14 +45,32 @@ La azotea del condominio presenta signos de desgaste y posibles filtraciones, lo
 </div>
 
 ## Propuesta de Solución
-Se proponen dos opciones para el mantenimiento de la azotea:
-1. **Impermeabilización completa con Rojo Acrílico**
+Se proponen tres opciones para el mantenimiento de la azotea:
+1. **Mantenimiento Ofman**
+   - Sistema A3 Rojo mantenimiento sencillo
+   - Precio: $38,200 MXN
+   - Se anexa <a href="/docs/trabajos/2026-04-mantenimiento-azotea/cotizacion-ofman.pdf" target="_blank">cotización detallada del proveedor</a> que incluye el costo de materiales y mano de obra. 
+
+2. **Impermeabilización completa con Rojo Acrílico**
    - Aplicación en toda la azotea con material de durabilidad de dos años con sellado y aplicado.
    - Precio: $72,580 MXN
    - Se anexa <a href="/docs/trabajos/2026-04-mantenimiento-azotea/cotizacion-ofman.pdf" target="_blank">cotización detallada del proveedor</a> que incluye el costo de materiales y mano de obra. 
 
-2. **Impermeabilización de mantenimiento en zonas críticas**
-   - Una opción más económica que se enfoca en las áreas más vulnerables de la azotea o con daños visibles.
-   - Precio: Variable según el alcance del trabajo, pero se estima que será significativamente menor que la opción completa.
+3. **Impermeabilización de mantenimiento en zonas críticas Aaron**
+   - Aplicación de impermeabilizante en zonas críticas.
+   - Precio: $38,510 MXN
+   - Se anexa cotización que incluye el costo solo demano de obra. 
+   - Se anexo el precio del material requerido, que se calcula con base en el area a cubrir, el cual es de $25,480 MXN por 13 cubetas.
+  <div class="grid grid-cols-3 md:grid-cols-3 gap-3 my-6">
+    <ProjectImage src="/docs/trabajos/2026-04-mantenimiento-azotea/img1.jpg" className="my-0" />
+    <ProjectImage src="/docs/trabajos/2026-04-mantenimiento-azotea/img2.jpg" className="my-0" />
+    <ProjectImage src="/docs/trabajos/2026-04-mantenimiento-azotea/img3.jpg" className="my-0" />
+  </div>
+
+4. **Mantenimiento General SanVel**
+   - Impermeabilización, resanes de grietas y corrección en bajadas de desagües en azotea.
+   - Precio: $33,460 MXN
+   - Se anexa <a href="/docs/trabajos/2026-04-mantenimiento-azotea/cotizacion-sanvel.pdf.pdf" target="_blank">cotización detallada</a> que incluye el costo solo de mano de obra. 
+   - Se anexo el precio del material requerido, que se calcula con base en el area a cubrir, el cual es de $25,480 MXN por 13 cubetas.
 
 

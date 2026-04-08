@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Proyecto de Votación Schema",
+  "description": "Schema for proyectos-votacion collection frontmatter",
+  "type": "object",
+  "required": ["titulo", "fecha"],
+  "properties": {
+    "titulo": {
+      "type": "string",
+      "description": "Título del proyecto"
+    },
+    "fecha": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha del proyecto (YYYY-MM-DD)"
+    },
+    "mes": {
+      "type": "integer",
+      "description": "Mes del proyecto (1-12)",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "anio": {
+      "type": "integer",
+      "description": "Año del proyecto",
+      "minimum": 2020,
+      "maximum": 2030
+    },
+    "categoria": {
+      "type": "string",
+      "description": "Categoría del proyecto"
+    },
+    "presupuesto_estimado": {
+      "type": "number",
+      "description": "Presupuesto estimado en pesos"
+    },
+    "presupuesto_min": {
+      "type": "number",
+      "description": "Presupuesto mínimo"
+    },
+    "presupuesto_max": {
+      "type": "number",
+      "description": "Presupuesto máximo"
+    },
+    "proveedor": {
+      "type": "string",
+      "description": "Nombre del proveedor"
+    },
+    "descripcion_corta": {
+      "type": "string",
+      "description": "Descripción breve del proyecto"
+    },
+    "votacion_abierta": {
+      "type": "boolean",
+      "description": "Si la votación está abierta o cerrada",
+      "default": true
+    },
+    "visible_publico": {
+      "type": "boolean",
+      "description": "Si el proyecto es visible en la homepage",
+      "default": false
+    },
+    "tipo_votacion": {
+      "type": "string",
+      "enum": ["binaria", "seleccion"],
+      "description": "Tipo de votación: binaria (sí/no) o selección (múltiples opciones)",
+      "default": "binaria"
+    },
+    "opciones_votacion": {
+      "type": "array",
+      "description": "Opciones para votación de selección (requerido si tipo_votacion es 'seleccion')",
+      "minItems": 2,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "required": ["id", "nombre"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "ID único de la opción"
+          },
+          "nombre": {
+            "type": "string",
+            "description": "Nombre de la opción"
+          },
+          "precio": {
+            "type": "number",
+            "description": "Precio de esta opción"
+          },
+          "descripcion_corta": {
+            "type": "string",
+            "description": "Descripción breve de la opción"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

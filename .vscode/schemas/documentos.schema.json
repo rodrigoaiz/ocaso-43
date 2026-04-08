@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Documento Schema",
+  "description": "Schema for documentos collection frontmatter",
+  "type": "object",
+  "required": ["title", "date", "category"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Título del documento"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha del documento (YYYY-MM-DD)"
+    },
+    "category": {
+      "type": "string",
+      "description": "Categoría del documento"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descripción opcional del documento"
+    }
+  },
+  "additionalProperties": false
+}

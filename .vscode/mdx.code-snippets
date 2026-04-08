@@ -1,0 +1,111 @@
+{
+  "Minuta Frontmatter": {
+    "prefix": "minuta",
+    "body": [
+      "---",
+      "title: \"${1:Título de la Minuta}\"",
+      "date: ${2:2026-${CURRENT_MONTH}-${CURRENT_DATE}}",
+      "description: \"${3:Descripción opcional}\"",
+      "year: ${4:${CURRENT_YEAR}}",
+      "month: ${5:${CURRENT_MONTH}}",
+      "tags: [${6:\"asamblea\"}]",
+      "---",
+      "",
+      "# ${1:Título de la Minuta}",
+      "",
+      "$0"
+    ],
+    "description": "Frontmatter completo para minutas"
+  },
+  "Proyecto Votación Binaria": {
+    "prefix": "proyecto-binario",
+    "body": [
+      "---",
+      "titulo: \"${1:Título del Proyecto}\"",
+      "fecha: ${2:2026-${CURRENT_MONTH}-${CURRENT_DATE}}",
+      "mes: ${3:${CURRENT_MONTH}}",
+      "anio: ${4:${CURRENT_YEAR}}",
+      "categoria: \"${5:Categoría}\"",
+      "presupuesto_estimado: ${6:0}",
+      "proveedor: \"${7:Nombre del Proveedor}\"",
+      "descripcion_corta: \"${8:Descripción corta}\"",
+      "votacion_abierta: ${9|true,false|}",
+      "visible_publico: ${10|false,true|}",
+      "tipo_votacion: \"binaria\"",
+      "---",
+      "",
+      "# ${1:Título del Proyecto}",
+      "",
+      "$0"
+    ],
+    "description": "Proyecto con votación binaria (sí/no)"
+  },
+  "Proyecto Votación Selección": {
+    "prefix": "proyecto-seleccion",
+    "body": [
+      "---",
+      "titulo: \"${1:Título del Proyecto}\"",
+      "fecha: ${2:2026-${CURRENT_MONTH}-${CURRENT_DATE}}",
+      "mes: ${3:${CURRENT_MONTH}}",
+      "anio: ${4:${CURRENT_YEAR}}",
+      "categoria: \"${5:Categoría}\"",
+      "descripcion_corta: \"${6:Descripción corta}\"",
+      "votacion_abierta: ${7|true,false|}",
+      "visible_publico: ${8|false,true|}",
+      "tipo_votacion: \"seleccion\"",
+      "opciones_votacion:",
+      "  - id: \"${9:opcion-1}\"",
+      "    nombre: \"${10:Opción 1}\"",
+      "    precio: ${11:0}",
+      "    descripcion_corta: \"${12:Descripción opción 1}\"",
+      "  - id: \"${13:opcion-2}\"",
+      "    nombre: \"${14:Opción 2}\"",
+      "    precio: ${15:0}",
+      "    descripcion_corta: \"${16:Descripción opción 2}\"",
+      "---",
+      "",
+      "# ${1:Título del Proyecto}",
+      "",
+      "$0"
+    ],
+    "description": "Proyecto con votación de selección múltiple"
+  },
+  "Trabajo Realizado": {
+    "prefix": "trabajo",
+    "body": [
+      "---",
+      "titulo: \"${1:Título del Trabajo}\"",
+      "fecha_realizacion: ${2:2026-${CURRENT_MONTH}-${CURRENT_DATE}}",
+      "categoria: ${3|\"Mantenimiento\",\"Compras\",\"Mejoras\",\"Emergencias\",\"Reparaciones\"|}",
+      "costo_final: ${4:0}",
+      "proveedor: \"${5:Nombre del Proveedor}\"",
+      "descripcion_corta: \"${6:Descripción corta}\"",
+      "imagenes:",
+      "  - url: \"/img/trabajos/${7:carpeta}/${8:imagen}.jpg\"",
+      "    tipo: ${9|\"antes\",\"durante\",\"despues\"|}",
+      "    descripcion: \"${10:Descripción de la imagen}\"",
+      "---",
+      "",
+      "# ${1:Título del Trabajo}",
+      "",
+      "$0"
+    ],
+    "description": "Trabajo realizado completo"
+  },
+  "Documento": {
+    "prefix": "documento",
+    "body": [
+      "---",
+      "title: \"${1:Título del Documento}\"",
+      "date: ${2:2026-${CURRENT_MONTH}-${CURRENT_DATE}}",
+      "category: \"${3:Categoría}\"",
+      "description: \"${4:Descripción opcional}\"",
+      "---",
+      "",
+      "# ${1:Título del Documento}",
+      "",
+      "$0"
+    ],
+    "description": "Documento completo"
+  }
+}

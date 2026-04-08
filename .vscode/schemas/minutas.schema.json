@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Minuta Schema",
+  "description": "Schema for minutas collection frontmatter",
+  "type": "object",
+  "required": ["title", "date", "year", "month"],
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Título de la minuta"
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "Fecha de la asamblea (YYYY-MM-DD)"
+    },
+    "description": {
+      "type": "string",
+      "description": "Descripción opcional de los temas tratados"
+    },
+    "year": {
+      "type": "integer",
+      "description": "Año de la minuta",
+      "minimum": 2020,
+      "maximum": 2030
+    },
+    "month": {
+      "type": "integer",
+      "description": "Mes de la minuta (1-12)",
+      "minimum": 1,
+      "maximum": 12
+    },
+    "tags": {
+      "type": "array",
+      "description": "Etiquetas de la minuta",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "additionalProperties": false
+}

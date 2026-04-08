@@ -1,0 +1,18 @@
+{
+  "yaml.schemas": {
+    "./.vscode/schemas/minutas.schema.json": "/src/content/minutas/**/*.mdx",
+    "./.vscode/schemas/proyectos-votacion.schema.json": "/src/content/proyectos-votacion/**/*.mdx",
+    "./.vscode/schemas/trabajos-realizados.schema.json": "/src/content/trabajos-realizados/**/*.mdx",
+    "./.vscode/schemas/documentos.schema.json": "/src/content/documentos/**/*.mdx"
+  },
+  "yaml.customTags": [
+    "!datetime"
+  ],
+  "[mdx]": {
+    "editor.quickSuggestions": {
+      "other": true,
+      "comments": false,
+      "strings": true
+    }
+  }
+}
