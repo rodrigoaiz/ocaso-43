@@ -218,7 +218,7 @@ const isObservador = userRol === 'observador';
         card.addEventListener('click', () => {
           const opcionId = card.dataset.opcionId;
           if (!opcionId) return;
-          const nombre = card.querySelector('.font-black')?.textContent?.trim() || 'esta opción';
+          const nombre = card.querySelector('p.font-black')?.textContent?.trim() || 'esta opción';
           showModal(nombre, () => submitVote({ proyectoSlug: slug, opcionProductoId: opcionId }));
         });
       });

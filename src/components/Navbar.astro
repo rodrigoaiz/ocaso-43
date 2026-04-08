@@ -81,7 +81,7 @@
 <!-- Menú Móvil Overlay (fixed, fuera del header) -->
 <div
   id="mobile-menu"
-  class="fixed inset-0 bg-white/95 backdrop-blur-3xl z-[100] flex flex-col items-center justify-center lg:hidden transition-all duration-500 ease-in-out opacity-0 pointer-events-none translate-y-[-20px]"
+  class="fixed inset-0 bg-white/95 backdrop-blur-3xl z-[100] flex flex-col items-center justify-center lg:hidden opacity-0 pointer-events-none translate-y-[-20px]"
 >
   <!-- Decoración de fondo -->
   <div
@@ -168,6 +168,7 @@
   });
 
   function openMenu() {
+    mobileMenu?.classList.add("transition-all", "duration-500", "ease-in-out");
     mobileMenu?.classList.remove(
       "opacity-0",
       "pointer-events-none",
